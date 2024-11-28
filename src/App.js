@@ -1,30 +1,18 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+// src/App.jsx
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './Home';
+import Login from './Login';
 
-export default function App() {
-  const [users, setUsers] = useState();
-
-  useEffect(() => {
-    async function getUser() {
-      const response = await axios.get("http://localhost:8080/api/user");
-      const data = response.data;
-
-      setUsers(data);
-    }
-
-    getUser();
-  }, []);
-
-  return (
-    <div>
-      {
-        users ? users.map((user) =>
-          <div key={user.id}>
-            <h3>{user.name} {user.age}</h3>
-            <p>{user.memo}</p>
-          </div>
-        ) : null
-      }
-    </div>
-  )
+function App() {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+            </Routes>
+        </Router>
+    );
 }
+
+export default App;
