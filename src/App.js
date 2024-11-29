@@ -1,15 +1,26 @@
 // src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './Home';
-import Login from './Login';
+import styled from 'styled-components';
 
-function App() {
+import MainPage from './component/page/MainPage';
+import PostWritePage from './component/page/PostWritePage';
+import PostViewPage from './component/page/PostViewPage';
+
+const MainTitleText = styled.p`
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+`;
+
+function App(props) {
     return (
         <Router>
+            <MainTitleText>미니 블로그</MainTitleText>
             <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
+                <Route index element={<MainPage />} />
+                <Route path="post-write" element={<PostWritePage />} />
+                <Route path="post/:postId" element={<PostViewPage />} />
             </Routes>
         </Router>
     );
