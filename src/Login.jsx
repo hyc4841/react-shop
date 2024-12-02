@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Login = () => {
+const Login = () => { // 컴포넌트 선언 arrow function 방식
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
