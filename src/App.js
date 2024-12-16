@@ -3,10 +3,14 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import styled from 'styled-components';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import MainPage from './component/page/MainPage';
 import PostWritePage from './component/page/PostWritePage';
 import PostViewPage from './component/page/PostViewPage';
 import BoardPage from './component/page/BoardPage';
+import LoginPage from './component/page/login/Login';
+import SignupPage from './component/page/signup/signupPage';
 
 const MainTitleText = styled.p`
     font-size: 24px;
@@ -20,6 +24,8 @@ function App(props) {
             <MainTitleText>미니 블로그</MainTitleText>
             <Routes>
                 <Route index element={<MainPage />} />
+                <Route path="login" element={<LoginPage />} />
+               /* <Route path="signup" element={<SignupPage />} /> */
                 <Route path="post-write" element={<PostWritePage />} />
                 <Route path="post/:postId" element={<PostViewPage />} />
                 <Route path="board" element={<BoardPage />} />
