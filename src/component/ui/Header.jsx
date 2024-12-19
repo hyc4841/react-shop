@@ -2,24 +2,54 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Col, Row, Button } from "react-bootstrap";
 import axios from "axios";
-
-import useFetch from "../../requestAPI/useFetch";
+import LogoutButton from "./LogoutButton";
 
 const Header = () => {
 
     const [data, setData] = useState([]); // 데이터 상태
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null); // 에러 상태
+    const [content, setContent] = useState(null);
+
+    console.log("엑세스 토큰 확인 : " + localStorage.getItem("accessToken"));
 
     useEffect(() => {
-        var fetchdata = useFetch("http://localhost:8080/member/islogin");
-        setData(fetchdata.data);
-        setError(fetchdata.error);
-        setLoading(fetchdata.loading);
-    }, []);
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/member/islogin', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+                    }
+                });
+                setData(response.data.userName);
+                console.log("로그인 중인 유저 : " + data);
+            } catch (err) {
+                console.error("데이터 요청 실패 : " + err);
+            }
+        };
 
-    var isLoggedIn
+        if (localStorage.getItem('accessToken') != null) {
+            fetchData();
+            setContent((
+                <Col>
+                    <span>안녕하세요 </span>
+                    &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <LogoutButton title="로그아웃"/>
+                        
+                </Col>
+            ));
+        } else {
+            setContent((
+                <Col>
+                    <a href="/login">로그인</a>
+                    &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <a href="/signup">회원가입</a>
+                </Col>
+            ));
+        }
+    }, [])
 
+    console.log("여기까지 통과")
 
     return (
         <header>
@@ -31,14 +61,7 @@ const Header = () => {
                         <a href="/board">게시판</a>
                         &nbsp;&nbsp;|&nbsp;&nbsp;
                     </Col>
-
-                    <Col>
-                        <a href="/login">로그인</a>
-                        &nbsp;&nbsp;|&nbsp;&nbsp;
-                        <a href="/signup">회원가입</a>
-                    </Col>
-
-
+                    {content}
                 </Row>
             </Container>
             <hr/>

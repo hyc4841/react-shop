@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Button } from "react-bootstrap";
 
 const StyledButton = styled.button `
     padding: 8px 16px;
@@ -9,14 +10,14 @@ const StyledButton = styled.button `
     cursor: pointer;
 `;
 
-function Button(props) {
+function WriteButton(props) {
     const { title, onClick } = props;
 
     return (
-    <StyledButton onClick={onClick}>
-        {title || "button"}
-    </StyledButton>
+        <Button variant="success" onClick={onClick} style={{ marginBottom: '16px'}}>
+            {title || "button"}
+        </Button>
     );
 }
 
-export default Button;
+export default WriteButton;

@@ -30,7 +30,7 @@ const Login = () => { // 컴포넌트 선언 arrow function 방식
             localStorage.setItem('accessToken', res.data.accessToken);
             
             // 로그인 성공하면 홈 화면으로
-            navigate('/'); 
+            // navigate('/'); 
         } catch (err) {
             console.error('로그인 오류:', err);
             // errorHandler에 넣어서 무슨 오류인지 받는다.

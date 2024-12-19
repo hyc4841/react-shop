@@ -11,6 +11,8 @@ import PostViewPage from './component/page/PostViewPage';
 import BoardPage from './component/page/BoardPage';
 import LoginPage from './component/page/login/Login';
 import SignupPage from './component/page/signup/signupPage';
+import Header from './component/ui/Header';
+import Footer from './component/ui/Footer';
 
 const MainTitleText = styled.p`
     font-size: 24px;
@@ -21,6 +23,7 @@ const MainTitleText = styled.p`
 function App(props) {
     return (
         <Router>
+            <Header/>
             <MainTitleText>미니 블로그</MainTitleText>
             <Routes>
                 <Route index element={<MainPage />} />
@@ -30,6 +33,7 @@ function App(props) {
                 <Route path="post/:postId" element={<PostViewPage />} />
                 <Route path="board" element={<BoardPage />} />
             </Routes>
+            <Footer/>
         </Router>
     );
 }
