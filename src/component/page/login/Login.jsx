@@ -24,7 +24,7 @@ const Login = () => { // 컴포넌트 선언 arrow function 방식
         try {
             const res = await axios.post('http://localhost:8080/login', {
                 loginId, password
-            });
+            }, { withCredentials: true });
 
             // 로그인에 성공하면 응답으로 받는것은 엑세스 토큰임\
             localStorage.setItem('accessToken', res.data.accessToken);

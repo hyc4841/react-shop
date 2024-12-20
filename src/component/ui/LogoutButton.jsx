@@ -8,8 +8,10 @@ const LogoutButton = (props) => {
     const axiosIns = axios.create({
         baseURL: 'http://localhost:8080', // 기본 url 설정
         headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-        }
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            'Content-Type': 'application/json',
+        },
+        withCredentials: true
     });
 
     const { title } = props;
@@ -22,7 +24,7 @@ const LogoutButton = (props) => {
 
     var config = {
         headers: {
-            'Content-Type': 'application/json',
+            
             'Authorization': localStorage.getItem('accessToken')
         }
     };
