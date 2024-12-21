@@ -6,33 +6,36 @@ import LogoutButton from "./LogoutButton";
 
 const Header = () => {
 
-    const [data, setData] = useState([]); // 데이터 상태
+    const [username, setUsername] = useState(''); // 데이터 상태
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null); // 에러 상태
     const [content, setContent] = useState(null);
 
-    console.log("엑세스 토큰 확인 : " + localStorage.getItem("accessToken"));
-
     useEffect(() => {
         const fetchData = async () => {
             try {
+                console.log("요청 보내기");
                 const response = await axios.get('http://localhost:8080/member/islogin', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-                    }
+                    },
+                    withCredentials: true
                 });
-                setData(response.data.userName);
-                console.log("로그인 중인 유저 : " + data);
+                setUsername(response.data.userName);
+                console.log(username);
             } catch (err) {
                 console.error("데이터 요청 실패 : " + err);
+            } finally {
+                setLoading(false);
             }
         };
 
         if (localStorage.getItem('accessToken') != null) {
+            console.log("순서 확인");
             fetchData();
             setContent((
                 <Col>
-                    <span>안녕하세요 </span>
+                    <span>안녕하세요</span>
                     &nbsp;&nbsp;|&nbsp;&nbsp;
                     <LogoutButton title="로그아웃"/>
                         
@@ -56,7 +59,7 @@ const Header = () => {
             <Container>
                 <Row>
                     <Col>
-                        <a href="/">홈</a>
+                        <a href="/">홈 {username}</a>
                         &nbsp;&nbsp;|&nbsp;&nbsp;
                         <a href="/board">게시판</a>
                         &nbsp;&nbsp;|&nbsp;&nbsp;

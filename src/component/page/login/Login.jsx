@@ -4,12 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { Container, Button, Row, Col } from 'react-bootstrap';
 
-function errorHandler(err) {
-
-
-}
-
-
 const Login = () => { // 컴포넌트 선언 arrow function 방식
     const [loginId, setLoginId] = useState('');
     const [password, setPassword] = useState('');
