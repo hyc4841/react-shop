@@ -9,7 +9,7 @@ import MainPage from './component/page/MainPage';
 import PostWritePage from './component/page/PostWritePage';
 import PostViewPage from './component/page/PostViewPage';
 import BoardPage from './component/page/BoardPage';
-import LoginPage from './component/page/login/Login';
+import LoginPage from './component/page/login/LoginPage'
 import SignupPage from './component/page/signup/signupPage';
 import Header from './component/ui/Header';
 import Footer from './component/ui/Footer';

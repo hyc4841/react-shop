@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Col, Row, Button } from "react-bootstrap";
 import axios from "axios";
 import LogoutButton from "./LogoutButton";
+import ReGenerateAccessToken from "../../test/reGenerateAccessToken";
 
 const Header = () => {
 
@@ -65,6 +66,10 @@ const Header = () => {
                         &nbsp;&nbsp;|&nbsp;&nbsp;
                     </Col>
                     {content}
+
+                    <Col>
+                        <ReGenerateAccessToken/>
+                    </Col>
                 </Row>
             </Container>
             <hr/>
