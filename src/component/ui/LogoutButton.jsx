@@ -18,21 +18,12 @@ const LogoutButton = (props) => {
 
     const navigate = useNavigate();
 
-    var data = {
-        message: "로그아웃 테스트"
-    }
-
-    var config = {
-        headers: {
-            
-            'Authorization': localStorage.getItem('accessToken')
-        }
-    };
-
     const logout = async () => {
         try {
             console.log("로그아웃 요청");
             const response = await axiosIns.post('/logout');
+
+            
             localStorage.removeItem('accessToken');
             navigate("/");
         } catch (err) {
