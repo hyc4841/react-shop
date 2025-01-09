@@ -2,13 +2,20 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+import { useDispatch } from 'react-redux';
+import { login } from '../../../redux/reducer/userSlice';
+
+
 import { Container, Button, Row, Col } from 'react-bootstrap';
+
 
 const Login = () => { // 컴포넌트 선언 arrow function 방식
     const [loginId, setLoginId] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+
+    const dispatch = useDispatch();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -22,6 +29,10 @@ const Login = () => { // 컴포넌트 선언 arrow function 방식
 
             // 로그인에 성공하면 응답으로 받는것은 엑세스 토큰임
             localStorage.setItem('accessToken', res.data.accessToken);
+            
+            // redux 상태 업데이트 구문
+            console.log("isloggedIn : true");
+            dispatch(login());
             
             // 로그인 성공하면 홈 화면으로
             navigate('/'); 

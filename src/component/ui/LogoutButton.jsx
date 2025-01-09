@@ -3,7 +3,13 @@ import { Button } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+import { useDispatch } from "react-redux";
+import { logout, logoutFetch } from "../../redux/reducer/userSlice";
+
+
 const LogoutButton = (props) => {
+
+    const dispatch = useDispatch();
 
     const axiosIns = axios.create({
         baseURL: 'http://localhost:8080', // 기본 url 설정
@@ -21,10 +27,11 @@ const LogoutButton = (props) => {
     const logout = async () => {
         try {
             console.log("로그아웃 요청");
-            const response = await axiosIns.post('/logout');
+            // const response = await axiosIns.post('/logout');
 
-            
-            localStorage.removeItem('accessToken');
+            // isLoggedIn : false 로
+            dispatch(logoutFetch());
+
             navigate("/");
         } catch (err) {
             console.error("로그아웃 실패? : " + err);
