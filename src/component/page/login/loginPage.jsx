@@ -31,7 +31,7 @@ const Login = () => { // 컴포넌트 선언 arrow function 방식
             localStorage.setItem('accessToken', res.data.accessToken);
             
             // redux 상태 업데이트 구문
-            console.log("isloggedIn : true");
+            console.log("isloggedIn : tre")
             dispatch(login());
             
             // 로그인 성공하면 홈 화면으로
