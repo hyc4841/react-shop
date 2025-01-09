@@ -15,12 +15,28 @@ export const logoutFetch = createAsyncThunk(
         console.log(response);
         localStorage.removeItem('accessToken');
     }
-)
+);
+
+export const isLoggedInFetch = createAsyncThunk(
+    'user/isLoggedInFetch',
+    async () => {
+        const response = await axios.get('http://localhost:8080/member/islogin', {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+            },
+            withCredentials: true
+        });
+
+        console.log(response.data);
+
+        return response.data;
+    }
+);
 
 const userSlice = createSlice({
     name: 'user',
 
-    initialState: { isLoggedIn: false },
+    initialState: { isLoggedIn: false, username: null },
 
     reducers: {
         login: (state) => {
@@ -35,11 +51,22 @@ const userSlice = createSlice({
             .addCase(logoutFetch.pending, (state) => {
                 
             })
-            .addCase(logoutFetch.fulfilled, (state) => {
+            .addCase(logoutFetch.fulfilled, (state, action) => {
                 state.isLoggedIn = false;
             })
             .addCase(logoutFetch.rejected, (state) => {
 
+            })
+
+            .addCase(isLoggedInFetch.pending, (state) => {
+            
+            })
+            .addCase(isLoggedInFetch.fulfilled, (state, action) => {
+                state.isLoggedIn = true;
+                state.username = action.payload.userName;
+            })
+            .addCase(isLoggedInFetch.rejected, (state) => {
+                
             })
     }
 });

@@ -24,11 +24,10 @@ function App(props) {
     return (
         <Router>
             <Header/>
-            <MainTitleText>미니 블로그</MainTitleText>
             <Routes>
-                <Route index element={<MainPage />} />
+                <Route  element={<MainPage />} />
                 <Route path="login" element={<LoginPage />} />
-               /* <Route path="signup" element={<SignupPage />} /> */
+                <Route  index element={<SignupPage />} />
                 <Route path="post-write" element={<PostWritePage />} />
                 <Route path="post/:postId" element={<PostViewPage />} />
                 <Route path="board" element={<BoardPage />} />
