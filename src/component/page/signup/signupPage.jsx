@@ -2,8 +2,19 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import DaumPostcode from "react-daum-postcode";
 
-const Signup = () => {
+
+const Signup = (props) => {
+
+    const [ zonecode, setZonecode ] = useState('');
+    const [ address, setAddress ] = useState('');
+
+
+    const postcodeHandler = (data) => {
+        { }
+    }
+
 
     return (
         <Container >
@@ -33,6 +44,8 @@ const Signup = () => {
                             <Form.Label>주소</Form.Label>
                             <Form.Control type="email" placeholder="이메일을 입력하세요" />
                         </Form.Group>
+
+                        <DaumPostcode />
                         
 
                         
