@@ -8,14 +8,8 @@ const DaumPostModal = (props) => {
     return (
         <Modal 
             {...props}
-            centered
-        >
-            <Modal.Header closeButton>
-                <Modal.Title id="postcode">
-                    머리
-                </Modal.Title>
-            </Modal.Header>
-
+            centered >
+            <Modal.Header closeButton></Modal.Header>
             <Modal.Body>
                 <DaumPostcode 
                     onComplete={props.onCompleteHandler}
