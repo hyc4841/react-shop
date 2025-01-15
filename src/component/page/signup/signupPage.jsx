@@ -12,21 +12,45 @@ const Signup = (props) => {
     const [ detailedAddress, setDetailedAddress ] = useState('');
     const [ modalShow, setModalShow ] = useState(false);
 
+    // 주소 선택했을 때 실행되는 함수. 우편번호와 지번 혹은 도로명 주소값이 결정된다.
     const onCompleteHandler = (data) => {
-        const { address, zonecode } = data;
+        const zonecode = data.zonecode;
         setZonecode(zonecode);
+
+        var addr = '';
+        var extraAddr = '';
 
         //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
         if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
-            setAddress(data.roadAddress);
+            addr = data.roadAddress;
+            // setAddress(data.roadAddress);
         } else { // 사용자가 지번 주소를 선택했을 경우(J)
-            setAddress(data.jibunAddress);
+            addr = data.jibunAddress;
         }
+
+        // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+        if(data.userSelectedType === 'R'){
+            // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+            // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+            if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                extraAddr += data.bname;
+            }
+            // 건물명이 있고, 공동주택일 경우 추가한다.
+            if(data.buildingName !== '' && data.apartment === 'Y'){
+                extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+            }
+            // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+            if(extraAddr !== ''){
+                extraAddr = ' (' + extraAddr + ')';
+            }
+        }
+        setAddress(addr + extraAddr);
 
         console.log("zonecode : " + zonecode);
         console.log("address : " + address);
     };
 
+    // 주소창을 열고 닫을 때 실행되는 함수
     const onCloseHandler = (state) => {
         console.log("state : " + state);
         if (state === 'FORCE_CLOSE') {
@@ -36,6 +60,7 @@ const Signup = (props) => {
         }
     };
 
+    // 상세주소 값을 결정하는 함수    
     const detailedAddressHandler = (event) => {
         console.log("텍스트 내용? : " + event.target.value);
         setDetailedAddress(event.target.value);
@@ -47,7 +72,8 @@ const Signup = (props) => {
                 <Col sm={12} className="text-center"><h2>회원가입</h2></Col>
 
                 <Col sm={12} className="d-flex justify-content-center">
-                    <Form style={{ width: '600px', background: 'skyblue', padding: '10px'}}>
+
+                    <Form style={{ width: '600px', background: 'white', padding: '10px', borderRadius: '10px', border: '1px solid black'}}>
 
                         <Row>
                             <Col sm={12}>
@@ -73,41 +99,44 @@ const Signup = (props) => {
                             </Col>
 
                             <Col sm={12}>
-                                <Form.Group className="mb-3">
+                                
                                 <Form.Label>주소</Form.Label>
-
-                                    <Row xs={2} md={4}>
-                                        <Col style={{paddingRight: '5px'}}>
+                                <Row>
+                                    <Col sm={6} md={6}>
+                                        <Form.Group className="mb-3">
                                             <Form.Control type="text" placeholder="우편번호" value={zonecode} readOnly/>
-                                        </Col>
+                                        </Form.Group>
+                                    </Col>
 
-                                        <Col style={{paddingLeft: '5px'}}>
-                                            <Button style={{whiteSpace: 'nowrap'}} onClick={() => setModalShow(true)}>
-                                                우편번호 찾기
-                                            </Button>
-                                        </Col>
-                                    </Row>
-                                </Form.Group>
+                                    <Col sm={6} md={6}>
+                                        <Button className="mb-3" style={{whiteSpace: 'nowrap'}} onClick={() => setModalShow(true)}>
+                                            우편번호 찾기
+                                        </Button>
+                                    </Col>
+                                    <Col sm={12} md={6}>
+                                        <Form.Group className="mb-3">
+                                            <Form.Control type="text" placeholder="주소" value={address} readOnly/>
+                                        </Form.Group>
+                                    </Col>
+
+                                    <Col sm={12} md={6}>
+                                        <Form.Group className="mb-3">
+                                            <Form.Control type="text" placeholder="상세 주소"
+                                            value={detailedAddress}
+                                            onChange={detailedAddressHandler} />
+                                        </Form.Group>
+                                    </Col>
+
+                                </Row>
+                                
 
                             </Col>
                             
-                            <Col sm={12} md={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Control type="text" placeholder="주소" value={address} readOnly/>
-                                </Form.Group>
-                            </Col>
-
-                            <Col sm={12} md={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Control type="text" placeholder="상세 주소"
-                                    value={detailedAddress}
-                                    onChange={detailedAddressHandler} />
-                                </Form.Group>
-                            </Col>
+                            
 
                             <Col sm={12} md={12}>
-                                <Row className="justify-content-center">
-                                    <Col xs sm md >
+                                <Row className="d-flex justify-content-center">
+                                    <Col x="auto">
                                         <Button variant="primary" type="submit" style={{whiteSpace:'nowrap'}}>
                                             회원가입
                                         </Button>
