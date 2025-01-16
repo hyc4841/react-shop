@@ -3,19 +3,58 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Form, Button, Modal } from "react-bootstrap";
 import DaumPostModal from "./DaumPostModal";
+import { type } from "@testing-library/user-event/dist/type";
 
 
 const Signup = (props) => {
 
-    const [ zonecode, setZonecode ] = useState('');
-    const [ address, setAddress ] = useState('');
+    const [ loginId, setLoginId ] = useState('');
+    const [ password, setPassword ] = useState('');
+    const [ name, setName ] = useState('');
+    const [ birthDate, setBirthDate ] = useState('');
+    const [ gender, setGender ] = useState('');
+    const [ email, setEmail ] = useState('');
+   
+    const [ city, setCity ] = useState('');
+    const [ zipcode, setZipcode ] = useState('');
+    const [ street, setStreet ] = useState('');
     const [ detailedAddress, setDetailedAddress ] = useState('');
     const [ modalShow, setModalShow ] = useState(false);
 
+    const [error, setError ] = useState('');
+
+    const signupSubmit = async (e) => {
+        e.preventDefault();
+
+        console.log("회원가입 시도");
+        console.log("loginId : " + loginId);
+        console.log("password : " + password);
+        console.log("name : " + name);
+        console.log("birthDate : " + birthDate);
+        console.log("gender : " + gender);
+        console.log("email : " + email);
+        console.log("zonecode : " + zipcode);
+        console.log("street : " + street);
+        console.log("detailedAddress : " + detailedAddress);
+
+
+        try {
+            const response = await axios.post('http://localhost:8080/signup', {
+                loginId, password, name, birthDate, gender, email, city, street, zipcode, detailedAddress
+            }, { withCredentials: true });
+
+            console.log(response);
+
+        } catch (err) {
+            console.error("회원가입 오류 : ", err);
+            setError(err.response.data.message);
+        }
+    }
+
     // 주소 선택했을 때 실행되는 함수. 우편번호와 지번 혹은 도로명 주소값이 결정된다.
     const onCompleteHandler = (data) => {
-        const zonecode = data.zonecode;
-        setZonecode(zonecode);
+        const zipcode = data.zonecode;
+        setZipcode(zipcode);
 
         var addr = '';
         var extraAddr = '';
@@ -44,13 +83,12 @@ const Signup = (props) => {
                 extraAddr = ' (' + extraAddr + ')';
             }
         }
-        setAddress(addr + extraAddr);
+        setStreet(addr + extraAddr);
 
-        console.log("zonecode : " + zonecode);
-        console.log("address : " + address);
+
     };
 
-    // 주소창을 열고 닫을 때 실행되는 함수
+    // 주소 모달 열고 닫을 때 실행되는 함수
     const onCloseHandler = (state) => {
         console.log("state : " + state);
         if (state === 'FORCE_CLOSE') {
@@ -71,15 +109,26 @@ const Signup = (props) => {
             <Row>
                 <Col sm={12} className="text-center"><h2>회원가입</h2></Col>
 
+                <Col sm={12} className='text-center'>
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                </Col>
+
                 <Col sm={12} className="d-flex justify-content-center">
 
-                    <Form style={{ width: '600px', background: 'white', padding: '10px', borderRadius: '10px', border: '1px solid black'}}>
+                    <Form onSubmit={signupSubmit} style={{ width: '600px', background: 'white', padding: '10px', borderRadius: '10px', border: '1px solid black'}}>
 
                         <Row>
                             <Col sm={12}>
+                                <Form.Group className="mb-3" controlId="name">
+                                    <Form.Label>이름</Form.Label>
+                                    <Form.Control onChange={(e) => setName(e.target.value)} type="text" value={name} placeholder="이름을 입력하세요" />
+                                </Form.Group>
+                            </Col>
+
+                            <Col sm={12}>
                                 <Form.Group className="mb-3" controlId="userId">
                                     <Form.Label>아이디</Form.Label>
-                                    <Form.Control type="text" placeholder="아이디를 입력하세요" />
+                                    <Form.Control onChange={(e) => setLoginId(e.target.value)} type="text" value={loginId} placeholder="아이디를 입력하세요" />
                                     <Form.Text className="text-muted">여기에 아이디를 입력하세요</Form.Text>
                                 </Form.Group>
                             </Col>
@@ -87,24 +136,52 @@ const Signup = (props) => {
                             <Col sm={12}>
                                 <Form.Group className="mb-3">
                                     <Form.Label>비밀번호</Form.Label>
-                                    <Form.Control type="password" placeholder="비밀번호를 입력하세요" />
+                                    <Form.Control onChange={(e) => setPassword(e.target.value)} type="password" placeholder="비밀번호를 입력하세요" />
                                 </Form.Group>
                             </Col>
 
                             <Col sm={12}>
                                 <Form.Group className="mb-3">
                                     <Form.Label>이메일</Form.Label>
-                                    <Form.Control type="email" placeholder="이메일을 입력하세요" />
+                                    <Form.Control onChange={(e) => setEmail(e.target.value)} type="email" value={email} placeholder="이메일을 입력하세요" />
                                 </Form.Group>
                             </Col>
 
+                            <Col xs={12}>
+                                <Form>
+                                    <Form.Label>성별</Form.Label>
+                                    {['radio'].map((type) => (
+                                        <div key={`inline-${type}`} className="mb-3">
+                                            <Form.Check
+                                                inline
+                                                label="남자"
+                                                name="gender"
+                                                type={type}
+                                                id="man"
+                                                value={"MAN"}
+                                                onChange={(e) => setGender(e.target.value)}
+                                            />
+                                            <Form.Check
+                                                inline
+                                                label="여자"
+                                                name="gender"
+                                                type={type}
+                                                id="women"
+                                                value={"WOMEN"}
+                                                onChange={(e) => setGender(e.target.value)}
+                                            />
+
+                                        </div>
+                                    ))}
+                                </Form>
+                            </Col>
+
                             <Col sm={12}>
-                                
                                 <Form.Label>주소</Form.Label>
                                 <Row>
                                     <Col sm={6} md={6}>
                                         <Form.Group className="mb-3">
-                                            <Form.Control type="text" placeholder="우편번호" value={zonecode} readOnly/>
+                                            <Form.Control type="text" placeholder="우편번호" value={zipcode} readOnly/>
                                         </Form.Group>
                                     </Col>
 
@@ -115,7 +192,7 @@ const Signup = (props) => {
                                     </Col>
                                     <Col sm={12} md={6}>
                                         <Form.Group className="mb-3">
-                                            <Form.Control type="text" placeholder="주소" value={address} readOnly/>
+                                            <Form.Control type="text" placeholder="주소" value={street} readOnly/>
                                         </Form.Group>
                                     </Col>
 
@@ -123,20 +200,27 @@ const Signup = (props) => {
                                         <Form.Group className="mb-3">
                                             <Form.Control type="text" placeholder="상세 주소"
                                             value={detailedAddress}
-                                            onChange={detailedAddressHandler} />
+                                            onChange={(e) => setDetailedAddress(e.target.value)} />
                                         </Form.Group>
                                     </Col>
-
                                 </Row>
-                                
-
                             </Col>
                             
-                            
+                            <Col className="mb-3">
+                                <Form.Group>
+                                    <Form.Label>생년월일</Form.Label>
+                                    
+                                </Form.Group>
+                            </Col>
+
+
+
+
+
 
                             <Col sm={12} md={12}>
                                 <Row className="d-flex justify-content-center">
-                                    <Col x="auto">
+                                    <Col xs="auto">
                                         <Button variant="primary" type="submit" style={{whiteSpace:'nowrap'}}>
                                             회원가입
                                         </Button>
