@@ -8,11 +8,13 @@ import { type } from "@testing-library/user-event/dist/type";
 
 const Signup = (props) => {
 
+    const navigate = useNavigate();
+
     const [ loginId, setLoginId ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ name, setName ] = useState('');
     const [ birthDate, setBirthDate ] = useState('');
-    const [ gender, setGender ] = useState('');
+    const [ gender, setGender ] = useState('NONE');
     const [ email, setEmail ] = useState('');
    
     const [ city, setCity ] = useState('');
@@ -37,13 +39,14 @@ const Signup = (props) => {
         console.log("street : " + street);
         console.log("detailedAddress : " + detailedAddress);
 
-
         try {
             const response = await axios.post('http://localhost:8080/signup', {
                 loginId, password, name, birthDate, gender, email, city, street, zipcode, detailedAddress
             }, { withCredentials: true });
 
             console.log(response);
+            
+            navigate('/'); // 회원가입 성공하면 홈 화면으로 이동
 
         } catch (err) {
             console.error("회원가입 오류 : ", err);
@@ -84,8 +87,6 @@ const Signup = (props) => {
             }
         }
         setStreet(addr + extraAddr);
-
-
     };
 
     // 주소 모달 열고 닫을 때 실행되는 함수
@@ -213,11 +214,6 @@ const Signup = (props) => {
                                 </Form.Group>
                             </Col>
 
-
-
-
-
-
                             <Col sm={12} md={12}>
                                 <Row className="d-flex justify-content-center">
                                     <Col xs="auto">
@@ -237,11 +233,8 @@ const Signup = (props) => {
                             />  
 
                         </Row>
-
                     </Form>
-
                 </Col>
-
             </Row>
         </Container>
     );
