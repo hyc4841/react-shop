@@ -25,9 +25,9 @@ function App(props) {
         <Router>
             <Header/>
             <Routes>
-                <Route  element={<MainPage />} />
+                <Route index element={<MainPage />} />
                 <Route path="login" element={<LoginPage />} />
-                <Route  index element={<SignupPage />} />
+                <Route path='signup' element={<SignupPage />} />
                 <Route path="post-write" element={<PostWritePage />} />
                 <Route path="post/:postId" element={<PostViewPage />} />
                 <Route path="board" element={<BoardPage />} />
