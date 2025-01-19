@@ -1,44 +1,49 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Container, Row, Col, Form, Button, Modal } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Modal, Dropdown } from "react-bootstrap";
 import DaumPostModal from "./DaumPostModal";
+import Calendar from "react-calendar";
+import 'react-calendar/dist/Calendar.css';
+import moment from "moment";
+
 import { type } from "@testing-library/user-event/dist/type";
+import styled from "styled-components";
 
 
 const Signup = (props) => {
-
     const navigate = useNavigate();
 
-    const [ loginId, setLoginId ] = useState('');
-    const [ password, setPassword ] = useState('');
-    const [ name, setName ] = useState('');
-    const [ birthDate, setBirthDate ] = useState('');
-    const [ gender, setGender ] = useState('NONE');
-    const [ email, setEmail ] = useState('');
+    const [ loginId, setLoginId ] = useState('');                 // 로그인 아이디
+    const [ password, setPassword ] = useState('');               // 비밀번호
+    const [ name, setName ] = useState('');                       // 이름
+    const [ birthDate, setBirthDate ] = useState('');             // 생년월일
+    const [ gender, setGender ] = useState('NONE');               // 성별
+    const [ email, setEmail ] = useState('');                     // 이메일
    
-    const [ city, setCity ] = useState('');
-    const [ zipcode, setZipcode ] = useState('');
-    const [ street, setStreet ] = useState('');
-    const [ detailedAddress, setDetailedAddress ] = useState('');
-    const [ modalShow, setModalShow ] = useState(false);
+    const [ city, setCity ] = useState('');                       // 도시
+    const [ zipcode, setZipcode ] = useState('');                 // 우편번호
+    const [ street, setStreet ] = useState('');                   // 주소
+    const [ detailedAddress, setDetailedAddress ] = useState(''); // 상세주소
 
-    const [error, setError ] = useState('');
+    const [ modalShow, setModalShow ] = useState(false);          // 주소 선택창 모달 변수
+    const [ dropDownShow, setDropDownShow ] = useState(false);    // 생년월일 달력창 드롭다운 변수
+
+    const [ birthDateShow, setBirthDateShow ] = useState('');     // 생년월일 표시 변수
+
+    const [error, setError ] = useState({});                      // 회원가입 오류 응답 변수
+
+    /*
+    const errorText = styled(Form.Control)`
+        &::placeholder {
+            color: red;
+            opacity: 1;
+        }
+    `;
+    */
 
     const signupSubmit = async (e) => {
-        e.preventDefault();
-
-        console.log("회원가입 시도");
-        console.log("loginId : " + loginId);
-        console.log("password : " + password);
-        console.log("name : " + name);
-        console.log("birthDate : " + birthDate);
-        console.log("gender : " + gender);
-        console.log("email : " + email);
-        console.log("zonecode : " + zipcode);
-        console.log("street : " + street);
-        console.log("detailedAddress : " + detailedAddress);
-
+        e.preventDefault(); // 폼 제출 방지
         try {
             const response = await axios.post('http://localhost:8080/signup', {
                 loginId, password, name, birthDate, gender, email, city, street, zipcode, detailedAddress
@@ -50,12 +55,12 @@ const Signup = (props) => {
 
         } catch (err) {
             console.error("회원가입 오류 : ", err);
-            setError(err.response.data.message);
+            setError(err.response.data);
         }
     }
 
-    // 주소 선택했을 때 실행되는 함수. 우편번호와 지번 혹은 도로명 주소값이 결정된다.
-    const onCompleteHandler = (data) => {
+    // 주소 선택 함수. 우편번호와 지번 혹은 도로명 주소값 결정
+    const addressSelectHandler = (data) => {
         const zipcode = data.zonecode;
         setZipcode(zipcode);
 
@@ -89,7 +94,7 @@ const Signup = (props) => {
         setStreet(addr + extraAddr);
     };
 
-    // 주소 모달 열고 닫을 때 실행되는 함수
+    // 주소 모달 on, close 함수
     const onCloseHandler = (state) => {
         console.log("state : " + state);
         if (state === 'FORCE_CLOSE') {
@@ -99,10 +104,16 @@ const Signup = (props) => {
         }
     };
 
-    // 상세주소 값을 결정하는 함수    
-    const detailedAddressHandler = (event) => {
-        console.log("텍스트 내용? : " + event.target.value);
-        setDetailedAddress(event.target.value);
+    // 생년월일 달력 드롭다운 버튼 on, close 함수
+    const birthDateDropdownHandler = (isOpen) => {
+        setDropDownShow(isOpen);
+    }
+
+    // 
+    const birthDateSelectHandler = (date) => {
+        setBirthDateShow(moment(date).format("yyyy년 MM월 DD일"));
+        setBirthDate(date);
+        setDropDownShow(false);
     }
 
     return (
@@ -111,7 +122,7 @@ const Signup = (props) => {
                 <Col sm={12} className="text-center"><h2>회원가입</h2></Col>
 
                 <Col sm={12} className='text-center'>
-                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                    {error && <p style={{ color: 'red' }}>{error.message}</p>}
                 </Col>
 
                 <Col sm={12} className="d-flex justify-content-center">
@@ -119,35 +130,44 @@ const Signup = (props) => {
                     <Form onSubmit={signupSubmit} style={{ width: '600px', background: 'white', padding: '10px', borderRadius: '10px', border: '1px solid black'}}>
 
                         <Row>
+                            {/* 이름 섹션 */}
                             <Col sm={12}>
                                 <Form.Group className="mb-3" controlId="name">
                                     <Form.Label>이름</Form.Label>
                                     <Form.Control onChange={(e) => setName(e.target.value)} type="text" value={name} placeholder="이름을 입력하세요" />
+                                    {error && <p style={{ color: 'red' }}>{error.name}</p>}
                                 </Form.Group>
                             </Col>
 
+                            {/* 아이디 섹션 */}
                             <Col sm={12}>
                                 <Form.Group className="mb-3" controlId="userId">
                                     <Form.Label>아이디</Form.Label>
                                     <Form.Control onChange={(e) => setLoginId(e.target.value)} type="text" value={loginId} placeholder="아이디를 입력하세요" />
                                     <Form.Text className="text-muted">여기에 아이디를 입력하세요</Form.Text>
+                                    {error && <p style={{ color: 'red' }}>{error.loginId}</p>}
                                 </Form.Group>
                             </Col>
 
+                            {/* 비밀번호 섹션 */}
                             <Col sm={12}>
                                 <Form.Group className="mb-3">
                                     <Form.Label>비밀번호</Form.Label>
                                     <Form.Control onChange={(e) => setPassword(e.target.value)} type="password" placeholder="비밀번호를 입력하세요" />
+                                    {error && <p style={{ color: 'red' }}>{error.password}</p>}
                                 </Form.Group>
                             </Col>
 
+                            {/* 이메일 섹션 */}
                             <Col sm={12}>
                                 <Form.Group className="mb-3">
                                     <Form.Label>이메일</Form.Label>
                                     <Form.Control onChange={(e) => setEmail(e.target.value)} type="email" value={email} placeholder="이메일을 입력하세요" />
+                                    {error && <p style={{ color: 'red' }}>{error.email}</p>}
                                 </Form.Group>
                             </Col>
 
+                            {/* 성별 섹션 */}
                             <Col xs={12}>
                                 <Form>
                                     <Form.Label>성별</Form.Label>
@@ -171,12 +191,13 @@ const Signup = (props) => {
                                                 value={"WOMEN"}
                                                 onChange={(e) => setGender(e.target.value)}
                                             />
-
+                                            {error && <p style={{ color: 'red' }}>{error.gender}</p>}
                                         </div>
                                     ))}
                                 </Form>
                             </Col>
 
+                            {/* 주소 섹션 */}
                             <Col sm={12}>
                                 <Form.Label>주소</Form.Label>
                                 <Row>
@@ -191,26 +212,62 @@ const Signup = (props) => {
                                             우편번호 찾기
                                         </Button>
                                     </Col>
+                                    
+                                    {/* 다음 주소 모달 */}
+                                    <DaumPostModal
+                                        show={modalShow} 
+                                        onHide={() => setModalShow(false)}
+                                        onCompleteHandler={addressSelectHandler} // 원래 넘겨주려는 함수 이름 onCompleteHandler. props로 함수 이름이 on 으로 시작하는 함수가 가끔 on으로 시작하는 자바스크립트 이벤트로 인지해서 발생하는
+                                        onCloseHandler={onCloseHandler}
+                                    />
+
                                     <Col sm={12} md={6}>
                                         <Form.Group className="mb-3">
                                             <Form.Control type="text" placeholder="주소" value={street} readOnly/>
                                         </Form.Group>
                                     </Col>
 
+                                    {error && <p style={{ color: 'red' }}>{error.zipcode}</p>}
                                     <Col sm={12} md={6}>
                                         <Form.Group className="mb-3">
-                                            <Form.Control type="text" placeholder="상세 주소"
+                                            {/* 이부분 삼항연산자 동작하도록 만들어야함. */}
+                                            {error ? <Form.Control 
+                                            type="text"
+                                            placeholder={error.detailedAddress}
+                                            value={detailedAddress}
+                                            onChange={(e) => setDetailedAddress(e.target.value)} /> 
+                                            : 
+                                            <Form.Control 
+                                            type="text"
+                                            placeholder="상세주소를 입력해주세요."
                                             value={detailedAddress}
                                             onChange={(e) => setDetailedAddress(e.target.value)} />
+                                            }
                                         </Form.Group>
                                     </Col>
                                 </Row>
                             </Col>
                             
+                            {/* 생년월일 섹션 */}
                             <Col className="mb-3">
                                 <Form.Group>
                                     <Form.Label>생년월일</Form.Label>
-                                    
+                                    <Dropdown onToggle={birthDateDropdownHandler} show={dropDownShow}>
+                                        <Dropdown.Toggle id="birthDate-dropDown">
+                                            생년월일을 선택해주세요
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                            <Calendar 
+                                                onChange={birthDateSelectHandler}
+                                                value={birthDate}
+                                            />
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                    <Form.Control
+                                        id="bithDateShow"
+                                        value={birthDateShow}
+                                        readOnly
+                                    />
                                 </Form.Group>
                             </Col>
 
@@ -222,16 +279,8 @@ const Signup = (props) => {
                                         </Button>
                                     </Col>
                                 </Row>
-                                
                             </Col>
                            
-                            <DaumPostModal
-                                show={modalShow} 
-                                onHide={() => setModalShow(false)}
-                                onCompleteHandler={onCompleteHandler} // 원래 넘겨주려는 함수 이름 onCompleteHandler. props로 함수 이름이 on 으로 시작하는 함수가 가끔 on으로 시작하는 자바스크립트 이벤트로 인지해서 발생하는
-                                onCloseHandler={onCloseHandler}
-                            />  
-
                         </Row>
                     </Form>
                 </Col>
