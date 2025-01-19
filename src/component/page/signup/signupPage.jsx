@@ -63,6 +63,8 @@ const Signup = (props) => {
     const addressSelectHandler = (data) => {
         const zipcode = data.zonecode;
         setZipcode(zipcode);
+        setCity(data.sido)
+        console.log(data.sido);
 
         var addr = '';
         var extraAddr = '';
@@ -96,7 +98,6 @@ const Signup = (props) => {
 
     // 주소 모달 on, close 함수
     const onCloseHandler = (state) => {
-        console.log("state : " + state);
         if (state === 'FORCE_CLOSE') {
             setModalShow(false);
         } else if (state === 'COMPLETE_CLOSE') {
@@ -252,7 +253,7 @@ const Signup = (props) => {
                             <Col className="mb-3">
                                 <Form.Group>
                                     <Form.Label>생년월일</Form.Label>
-                                    <Dropdown onToggle={birthDateDropdownHandler} show={dropDownShow}>
+                                    <Dropdown onToggle={birthDateDropdownHandler} show={dropDownShow} className="mb-1">
                                         <Dropdown.Toggle id="birthDate-dropDown">
                                             생년월일을 선택해주세요
                                         </Dropdown.Toggle>
