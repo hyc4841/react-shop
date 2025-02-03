@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Col, Row, Button } from "react-bootstrap";
 import axios from "axios";
 import LogoutButton from "./LogoutButton";
 import ReGenerateAccessToken from "../../test/reGenerateAccessToken";
 
 import { useSelector, useDispatch } from "react-redux";
 import { login, logout, isLoggedInFetch } from "../../redux/reducer/userSlice";
+import { Container, Col, Row, Button, Navbar, Nav } from "react-bootstrap";
+
 
 const Header = () => {
 
@@ -41,29 +42,34 @@ const Header = () => {
 
     return (
         <header>
-            <Container>
-                <Row>
-                    <Col>
-                        <a href="/">홈</a>
-                        &nbsp;&nbsp;|&nbsp;&nbsp;
-                        <a href="/board">게시판</a>
-                    </Col>
-                    {isLoggedIn ? <Col>
-                                    <span>안녕하세요 {username}님!</span>
-                                    &nbsp;&nbsp;|&nbsp;&nbsp;
-                                    <LogoutButton title="로그아웃"/>
-                                    </Col> : 
-                                    <Col>
-                                        <a href="/login">로그인</a>
-                                        &nbsp;&nbsp;|&nbsp;&nbsp;
-                                        <a href="/signup">회원가입</a>
-                                    </Col>}
+            <Navbar className="py-2 bg-body-tertiary border-bottom">
+                <Container>
+                    <Nav className="me-auto">
+                        <Nav.Link>즐겨찾기</Nav.Link>
+                        <Nav.Link></Nav.Link>
+                    </Nav>
+                    
+                    <Nav>
+                        {isLoggedIn ? 
+                            <>
+                                <Nav.Link>{username} 님</Nav.Link>
+                                <Nav.Link>로그아웃</Nav.Link>
+                            </>
+                            :
+                            <>
+                                <Nav.Link>로그인</Nav.Link>
+                                <Nav.Link>회원가입</Nav.Link>
+                            </>
+                        }
+                        <Nav.Link>고객센터</Nav.Link>
+                    </Nav>
+                        
 
-                    <Col>
-                        <ReGenerateAccessToken/>
-                    </Col>
-                </Row>
-            </Container>
+                    
+
+                    
+                </Container>
+            </Navbar>
             <hr/>
         </header>
     );
