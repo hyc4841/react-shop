@@ -17,6 +17,10 @@ const ReGenerateAccessToken = () => {
 
     const generate = async () => {
         try {
+            if (localStorage.getItem('accessToken') == null) {
+                console.log("엑세스 토큰 없음. 토큰 재발급 불가");
+                return;
+            }
             // 만료된 엑세스 토큰을 서버로 들고 가는것
             console.log("리프레시 토큰으로 엑세스 토큰 재발급 받기 테스트");
             const response = await axiosIns.get('/refresh');
