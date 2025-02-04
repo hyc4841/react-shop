@@ -17,6 +17,23 @@ export const logoutFetch = createAsyncThunk(
     }
 );
 
+export const loginFetch = createAsyncThunk(
+    'user/loginFetch',
+    async (credentials, { dispatch }) => {
+        
+        console.log(credentials); // credentials은 loginId와 password임.
+        
+        const response = await axios.post('http://localhost:8080/login', credentials, {withCredentials: true});
+
+        if (response.status === 200) {
+            localStorage.setItem('accessToken', response.data.token.accessToken);
+            console.log(response.data);
+        }
+
+        return response.data;
+    }
+);
+
 export const isLoggedInFetch = createAsyncThunk(
     'user/isLoggedInFetch',
     async () => {
@@ -27,7 +44,7 @@ export const isLoggedInFetch = createAsyncThunk(
             withCredentials: true
         });
 
-        console.log("response.data" + response.data);
+        console.log(response.data);
 
         return response.data;
     }
@@ -40,7 +57,7 @@ const userSlice = createSlice({
 
     reducers: {
         login: (state) => {
-            state.isLoggedIn = true; 
+            state.isLoggedIn = true;
         },
         logout: (state) => {
             state.isLoggedIn = false;
@@ -48,6 +65,19 @@ const userSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+
+            // loginFetch
+            .addCase(loginFetch.pending, (state) => {
+
+            })
+            .addCase(loginFetch.fulfilled, (state, action) => {
+                state.username = action.payload.userName;
+                state.isLoggedIn = true;
+            })
+            .addCase(loginFetch.rejected, (state) => {
+
+            })
+
 
             // logoutFetch
             .addCase(logoutFetch.pending, (state) => {

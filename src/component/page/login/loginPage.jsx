@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 import { useDispatch } from 'react-redux';
-import { login } from '../../../redux/reducer/userSlice';
+import { login, loginFetch } from '../../../redux/reducer/userSlice';
 
 
 import { Container, Button, Row, Col } from 'react-bootstrap';
@@ -18,24 +18,21 @@ const Login = () => { // 컴포넌트 선언 arrow function 방식
     const dispatch = useDispatch();
 
     const handleSubmit = async (e) => {
+
         e.preventDefault();
         console.log('아이디:', loginId);
         console.log('비번:', password);
+        const credentials = { loginId, password };
 
         try {
-            const res = await axios.post('http://localhost:8080/login', {
-                loginId, password
-            }, { withCredentials: true });
+            const resultAction = await dispatch(loginFetch(credentials))
 
-            // 로그인에 성공하면 응답으로 받는것은 엑세스 토큰임
-            localStorage.setItem('accessToken', res.data.accessToken);
-            
-            // redux 상태 업데이트 구문
-            console.log("isloggedIn : tre")
-            dispatch(login());
-            
-            // 로그인 성공하면 홈 화면으로
-            navigate('/'); 
+            if (loginFetch.fulfilled.match(resultAction)) {
+                console.log(resultAction);
+                // 로그인 성공하면 홈 화면으로
+                navigate('/');
+            }
+
         } catch (err) {
             console.error('로그인 오류:', err);
             // errorHandler에 넣어서 무슨 오류인지 받는다.
