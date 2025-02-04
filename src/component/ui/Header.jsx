@@ -8,6 +8,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { login, logout, isLoggedInFetch } from "../../redux/reducer/userSlice";
 import { Container, Col, Row, Button, Navbar, Nav } from "react-bootstrap";
 
+import { StyledNavItem } from "../style/header/headrStyle";
+
 
 const Header = () => {
 
@@ -39,39 +41,47 @@ const Header = () => {
         }
 
     }, [])
+    
+    console.log("isLoggedIn : " + isLoggedIn);
+    console.log("username : " + username);
 
     return (
-        <header>
+        <>
             <Navbar className="py-2 bg-body-tertiary border-bottom">
-                <Container>
+                <Container className="d-flex flex-wrap">
+
                     <Nav className="me-auto">
-                        <Nav.Link>즐겨찾기</Nav.Link>
-                        <Nav.Link></Nav.Link>
+                        <StyledNavItem>즐겨찾기</StyledNavItem>
                     </Nav>
                     
                     <Nav>
                         {isLoggedIn ? 
                             <>
-                                <Nav.Link>{username} 님</Nav.Link>
-                                <Nav.Link>로그아웃</Nav.Link>
+                                <StyledNavItem>{username} 님</StyledNavItem>
+                                <LogoutButton title="로그아웃" />
                             </>
                             :
                             <>
-                                <Nav.Link>로그인</Nav.Link>
-                                <Nav.Link>회원가입</Nav.Link>
+                                <StyledNavItem href="/login">로그인</StyledNavItem>
+                                <StyledNavItem href="/signup">회원가입</StyledNavItem>
                             </>
                         }
-                        <Nav.Link>고객센터</Nav.Link>
+                        <StyledNavItem>고객센터</StyledNavItem>
                     </Nav>
-                        
-
-                    
-
-                    
                 </Container>
             </Navbar>
-            <hr/>
-        </header>
+
+                        
+            <header className="py-3 mb-4 border-bottom">
+                <Container className="d-flex flex-wrap justify-content-center">
+                    <Navbar.Brand href="/" className="me-lg-auto">
+                        <img></img>
+                        윤철몰
+                    </Navbar.Brand>
+                </Container>
+            </header>
+        </>
+        
     );
 };
 
