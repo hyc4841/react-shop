@@ -27,7 +27,7 @@ export const isLoggedInFetch = createAsyncThunk(
             withCredentials: true
         });
 
-        console.log(response.data);
+        console.log("response.data" + response.data);
 
         return response.data;
     }
@@ -48,6 +48,8 @@ const userSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+
+            // logoutFetch
             .addCase(logoutFetch.pending, (state) => {
                 
             })
@@ -58,6 +60,8 @@ const userSlice = createSlice({
 
             })
 
+
+            // isLoggedInFetch
             .addCase(isLoggedInFetch.pending, (state) => {
             
             })
