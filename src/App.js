@@ -11,6 +11,9 @@ import PostViewPage from './component/page/board/PostViewPage';
 import BoardPage from './component/page/board/BoardPage'
 import LoginPage from './component/page/login/LoginPage'
 import SignupPage from './component/page/signup/signupPage';
+
+import MemberInfoPage from './component/page/member/MemberInfoPage';
+
 import Header from './component/ui/Header';
 import Footer from './component/ui/Footer';
 
@@ -31,6 +34,7 @@ function App(props) {
                 <Route path="post-write" element={<PostWritePage />} />
                 <Route path="post/:postId" element={<PostViewPage />} />
                 <Route path="board" element={<BoardPage />} />
+                <Route path="mypage/info" element={<MemberInfoPage />} />
             </Routes>
             <Footer/>
         </Router>

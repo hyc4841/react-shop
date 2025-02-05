@@ -57,7 +57,7 @@ const Header = () => {
                     <Nav>
                         {isLoggedIn ? 
                             <>
-                                <StyledNavItem>{username} 님</StyledNavItem>
+                                <StyledNavItem href="/mypage/info">{username} 님</StyledNavItem>
                                 <LogoutButton title="로그아웃" />
                             </>
                             :
