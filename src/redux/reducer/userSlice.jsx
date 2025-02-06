@@ -46,9 +46,27 @@ export const isLoggedInFetch = createAsyncThunk(
 
         console.log(response.data);
 
-        return response.data;
+        return response.data; // payload
+        // payload는 action의 반환값?
+    },
+    {
+        pending: (state) => {
+            
+        },
+        fulfilled: (state, action) => {
+            state.isLoggedIn = true;
+            state.username = action.payload.userName;
+        },
+        rejected: (state, action) => {
+            console.log("로그인 검증 거부됨");
+            console.log(state.error);
+        }
+
     }
+    
 );
+
+
 
 const userSlice = createSlice({
     name: 'user',
@@ -78,7 +96,6 @@ const userSlice = createSlice({
 
             })
 
-
             // logoutFetch
             .addCase(logoutFetch.pending, (state) => {
                 
@@ -90,18 +107,6 @@ const userSlice = createSlice({
 
             })
 
-
-            // isLoggedInFetch
-            .addCase(isLoggedInFetch.pending, (state) => {
-            
-            })
-            .addCase(isLoggedInFetch.fulfilled, (state, action) => {
-                state.isLoggedIn = true;
-                state.username = action.payload.userName;
-            })
-            .addCase(isLoggedInFetch.rejected, (state) => {
-                
-            })
     }
 });
 
