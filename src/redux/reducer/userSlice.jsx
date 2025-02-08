@@ -1,5 +1,9 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, buildCreateSlice, asyncThunkCreator } from "@reduxjs/toolkit";
 import axios from "axios";
+
+const createAppSlice = buildCreateSlice({
+    creators: { asyncThunk: asyncThunkCreator },
+});
 
 export const logoutFetch = createAsyncThunk(
     'user/logoutFetch', // 액션 타입 접두사?
@@ -34,53 +38,51 @@ export const loginFetch = createAsyncThunk(
     }
 );
 
-export const isLoggedInFetch = createAsyncThunk(
-    'user/isLoggedInFetch',
-    async () => {
-        const response = await axios.get('http://localhost:8080/member/islogin', {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-            },
-            withCredentials: true
-        });
 
-        console.log(response.data);
-
-        return response.data; // payload
-        // payload는 action의 반환값?
-    },
-    {
-        pending: (state) => {
-            
-        },
-        fulfilled: (state, action) => {
-            state.isLoggedIn = true;
-            state.username = action.payload.userName;
-        },
-        rejected: (state, action) => {
-            console.log("로그인 검증 거부됨");
-            console.log(state.error);
-        }
-
-    }
-    
-);
-
-
-
-const userSlice = createSlice({
+const userSlice = createAppSlice({
     name: 'user',
 
     initialState: { isLoggedIn: false, username: null },
 
-    reducers: {
-        login: (state) => {
+    reducers: (create) =>  ({
+        login: create.reducer((state, action) => {
             state.isLoggedIn = true;
-        },
-        logout: (state) => {
-            state.isLoggedIn = false;
-        },
-    },
+        }),
+        logout: create.reducer((state, action) => {
+            state.isLoggedIn = false; 
+        }),
+
+        isLoggedInFetch: create.asyncThunk(
+            async () => {
+                console.log("현재 엑세스 토큰 : " + localStorage.getItem('accessToken'));
+                const response = await axios.get('http://localhost:8080/member/islogin', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+                    },
+                    withCredentials: true
+                });
+                console.log(response.data);
+        
+                return await response.data; // payload
+                // payload는 action의 반환값?
+            },
+            {
+                pending: (state) => {
+                    
+                },
+                fulfilled: (state, action) => {
+                    state.isLoggedIn = true;
+                    state.username = action.payload.userName;
+                },
+                rejected: (state, action) => {
+                    console.log("로그인 검증 거부됨");
+                    console.log(action.error);
+                    console.log(action.meta)
+                }
+            }
+        )
+    }),
+
     extraReducers: (builder) => {
         builder
 
@@ -106,10 +108,9 @@ const userSlice = createSlice({
             .addCase(logoutFetch.rejected, (state) => {
 
             })
-
     }
 });
 
 // 액션 생성자와 리듀서
-export const { login, logout } = userSlice.actions;
+export const { login, logout, isLoggedInFetch } = userSlice.actions;
 export default userSlice.reducer;
