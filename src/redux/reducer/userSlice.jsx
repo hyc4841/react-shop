@@ -52,6 +52,7 @@ const userSlice = createAppSlice({
             state.isLoggedIn = false; 
         }),
 
+        // 로그인 상태 검사 로직
         isLoggedInFetch: create.asyncThunk(
             async () => {
                 console.log("현재 엑세스 토큰 : " + localStorage.getItem('accessToken'));
@@ -78,6 +79,8 @@ const userSlice = createAppSlice({
                     console.log("로그인 검증 거부됨");
                     console.log(action.error);
                     console.log(action.meta)
+                    state.isLoggedIn = false;
+                    localStorage.removeItem('accessToken');
                 }
             }
         )
