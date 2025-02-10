@@ -5,6 +5,21 @@ const createAppSlice = buildCreateSlice({
     creators: { asyncThunk: asyncThunkCreator },
 });
 
+export const loginFetch = createAsyncThunk(
+    'user/loginFetch',
+    async (credentials, { dispatch, getState, rejectWithValue }) => {
+        try {
+            console.log(credentials);
+
+            const response = await axios.post('http://localhost:8080/login', credentials, {withCredentials: true});
+
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 export const logoutFetch = createAsyncThunk(
     'user/logoutFetch', // 액션 타입 접두사?
     async () => {
@@ -21,23 +36,26 @@ export const logoutFetch = createAsyncThunk(
     }
 );
 
-export const loginFetch = createAsyncThunk(
-    'user/loginFetch',
-    async (credentials, { dispatch }) => {
-        
-        console.log(credentials); // credentials은 loginId와 password임.
-        
-        const response = await axios.post('http://localhost:8080/login', credentials, {withCredentials: true});
+export const isLoggedInFetch = createAsyncThunk(
+    'user/isLoggedInFetch',
+    async (args, { dispatch, getState, rejectWithValue }) => {
+        try {
+            const response = await axios.get('http://localhost:8080/member/islogin', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+                },
+                withCredentials: true
+            });
 
-        if (response.status === 200) {
-            localStorage.setItem('accessToken', response.data.token.accessToken);
             console.log(response.data);
+            
+            return response.data;
+        } catch (error) {
+            console.log(error.response.data);
+            return rejectWithValue();
         }
-
-        return response.data;
     }
 );
-
 
 const userSlice = createAppSlice({
     name: 'user',
@@ -51,69 +69,50 @@ const userSlice = createAppSlice({
         logout: create.reducer((state, action) => {
             state.isLoggedIn = false; 
         }),
-
-        // 로그인 상태 검사 로직
-        isLoggedInFetch: create.asyncThunk(
-            async () => {
-                console.log("현재 엑세스 토큰 : " + localStorage.getItem('accessToken'));
-                const response = await axios.get('http://localhost:8080/member/islogin', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-                    },
-                    withCredentials: true
-                });
-                console.log(response.data);
-        
-                return await response.data; // payload
-                // payload는 action의 반환값?
-            },
-            {
-                pending: (state) => {
-                    
-                },
-                fulfilled: (state, action) => {
-                    state.isLoggedIn = true;
-                    state.username = action.payload.userName;
-                },
-                rejected: (state, action) => {
-                    console.log("로그인 검증 거부됨");
-                    console.log(action.error);
-                    console.log(action.meta)
-                    state.isLoggedIn = false;
-                    localStorage.removeItem('accessToken');
-                }
-            }
-        )
     }),
 
     extraReducers: (builder) => {
         builder
-
             // loginFetch
-            .addCase(loginFetch.pending, (state) => {
-
-            })
+            .addCase(loginFetch.pending, (state) => {})
             .addCase(loginFetch.fulfilled, (state, action) => {
+                console.log(action.payload);
+
+                localStorage.setItem('accessToken', action.payload.token.accessToken);
                 state.username = action.payload.userName;
                 state.isLoggedIn = true;
             })
-            .addCase(loginFetch.rejected, (state) => {
-
-            })
+            .addCase(loginFetch.rejected, (state) => {})
 
             // logoutFetch
-            .addCase(logoutFetch.pending, (state) => {
-                
-            })
+            .addCase(logoutFetch.pending, (state) => {})
             .addCase(logoutFetch.fulfilled, (state, action) => {
                 state.isLoggedIn = false;
             })
-            .addCase(logoutFetch.rejected, (state) => {
+            .addCase(logoutFetch.rejected, (state) => {})
 
+            // isLoggedInFetch
+            .addCase(isLoggedInFetch.pending, (state) => {})
+            .addCase(isLoggedInFetch.fulfilled, (state, action) => {
+                console.log("로그인 검증 성공")
+                console.log(action);
+                console.log(state);
+                state.isLoggedIn = true;
+                state.username = action.payload.userName;
             })
+            .addCase(isLoggedInFetch.rejected, (state, action) => {
+                // rejectWithValue가 action의 payload로 담겨서 전달됨.
+                console.log("로그인 검증 거부");
+                console.log(action);
+                console.log(state);
+
+                state.isLoggedIn = false;
+                localStorage.removeItem('accessToken');
+            })
+
     }
 });
 
 // 액션 생성자와 리듀서
-export const { login, logout, isLoggedInFetch } = userSlice.actions;
+export const { login, logout } = userSlice.actions;
 export default userSlice.reducer;
