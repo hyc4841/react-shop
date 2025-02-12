@@ -60,7 +60,7 @@ export const isLoggedInFetch = createAsyncThunk(
 const userSlice = createAppSlice({
     name: 'user',
 
-    initialState: { isLoggedIn: false, username: null },
+    initialState: { isLoggedIn: false, username: null, loginError: null },
 
     reducers: (create) =>  ({
         login: create.reducer((state, action) => {
@@ -82,7 +82,13 @@ const userSlice = createAppSlice({
                 state.username = action.payload.userName;
                 state.isLoggedIn = true;
             })
-            .addCase(loginFetch.rejected, (state) => {})
+            .addCase(loginFetch.rejected, (state, action) => {
+                console.log(action);
+                console.log(state);
+
+                state.loginError = action.payload.error;
+
+            })
 
             // logoutFetch
             .addCase(logoutFetch.pending, (state) => {})
