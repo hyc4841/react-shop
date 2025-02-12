@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { login, loginFetch } from '../../../redux/reducer/userSlice';
 
 
@@ -13,6 +13,9 @@ const Login = () => { // 컴포넌트 선언 arrow function 방식
     const [loginId, setLoginId] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+
+    const loginError = useSelector((state) => state.user.loginError);
+
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
@@ -34,6 +37,7 @@ const Login = () => { // 컴포넌트 선언 arrow function 방식
             }
 
         } catch (err) {
+            console.log("여기로는 안드니?????????????");
             console.error('로그인 오류:', err);
             // errorHandler에 넣어서 무슨 오류인지 받는다.
             setError(err.response.data.message);
@@ -47,7 +51,7 @@ const Login = () => { // 컴포넌트 선언 arrow function 방식
                     <h2>로그인</h2>
                 </Col>
                 <Col sm={12} className='text-center'>
-                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                    {loginError && <p style={{ color: 'red' }}>{loginError.message}</p>}
                 </Col>
 
                 <Col sm={12}>
