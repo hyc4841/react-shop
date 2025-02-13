@@ -1,3 +1,17 @@
 .myPageList {
     text-decoration: none;
 }
+
+.pwdChangeT td {
+    border: none;
+}
+
+.pwdChangeT th {
+    border: none;
+}
+
+.pwdChangeI {
+    margin-bottom: 1px;
+    width: auto;
+    height: auto;
+}
