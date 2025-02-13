@@ -18,6 +18,7 @@ const MemberInfo = (props) => {
     const [ newPwdCon, setNewPwdCon ] = useState("");
 
 
+
     useEffect(() => {
 
         const fetchMemberData = async () => {
@@ -29,7 +30,7 @@ const MemberInfo = (props) => {
                     withCredentials: true
                 });
                 console.log(response);
-
+                setMemberData(response.data); // 멤버 데이터 넣기
             } catch (error) {
                 console.log(error);
                 alert("유저를 검증할 수 없습니다.");
@@ -55,60 +56,78 @@ const MemberInfo = (props) => {
                     <tbody>
                         <tr>
                             <td>아이디</td>
-                            <td>dbscjf4841@naver.com<Button>변경</Button></td>
+                            <td>{memberData ? memberData.loginId : ""} <Button>변경</Button></td>
                         </tr>
-                            
+
+                        <tr>
+                            <td>이메일</td>
+                            <td>{memberData && memberData.email} <Button>변경</Button></td>
+                        </tr>
+
+
+
+                        {/* 이름 변경 */}        
                         <tr>
                             <td>이름</td>
-                            <td>황윤철</td>
+                            <td>{memberData && memberData.name}</td>
                         </tr>
+                        {/* 휴대폰 번호 변경 */}
                         <tr>
                             <td>휴대폰 번호</td>
-                            <td>01099694841</td>
+                            <td>{memberData && memberData.phoneNum}</td>
                         </tr>
                         <tr>
                             <td>비밀번호 변경</td>
                             <td>
+                                {/* 비밀번호 변경 */}
+                                <Table className="pwdChangeT" style={{marginBottom: "0px"}}>
+                                    <tbody>
+                                        <tr>
+                                            <th>현재 비밀번호</th>
+                                            <td>
+                                                <input className="form-control pwdChangeI" type="password"
+                                                onChange={(e) => setCurPwd(e.target.value)} />
+                                            </td>
+                                            
+                                        </tr>
+                                        <tr>
+                                            <th>새 비밀번호</th>
+                                            <td>
+                                                <input className="form-control pwdChangeI" type="password"
+                                                onChange={(e) => setNewPwd(e.target.value)} />
+                                            </td>
+                                            
+                                        </tr>
+                                        <tr>
+                                            <th>비밀번호 확인</th>
+                                            <td>
+                                                <input className="form-control pwdChangeI" type="password"
+                                                onChange={(e) => setNewPwdCon(e.target.value)} />
+                                            </td>
+                                            
+                                        </tr>
 
-                                <Table style={{marginBottom: "0px"}}>
-                                    <tr>
-                                        <th>현재 비밀번호</th>
-                                        <td>
-                                            <input className="form-control" onChange={(e) => setCurPwd(e.target.value)}
-                                            style={{marginBottom: "15px", width: "auto", height: "auto"}} />
-                                        </td>
-                                        
-                                    </tr>
-                                    <tr>
-                                        <th>새 비밀번호</th>
-                                        <td>
-                                            <input className="form-control" onChange={(e) => setNewPwd(e.target.value)}
-                                            style={{marginBottom: "15px", width: "auto"}} />
-                                        </td>
-                                        
-                                    </tr>
-                                    <tr>
-                                        <th>비밀번호 확인</th>
-                                        <td>
-                                            <input className="form-control" onChange={(e) => setNewPwdCon(e.target.value)} 
-                                            style={{marginBottom: "15px", width: "auto"}} />
-                                        </td>
-                                        
-                                    </tr>
-
-                                    <tr>
-                                        <td></td>
-                                        <td>
-                                            <PasswordChangeButton
-                                                curPwd={curPwd}
-                                                newPwd={newPwd}
-                                                newPwdCon={newPwdCon}
-                                            />
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td style={{border: "none"}}></td>
+                                            <td style={{border: "none"}}>
+                                                <PasswordChangeButton
+                                                    curPwd={curPwd}
+                                                    newPwd={newPwd}
+                                                    newPwdCon={newPwdCon}
+                                                />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    
                                 </Table>
                             </td>
                         </tr>
+                        <tr>
+                            <th>주소</th>
+                            <td>배송지 관리</td>
+                            <td>배송지 관리</td>
+                        </tr>
+
                         <tr>
                             <th>배송지</th>
                             <td>배송지 관리</td>
