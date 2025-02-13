@@ -124,8 +124,12 @@ const MemberInfo = (props) => {
                         </tr>
                         <tr>
                             <th>주소</th>
-                            <td>배송지 관리</td>
-                            <td>배송지 관리</td>
+                            <td>
+                                <span style={{display: "block"}}>{memberData && memberData.address.zipcode}</span>
+                                <span style={{display: "block"}}>{memberData && memberData.address.street}</span>
+                                <span style={{display: "block"}}>{memberData && memberData.address.detailedAddress}</span>
+                            </td>
+                            
                         </tr>
 
                         <tr>
