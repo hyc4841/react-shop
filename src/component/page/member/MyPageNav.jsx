@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Container, Table } from "react-bootstrap";
 
+const StyledSpan = styled.span`
+        display: block;
+    `;
 
 const MypageNav = (props) => {
     const navigate = useNavigate();
 
-    const StyledSpan = styled.span`
-        display: block;
-    `;
-
+    
     return (
         
         <Container style={{ border: '1px solid black', padding: '0px', whiteSpace: "nowrap", width: 'fit-content' }}>
@@ -19,12 +19,12 @@ const MypageNav = (props) => {
             <Table hover style={{width: "100%", background: "orange"}} className="text-center">
                 <tbody>
                     
-
                     <tr>
                         <td style={{background: "#d2d2d2"}}>
                             <span>내 쇼핑</span>
                         </td>
                     </tr>
+
                     <tr>
                         <td>
                             <StyledSpan>
@@ -44,6 +44,7 @@ const MypageNav = (props) => {
                             <span>회원 정보</span>
                         </th>
                     </tr>
+                    
                     <tr>
                         <td>
                             <StyledSpan>
