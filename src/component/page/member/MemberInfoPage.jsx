@@ -8,6 +8,7 @@ import MypageNav from "../../page/member/MyPageNav";
 
 import '../../../css/memberInfoPage.css';
 import PasswordChangeButton from "./PasswordChangButton";
+import LoginChangeButton from "./LoginIdChangeButton";
 
 const MemberInfo = (props) => {
     const navigate = useNavigate();
@@ -17,7 +18,11 @@ const MemberInfo = (props) => {
     const [ newPwd, setNewPwd ] = useState("");
     const [ newPwdCon, setNewPwdCon ] = useState("");
 
+    const [ newLoginId, setNewLoginId ] = useState("");
 
+    const [ loginIdChange, setLoginIdChange ] = useState(false);
+    const [ loginIdChangeTitle, setLoginIdChangeTitle ] = useState("변경하기")
+    const [ loginChangeError, setLoginChangeError ] = useState(null);
 
     useEffect(() => {
 
@@ -41,6 +46,22 @@ const MemberInfo = (props) => {
         fetchMemberData();
     }, []);
 
+    const loginIdChangeBtn = () => {
+        if (loginIdChange) {
+            setLoginIdChange(false);
+            setLoginIdChangeTitle("변경하기");
+        } else {
+            setLoginIdChange(true);
+            setLoginIdChangeTitle("변경취소");
+            setLoginChangeError(null);
+
+        }
+    };
+
+    const fetchLoginIdError = (error) => {
+        setLoginChangeError(error);
+    };
+
 
     return (
         <Container style={{ border: '1px solid blue', display: "flex"}}>
@@ -56,7 +77,32 @@ const MemberInfo = (props) => {
                     <tbody>
                         <tr>
                             <td>아이디</td>
-                            <td>{memberData ? memberData.loginId : ""} <Button>변경</Button></td>
+                            <td>
+                                <div style={{marginBottom:"15px"}}>
+                                    {memberData ? memberData.loginId : ""} <Button onClick={loginIdChangeBtn}>{loginIdChangeTitle}</Button>
+                                </div>
+
+                                {loginIdChange &&
+                                    <>
+                                        <div style={{display: "flex"}}>
+                                            <input className="form-control" 
+                                            onChange={(e) => setNewLoginId(e.target.value)}
+                                            style={{width: "auto", marginRight: "10px"}} />
+                                            <LoginChangeButton 
+                                                newLoginId={newLoginId}
+                                                onChangeError={fetchLoginIdError}
+                                            />
+                                        </div>
+
+                                        {loginChangeError && 
+                                            <div style={{marginTop: "15px"}}>
+                                                <p style={{color: "red"}}>{loginChangeError.newLoginId}</p>
+                                            </div>
+                                        }
+
+                                    </>
+                                }
+                            </td>
                         </tr>
 
                         <tr>
@@ -72,10 +118,12 @@ const MemberInfo = (props) => {
                             <td>{memberData && memberData.name}</td>
                         </tr>
                         {/* 휴대폰 번호 변경 */}
+
                         <tr>
                             <td>휴대폰 번호</td>
                             <td>{memberData && memberData.phoneNum}</td>
                         </tr>
+
                         <tr>
                             <td>비밀번호 변경</td>
                             <td>
