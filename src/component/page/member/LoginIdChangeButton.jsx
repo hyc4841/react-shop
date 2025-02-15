@@ -5,8 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const LoginChangeButton = (props) => {
 
-    const { newLoginId, onChangeError } = props;
-
+    const { newLoginId, onChangeError, fetchMemberData } = props;
     const navigate = useNavigate();
 
     const submitLoginIdUpdate = async () => {
@@ -25,7 +24,8 @@ const LoginChangeButton = (props) => {
             );
             console.log(response);
             alert("아이디가 성공적으로 변경 되었습니다.");
-            navigate('/');
+            fetchMemberData(response.data.memberInfo);
+            navigate('/mypage/info');
         } catch (error) {
             onChangeError(error.response.data);
             console.log(error.response.data);

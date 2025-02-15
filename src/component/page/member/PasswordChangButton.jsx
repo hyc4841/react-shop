@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const PasswordChangeButton = (props) => {
 
-    const { curPwd, newPwd, newPwdCon } = props;
+    const { curPwd, newPwd, newPwdCon, fetchMemberData } = props;
     const navigate = useNavigate();
     
     const submitPasswordChange = async () => {
@@ -23,7 +23,8 @@ const PasswordChangeButton = (props) => {
 
             console.log(response);
             alert("비밀번호가 성공적으로 변경 되었습니다.");
-            navigate('/');
+            fetchMemberData(response.data.memberInfo);
+            navigate('/mypage/info');
         } catch (error) {
 
             console.error("비밀번호 변경 오류 : " + error);

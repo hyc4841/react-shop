@@ -6,8 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const EmailChangeButton = (props) => {
 
-    const { newEmail } = props;
-
+    const { newEmail, onChangeError, fetchMemberData } = props;
     const navigate = useNavigate();
 
     const submitmailChange = async () => {
@@ -26,16 +25,13 @@ const EmailChangeButton = (props) => {
 
             console.log(response);
             alert("이메일 변경 성공");
-            navigate('/');
-
-
-
+            fetchMemberData(response.data.memberInfo);
+            navigate('/mypage/info');
 
         } catch (error) {
-            console.log("이메일 변경 실패 : " + error);
+            console.log(error.response);
             // 오류 발생시 처리
-
-
+            onChangeError(error.response.data);
         }
     };
 
