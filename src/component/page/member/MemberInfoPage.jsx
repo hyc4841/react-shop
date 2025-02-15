@@ -24,6 +24,11 @@ const MemberInfo = (props) => {
     const [ loginIdChangeTitle, setLoginIdChangeTitle ] = useState("변경하기")
     const [ loginChangeError, setLoginChangeError ] = useState(null);
 
+    const [ emailChange, setEmailChange ] = useState(false);
+    const [ emailChangeTitle, setEmailChangeTitle ] = useState("변경하기")
+    const [ emailhangeError, setEmailChangeError ] = useState(null);
+
+
     useEffect(() => {
 
         const fetchMemberData = async () => {
@@ -58,6 +63,18 @@ const MemberInfo = (props) => {
         }
     };
 
+    const emailChangeBtn = () => {
+        if (emailChange) {
+            setEmailChange(false);
+            setEmailChangeTitle("변경하기");
+        } else {
+            setEmailChange(true);
+            setEmailChangeTitle("변경취소");
+            setEmailChangeError(null);
+
+        }
+    };
+
     const fetchLoginIdError = (error) => {
         setLoginChangeError(error);
     };
@@ -75,6 +92,8 @@ const MemberInfo = (props) => {
 
                 <Table>
                     <tbody>
+
+                        {/* 아이디 변경 */}
                         <tr>
                             <td>아이디</td>
                             <td>
@@ -85,8 +104,7 @@ const MemberInfo = (props) => {
                                 {loginIdChange &&
                                     <>
                                         <div style={{display: "flex"}}>
-                                            <input className="form-control" 
-                                            onChange={(e) => setNewLoginId(e.target.value)}
+                                            <input className="form-control" onChange={(e) => setNewLoginId(e.target.value)}
                                             style={{width: "auto", marginRight: "10px"}} />
                                             <LoginChangeButton 
                                                 newLoginId={newLoginId}
@@ -105,12 +123,21 @@ const MemberInfo = (props) => {
                             </td>
                         </tr>
 
+                        {/* 이메일 변경 */}
                         <tr>
                             <td>이메일</td>
-                            <td>{memberData && memberData.email} <Button>변경</Button></td>
+                            <td>
+                                <div>
+                                    {memberData && memberData.email} <Button>변경</Button>
+                                </div>
+
+                                <div>
+                                    
+                                </div>
+                                
+                            
+                            </td>
                         </tr>
-
-
 
                         {/* 이름 변경 */}        
                         <tr>
