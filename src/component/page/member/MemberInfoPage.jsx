@@ -10,6 +10,7 @@ import '../../../css/memberInfoPage.css';
 import PasswordChangeButton from "./PasswordChangButton";
 import LoginChangeButton from "./LoginIdChangeButton";
 import EmailChangeButton from "./EmailChangeButton";
+import PhoneNumChangeButton from "./PhoneNumChangeButton";
 
 const MemberInfo = (props) => {
     const navigate = useNavigate();
@@ -21,15 +22,22 @@ const MemberInfo = (props) => {
 
     const [ newLoginId, setNewLoginId ] = useState("");
     const [ newEmail , setNewEmail ] = useState("");
+    const [ newPhoneNum, setNewPhoneNum ] = useState("");
+    
+    // 이거 중복 없애기
+    const [ loginIdChgIsVisible, setLoginIdChgIsVisible ] = useState(false); // 아이디 변경 버튼 플레그
+    const [ loginIdChgTitle, setLoginIdChgTitle ] = useState("변경하기");
+    const [ loginChgError, setLoginChgError ] = useState(null);
 
-    const [ loginIdChange, setLoginIdChange ] = useState(false); // 아이디 변경 버튼 플레그
-    const [ loginIdChangeTitle, setLoginIdChangeTitle ] = useState("변경하기");
-    const [ loginChangeError, setLoginChangeError ] = useState(null);
+    const [ emailChgIsVisible, setEmailChgIsVisible ] = useState(false); // 이메일 변경 버튼 플레그
+    const [ emailChgTitle, setEmailChgTitle ] = useState("변경하기"); // 변경 버튼 텍스트
+    const [ emailChgError, setEmailChgError ] = useState(null);
 
-    const [ emailChange, setEmailChange ] = useState(false); // 이메일 변경 버튼 플레그
-    const [ emailChangeTitle, setEmailChangeTitle ] = useState("변경하기"); // 변경 버튼 텍스트
-    const [ emailChangeError, setEmailChangeError ] = useState(null);
+    const [ phoneNumChgIsVisible, setPhoneNumChgIsVisible ] = useState(false); // 이메일 변경 버튼 플레그
+    const [ phoneNumChgTitle, setPhoneNumChgTitle ] = useState("변경하기"); // 변경 버튼 텍스트
+    const [ phoneNumChgError, setPhoneNumChgError ] = useState(null);
 
+    const [ passwordChgError, setPasswordChgError ] = useState("")
 
     useEffect(() => {
 
@@ -54,31 +62,42 @@ const MemberInfo = (props) => {
     }, []);
 
     const loginIdChangeBtn = () => {
-        if (loginIdChange) {
-            setLoginIdChange(false);
-            setLoginIdChangeTitle("변경하기");
+        if (loginIdChgIsVisible) {
+            setLoginIdChgIsVisible(false);
+            setLoginIdChgTitle("변경하기");
         } else {
-            setLoginIdChange(true);
-            setLoginIdChangeTitle("변경취소");
-            setLoginChangeError(null);
+            setLoginIdChgIsVisible(true);
+            setLoginIdChgTitle("변경취소");
+            setLoginChgError(null);
 
         }
     };
 
     const emailChangeBtn = () => {
-        if (emailChange) {
-            setEmailChange(false);
-            setEmailChangeTitle("변경하기");
+        if (emailChgIsVisible) {
+            setEmailChgIsVisible(false);
+            setEmailChgTitle("변경하기");
         } else {
-            setEmailChange(true);
-            setEmailChangeTitle("변경취소");
-            setEmailChangeError(null);
+            setEmailChgIsVisible(true);
+            setEmailChgTitle("변경취소");
+            setEmailChgError(null);
 
         }
     };
 
+    const phoneNumChangeBtn = () => {
+        if (phoneNumChgIsVisible) {
+            setPhoneNumChgIsVisible(false);
+            setPhoneNumChgTitle("변경하기");
+        } else {
+            setPhoneNumChgIsVisible(true);
+            setPhoneNumChgTitle("변경취소");
+            setPhoneNumChgError(null);
+        }
+    };
+
     const fetchLoginIdError = (error) => {
-        setLoginChangeError(error);
+        setLoginChgError(error);
     };
 
 
@@ -100,10 +119,10 @@ const MemberInfo = (props) => {
                             <td>아이디</td>
                             <td>
                                 <div>
-                                    {memberData ? memberData.loginId : ""} <Button onClick={loginIdChangeBtn}>{loginIdChangeTitle}</Button>
+                                    {memberData ? memberData.loginId : ""} <Button onClick={loginIdChangeBtn}>{loginIdChgTitle}</Button>
                                 </div>
 
-                                {loginIdChange &&
+                                {loginIdChgIsVisible &&
                                     <>
                                         <div style={{display: "flex", marginTop: "15px"}}>
                                             <input className="form-control" type="text"
@@ -116,9 +135,9 @@ const MemberInfo = (props) => {
                                             />
                                         </div>
 
-                                        {loginChangeError && 
-                                            <div style={{marginTop: "15px"}}>
-                                                <p style={{color: "red"}}>{loginChangeError.newLoginId}</p>
+                                        {loginChgError && 
+                                            <div style={{marginTop: "10px"}}>
+                                                <p style={{color: "red", marginBottom: "0px"}}>{loginChgError.newLoginId}</p>
                                             </div>
                                         }
 
@@ -132,10 +151,10 @@ const MemberInfo = (props) => {
                             <td>이메일</td>
                             <td>
                                 <div>
-                                    {memberData && memberData.email} <Button type="button" onClick={emailChangeBtn}>{emailChangeTitle}</Button>
+                                    {memberData && memberData.email} <Button type="button" onClick={emailChangeBtn}>{emailChgTitle}</Button>
                                 </div>
                                 
-                                {emailChange && 
+                                {emailChgIsVisible && 
                                     <>
                                         <div style={{display: "flex", marginTop: "15px"}}>
 
@@ -144,14 +163,14 @@ const MemberInfo = (props) => {
 
                                             <EmailChangeButton
                                                 newEmail={newEmail}
-                                                onChangeError={setEmailChangeError}
+                                                onChangeError={setEmailChgError}
                                                 fetchMemberData={setMemberData}
                                             />
                                         </div>
 
-                                        {emailChangeError && 
-                                            <div style={{marginTop: "15px"}}>
-                                                <p style={{color: "red"}}>{emailChangeError.newEmail}</p>
+                                        {emailChgError && 
+                                            <div style={{marginTop: "10px"}}>
+                                                <p style={{color: "red", marginBottom: "0px"}}>{emailChgError.newEmail}</p>
                                             </div>
                                         
                                         }
@@ -167,12 +186,42 @@ const MemberInfo = (props) => {
                             <td>이름</td>
                             <td>{memberData && memberData.name} <Button>변경하기</Button></td>
                         </tr>
-                        {/* 휴대폰 번호 변경 */}
 
+
+                        {/* 휴대폰 번호 변경 */}
                         <tr>
                             <td>휴대폰 번호</td>
-                            <td>{memberData && memberData.phoneNum} <Button>변경하기</Button></td>
+                            <td>
+                                <div>
+                                    {memberData && memberData.phoneNum} <Button type="button" onClick={phoneNumChangeBtn}>{phoneNumChgTitle}</Button>
+                                </div>
+                            
+                                {phoneNumChgIsVisible && 
+                                    <>
+                                        <div style={{display: "flex", marginTop: "15px"}}>
+
+                                            <input className="form-control" type="text" onChange={(e) => setNewPhoneNum(e.target.value)}
+                                            style={{width: "auto", marginRight: "10px"}}/>
+                                            <PhoneNumChangeButton
+                                                newPhoneNum={newPhoneNum}
+                                                onChangeError={setPhoneNumChgError}
+                                                fetchMemberData={setMemberData}
+                                            />
+                                        </div>
+
+                                        {phoneNumChgError && 
+                                            <div style={{marginTop: "10px"}}>
+                                                <p style={{color: "red", marginBottom: "0px"}}>{phoneNumChgError.newPhoneNum}</p>
+                                            </div>
+                                        }
+                                    </>
+                                    
+                                }
+                                
+                            </td>
                         </tr>
+
+
 
                         <tr>
                             <td>비밀번호 변경</td>
@@ -185,6 +234,12 @@ const MemberInfo = (props) => {
                                             <td>
                                                 <input className="form-control pwdChangeI" type="password"
                                                 onChange={(e) => setCurPwd(e.target.value)} />
+
+                                                {passwordChgError.curPwd && 
+                                                    <div>
+                                                        <p style={{color: "red", marginBottom: "0px"}}>{passwordChgError.curPwd}</p>
+                                                    </div>
+                                                }
                                             </td>
                                             
                                         </tr>
@@ -193,6 +248,12 @@ const MemberInfo = (props) => {
                                             <td>
                                                 <input className="form-control pwdChangeI" type="password"
                                                 onChange={(e) => setNewPwd(e.target.value)} />
+
+                                                {passwordChgError.newPwd && 
+                                                    <div>
+                                                        <p style={{color: "red", marginBottom: "0px"}}>{passwordChgError.newPwd}</p>
+                                                    </div>
+                                                }
                                             </td>
                                             
                                         </tr>
@@ -201,6 +262,12 @@ const MemberInfo = (props) => {
                                             <td>
                                                 <input className="form-control pwdChangeI" type="password"
                                                 onChange={(e) => setNewPwdCon(e.target.value)} />
+
+                                                {passwordChgError.newPwdCon && 
+                                                    <div>
+                                                        <p style={{color: "red", marginBottom: "0px"}}>{passwordChgError.newPwdCon}</p>
+                                                    </div>
+                                                }
                                             </td>
                                             
                                         </tr>
@@ -212,6 +279,7 @@ const MemberInfo = (props) => {
                                                     curPwd={curPwd}
                                                     newPwd={newPwd}
                                                     newPwdCon={newPwdCon}
+                                                    onChangeError={setPasswordChgError}
                                                     fetchMemberData={setMemberData}
                                                 />
                                             </td>
