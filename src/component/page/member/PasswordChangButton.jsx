@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const PasswordChangeButton = (props) => {
 
-    const { curPwd, newPwd, newPwdCon, fetchMemberData } = props;
+    const { curPwd, newPwd, newPwdCon, onChangeError, fetchMemberData } = props;
     const navigate = useNavigate();
     
     const submitPasswordChange = async () => {
@@ -27,7 +27,9 @@ const PasswordChangeButton = (props) => {
             navigate('/mypage/info');
         } catch (error) {
 
-            console.error("비밀번호 변경 오류 : " + error);
+            console.error(error.response);
+            onChangeError(error.response.data);
+
         }
 
     }
