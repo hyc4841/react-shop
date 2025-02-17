@@ -21,11 +21,11 @@ const PhoneNumChangeButton = (props) => {
                     withCredentials: true
                 }
             );
-    
-            fetchMemberData(response.data.memberInfo);
+
             console.log(response.data);
             alert("전화번호 변경 성공");
-            navigate('/mypage/info');
+            fetchMemberData(response.data.memberInfo);
+            navigate(0); // useNavigate(0)을 하면 페이지 새로고침이 된다!
         } catch (error) {
             console.log(error.response);
             onChangeError(error.response.data);

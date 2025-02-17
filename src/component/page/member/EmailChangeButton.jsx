@@ -26,8 +26,7 @@ const EmailChangeButton = (props) => {
             console.log(response);
             alert("이메일 변경 성공");
             fetchMemberData(response.data.memberInfo);
-            navigate('/mypage/info');
-
+            navigate(0);
         } catch (error) {
             console.log(error.response);
             // 오류 발생시 처리

@@ -24,11 +24,11 @@ const PasswordChangeButton = (props) => {
             console.log(response);
             alert("비밀번호가 성공적으로 변경 되었습니다.");
             fetchMemberData(response.data.memberInfo);
-            navigate('/mypage/info');
+            navigate(0);
         } catch (error) {
 
-            console.error(error.response);
             onChangeError(error.response.data);
+            console.error(error.response);
 
         }
 

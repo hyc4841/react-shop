@@ -25,7 +25,7 @@ const LoginChangeButton = (props) => {
             console.log(response);
             alert("아이디가 성공적으로 변경 되었습니다.");
             fetchMemberData(response.data.memberInfo);
-            navigate('/mypage/info');
+            navigate(0);
         } catch (error) {
             onChangeError(error.response.data);
             console.log(error.response.data);
