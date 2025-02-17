@@ -11,6 +11,7 @@ import PasswordChangeButton from "./PasswordChangButton";
 import LoginChangeButton from "./LoginIdChangeButton";
 import EmailChangeButton from "./EmailChangeButton";
 import PhoneNumChangeButton from "./PhoneNumChangeButton";
+import NameChangeButton from "./NameChangeButton";
 
 const MemberInfo = (props) => {
     const navigate = useNavigate();
@@ -23,6 +24,7 @@ const MemberInfo = (props) => {
     const [ newLoginId, setNewLoginId ] = useState("");
     const [ newEmail , setNewEmail ] = useState("");
     const [ newPhoneNum, setNewPhoneNum ] = useState("");
+    const [ newName, setNewName ] = useState("");
     
     // 이거 중복 없애기
     const [ loginIdChgIsVisible, setLoginIdChgIsVisible ] = useState(false); // 아이디 변경 버튼 플레그
@@ -36,6 +38,10 @@ const MemberInfo = (props) => {
     const [ phoneNumChgIsVisible, setPhoneNumChgIsVisible ] = useState(false); // 이메일 변경 버튼 플레그
     const [ phoneNumChgTitle, setPhoneNumChgTitle ] = useState("변경하기"); // 변경 버튼 텍스트
     const [ phoneNumChgError, setPhoneNumChgError ] = useState(null);
+
+    const [ nameChgIsVisible, setNameChgIsVisible ] = useState(false);
+    const [ nameChgTitle, setNameChgTitle ] = useState("변경하기");
+    const [ nameChgError, setNameChgError ] = useState(null);
 
     const [ passwordChgError, setPasswordChgError ] = useState("")
 
@@ -52,6 +58,14 @@ const MemberInfo = (props) => {
                 console.log(response);
                 setMemberData(response.data); // 멤버 데이터 넣기
             } catch (error) {
+                if (error.status == 403) {
+                    alert("접근 권한이 없는 유저입니다.");
+                    navigate('/');
+                } else if (error.status == 401) {
+                    alert("로그인이 필요한 화면입니다.");
+                    navigate('')
+                }
+
                 console.log(error);
                 alert("유저를 검증할 수 없습니다.");
                 navigate('/'); // 만약 잘못된 토큰 제시로 보안상 문제가 있으면 홈 화면으로 이동
@@ -96,10 +110,16 @@ const MemberInfo = (props) => {
         }
     };
 
-    const fetchLoginIdError = (error) => {
-        setLoginChgError(error);
+    const nameChangeBtn = () => {
+        if (nameChgIsVisible) {
+            setNameChgIsVisible(false);
+            setNameChgTitle("변경하기");
+        } else {
+            setNameChgIsVisible(true);
+            setNameChgTitle("변경취소");
+            setNameChgError(null);
+        }
     };
-
 
     return (
         <Container style={{ border: '1px solid blue', display: "flex"}}>
@@ -130,14 +150,16 @@ const MemberInfo = (props) => {
                                             style={{width: "auto", marginRight: "10px"}} />
                                             <LoginChangeButton 
                                                 newLoginId={newLoginId}
-                                                onChangeError={fetchLoginIdError}
+                                                onChangeError={setLoginChgError}
                                                 fetchMemberData={setMemberData}
                                             />
                                         </div>
 
                                         {loginChgError && 
                                             <div style={{marginTop: "10px"}}>
-                                                <p style={{color: "red", marginBottom: "0px"}}>{loginChgError.newLoginId}</p>
+                                                {loginChgError.newLoginId.map((error, index) => (
+                                                    <p key={error.id} style={{color: "red", marginBottom: "0px"}}>※ {error.message}</p>
+                                                ))}
                                             </div>
                                         }
 
@@ -169,9 +191,17 @@ const MemberInfo = (props) => {
                                         </div>
 
                                         {emailChgError && 
-                                            <div style={{marginTop: "10px"}}>
-                                                <p style={{color: "red", marginBottom: "0px"}}>{emailChgError.newEmail}</p>
-                                            </div>
+                                            <>
+                                                
+                                                <div style={{marginTop: "10px"}}>
+                                                    {emailChgError.newEmail.map((error, index) => (
+                                                        <p key={error.id} style={{color: "red", marginBottom: "0px"}}>※ {error.message}</p>
+                                                    ))}
+                                                    
+                                                </div>
+                                            </>
+
+                                            
                                         
                                         }
                                     </>
@@ -184,7 +214,38 @@ const MemberInfo = (props) => {
                         {/* 이름 변경 */}        
                         <tr>
                             <td>이름</td>
-                            <td>{memberData && memberData.name} <Button>변경하기</Button></td>
+                            <td>
+                                <div>
+                                    {memberData && memberData.name} <Button onClick={nameChangeBtn}>{nameChgTitle}</Button>
+                                </div>
+
+                                {nameChgIsVisible && 
+                                    <>
+                                    
+                                        <div style={{display: "flex", marginTop: "15px"}}>
+                                            <input className="form-control" onChange={(e) => setNewName(e.target.value)}
+                                            style={{width: "auto", marginRight: "10px"}} />
+                                            <NameChangeButton 
+                                                newName={newName}
+                                                onChangeError={setNameChgError}
+                                                fetchMemberData={setMemberData}
+                                            />
+                                        </div>
+
+                                        {nameChgError && 
+                                            <div style={{marginTop: "10px"}}>
+
+                                                {nameChgError.newName.map((error, index) => (
+                                                    <p key={error.id} style={{color: "red", marginBottom: "0px"}}>※ {error.message}</p>
+                                                ))}
+                                                
+                                            </div>
+                                        }
+                                    </>
+                                }
+
+                                
+                            </td>
                         </tr>
 
 
@@ -211,13 +272,15 @@ const MemberInfo = (props) => {
 
                                         {phoneNumChgError && 
                                             <div style={{marginTop: "10px"}}>
-                                                <p style={{color: "red", marginBottom: "0px"}}>{phoneNumChgError.newPhoneNum}</p>
+
+                                                {phoneNumChgError.newPhoneNum.map((error, index) => (
+                                                    <p key={error.id} style={{color: "red", marginBottom: "0px"}}>※ {error.message}</p>
+                                                ))}
+
                                             </div>
                                         }
-                                    </>
-                                    
-                                }
-                                
+                                    </> 
+                                } 
                             </td>
                         </tr>
 
@@ -236,9 +299,15 @@ const MemberInfo = (props) => {
                                                 onChange={(e) => setCurPwd(e.target.value)} />
 
                                                 {passwordChgError.curPwd && 
-                                                    <div>
-                                                        <p style={{color: "red", marginBottom: "0px"}}>{passwordChgError.curPwd}</p>
-                                                    </div>
+                                                    <>
+                                                        <div>
+
+                                                            {passwordChgError.curPwd.map((error, index) => (
+                                                                <p key={error.id} style={{color: "red", marginBottom: "0px"}}>※ {error.message}</p>
+                                                            ))}
+
+                                                        </div>
+                                                    </>
                                                 }
                                             </td>
                                             
@@ -250,9 +319,16 @@ const MemberInfo = (props) => {
                                                 onChange={(e) => setNewPwd(e.target.value)} />
 
                                                 {passwordChgError.newPwd && 
-                                                    <div>
-                                                        <p style={{color: "red", marginBottom: "0px"}}>{passwordChgError.newPwd}</p>
-                                                    </div>
+
+                                                    <>
+                                                        <div>
+
+                                                            {passwordChgError.newPwd.map((error, index) => (
+                                                                <p key={error.id} style={{color: "red", marginBottom: "0px"}}>※ {error.message}</p>
+                                                            ))}
+
+                                                        </div>
+                                                    </>
                                                 }
                                             </td>
                                             
@@ -263,10 +339,18 @@ const MemberInfo = (props) => {
                                                 <input className="form-control pwdChangeI" type="password"
                                                 onChange={(e) => setNewPwdCon(e.target.value)} />
 
-                                                {passwordChgError.newPwdCon && 
-                                                    <div>
-                                                        <p style={{color: "red", marginBottom: "0px"}}>{passwordChgError.newPwdCon}</p>
-                                                    </div>
+                                                {passwordChgError.newPwdCon &&
+
+                                                    <>
+                                                        <div>
+
+                                                            {passwordChgError.newPwdCon.map((error, index) => (
+                                                                <p key={error.id} style={{color: "red", marginBottom: "0px"}}>※ {error.message}</p>
+                                                            ))}
+
+                                                        </div>
+                                                    </>
+                                                    
                                                 }
                                             </td>
                                             
@@ -303,9 +387,6 @@ const MemberInfo = (props) => {
                             <th>배송지</th>
                             <td>배송지 관리</td>
                         </tr>
-
-
-
 
                     </tbody>
 
