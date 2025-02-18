@@ -26,7 +26,7 @@ const Signup = (props) => {
     const [ street, setStreet ] = useState('');                   // 주소
     const [ detailedAddress, setDetailedAddress ] = useState(''); // 상세주소
 
-    const [ modalShow, setModalShow ] = useState(false);          // 주소 선택창 모달 변수
+    const [ modalOnOff, setModalOnOff ] = useState(false);          // 주소 선택창 모달 변수
     const [ dropDownShow, setDropDownShow ] = useState(false);    // 생년월일 달력창 드롭다운 변수
 
     const [ birthDateShow, setBirthDateShow ] = useState('');     // 생년월일 표시 변수
@@ -60,7 +60,7 @@ const Signup = (props) => {
     }
 
     // 주소 선택 함수. 우편번호와 지번 혹은 도로명 주소값 결정
-    const addressSelectHandler = (data) => {
+    const completeHandler = (data) => {
         const zipcode = data.zonecode;
         setZipcode(zipcode);
         setCity(data.sido)
@@ -96,14 +96,6 @@ const Signup = (props) => {
         setStreet(addr + extraAddr);
     };
 
-    // 주소 모달 on, close 함수
-    const onCloseHandler = (state) => {
-        if (state === 'FORCE_CLOSE') {
-            setModalShow(false);
-        } else if (state === 'COMPLETE_CLOSE') {
-            setModalShow(false);
-        }
-    };
 
     // 생년월일 달력 드롭다운 버튼 on, close 함수
     const birthDateDropdownHandler = (isOpen) => {
@@ -209,17 +201,18 @@ const Signup = (props) => {
                                     </Col>
 
                                     <Col sm={6} md={6}>
-                                        <Button className="mb-3" style={{whiteSpace: 'nowrap'}} onClick={() => setModalShow(true)}>
+                                        <Button className="mb-3" style={{whiteSpace: 'nowrap'}} onClick={() => setModalOnOff(true)}>
                                             우편번호 찾기
                                         </Button>
                                     </Col>
                                     
                                     {/* 다음 주소 모달 */}
                                     <DaumPostModal
-                                        show={modalShow} 
-                                        onHide={() => setModalShow(false)}
-                                        onCompleteHandler={addressSelectHandler} // 원래 넘겨주려는 함수 이름 onCompleteHandler. props로 함수 이름이 on 으로 시작하는 함수가 가끔 on으로 시작하는 자바스크립트 이벤트로 인지해서 발생하는
-                                        onCloseHandler={onCloseHandler}
+                                        modalOnOff={modalOnOff}
+                                        setModalOnOff={setModalOnOff}
+                                        setZipcode={setZipcode}
+                                        setCity={setCity}
+                                        setStreet={setStreet}
                                     />
 
                                     <Col sm={12} md={6}>
