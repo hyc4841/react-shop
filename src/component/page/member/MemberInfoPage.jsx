@@ -12,6 +12,7 @@ import LoginChangeButton from "./LoginIdChangeButton";
 import EmailChangeButton from "./EmailChangeButton";
 import PhoneNumChangeButton from "./PhoneNumChangeButton";
 import NameChangeButton from "./NameChangeButton";
+import DaumPostModal from "../signup/DaumPostModal";
 
 const MemberInfo = (props) => {
     const navigate = useNavigate();
@@ -43,7 +44,15 @@ const MemberInfo = (props) => {
     const [ nameChgTitle, setNameChgTitle ] = useState("변경하기");
     const [ nameChgError, setNameChgError ] = useState(null);
 
-    const [ passwordChgError, setPasswordChgError ] = useState("")
+    const [ passwordChgError, setPasswordChgError ] = useState("");
+
+    const [ addressChgIsVisible, setAddressChgIsVisible ] = useState(false);
+
+    const [ modalOnOff, setModalOnOff ] = useState(false);
+    const [ newZipcode, setNewZipcode ] = useState("");
+    const [ newCity, setNewCity ] = useState("");
+    const [ newStreet, setNewStreet ] = useState("");
+    const [ detailedAddress, setDetailedAddress ] = useState('');
 
     useEffect(() => {
 
@@ -376,11 +385,41 @@ const MemberInfo = (props) => {
                         <tr>
                             <th>주소</th>
                             <td>
-                                <span style={{display: "block"}}>{memberData && memberData.address.zipcode}</span>
-                                <span style={{display: "block"}}>{memberData && memberData.address.street}</span>
-                                <span style={{display: "block"}}>{memberData && memberData.address.detailedAddress}</span>
+                                <div>
+                                    <span style={{display: "block"}}>{memberData && memberData.address.zipcode}</span>
+                                    <span style={{display: "block"}}>{memberData && memberData.address.street}</span>
+                                    <span style={{display: "block"}}>{memberData && memberData.address.detailedAddress}</span>
+                                </div>
+
+                                {addressChgIsVisible ?
+                                <>
+                                    <div>
+                                        <input className="form-control" style={{width: "auto", marginTop: "5px"}} value={newZipcode} readOnly />
+                                        <input className="form-control" style={{width: "auto", marginTop: "5px"}} value={newStreet} readOnly />
+                                        <input className="form-control" style={{width: "auto", marginTop: "5px"}} onChange={(e) => setDetailedAddress(e.target.value)} />
+                                    </div>
+                                    <Button style={{marginTop: "10px"}} onClick={() => setModalOnOff(true)}
+                                    >주소 변경하기</Button>
+                                </>
+                                
+                                :
+                                
+                                <Button style={{marginTop: "10px"}} onClick={() => setModalOnOff(true)}
+                                >주소 변경하기</Button>
+                                }
+                                
+                                
+                                
                             </td>
-                            
+
+                            <DaumPostModal
+                                modalOnOff={modalOnOff}
+                                setModalOnOff={setModalOnOff}
+                                setZipcode={setNewZipcode}
+                                setCity={setNewCity}
+                                setStreet={setNewStreet}
+                            />
+
                         </tr>
 
                         <tr>
