@@ -31,19 +31,19 @@ const MemberInfo = (props) => {
     // 이거 중복 없애기
     const [ loginIdChgIsVisible, setLoginIdChgIsVisible ] = useState(false); // 아이디 변경 버튼 플레그
     const [ loginIdChgTitle, setLoginIdChgTitle ] = useState("변경하기");
-    const [ loginChgError, setLoginChgError ] = useState(null);
+    const [ loginChgError, setLoginChgError ] = useState("");
 
     const [ emailChgIsVisible, setEmailChgIsVisible ] = useState(false); // 이메일 변경 버튼 플레그
     const [ emailChgTitle, setEmailChgTitle ] = useState("변경하기"); // 변경 버튼 텍스트
-    const [ emailChgError, setEmailChgError ] = useState(null);
+    const [ emailChgError, setEmailChgError ] = useState("");
 
     const [ phoneNumChgIsVisible, setPhoneNumChgIsVisible ] = useState(false); // 이메일 변경 버튼 플레그
     const [ phoneNumChgTitle, setPhoneNumChgTitle ] = useState("변경하기"); // 변경 버튼 텍스트
-    const [ phoneNumChgError, setPhoneNumChgError ] = useState(null);
+    const [ phoneNumChgError, setPhoneNumChgError ] = useState("");
 
     const [ nameChgIsVisible, setNameChgIsVisible ] = useState(false);
     const [ nameChgTitle, setNameChgTitle ] = useState("변경하기");
-    const [ nameChgError, setNameChgError ] = useState(null);
+    const [ nameChgError, setNameChgError ] = useState("");
 
     const [ passwordChgError, setPasswordChgError ] = useState("");
 
@@ -53,8 +53,8 @@ const MemberInfo = (props) => {
     const [ newZipcode, setNewZipcode ] = useState("");
     const [ newCity, setNewCity ] = useState("");
     const [ newStreet, setNewStreet ] = useState("");
-    const [ newDetailedAddress, setNewDetailedAddress ] = useState('');
-    const [ addressChgError, setAddressChgError ] = useState(null);
+    const [ newDetailedAddress, setNewDetailedAddress ] = useState("");
+    const [ addressChgError, setAddressChgError ] = useState("");
 
     useEffect(() => {
 
@@ -133,18 +133,12 @@ const MemberInfo = (props) => {
     };
 
     const addressChangeBtn = () => {
-        if (addressChgIsVisible) {
-            setModalOnOff(false);
-            setAddressChgIsVisible(false);
-
-        } else {
-            setModalOnOff(true);
-            setAddressChgIsVisible(true);
-            setAddressChgError(null);
-
-        }
+        setModalOnOff(true);
     }
 
+    console.log(passwordChgError);
+    
+    
     return (
         <Container style={{ border: '1px solid blue', display: "flex"}}>
            
@@ -317,8 +311,8 @@ const MemberInfo = (props) => {
                                 <Table className="pwdChangeT" style={{marginBottom: "0px"}}>
                                     <tbody>
                                         <tr>
-                                            <th>현재 비밀번호</th>
-                                            <td>
+                                            <th style={{paddingTop: "0px"}}>현재 비밀번호</th>
+                                            <td style={{paddingTop: "0px"}}>
                                                 <input className="form-control pwdChangeI" type="password"
                                                 onChange={(e) => setCurPwd(e.target.value)} />
 
@@ -337,8 +331,8 @@ const MemberInfo = (props) => {
                                             
                                         </tr>
                                         <tr>
-                                            <th>새 비밀번호</th>
-                                            <td>
+                                            <th style={{paddingTop: "0px"}}>새 비밀번호</th>
+                                            <td style={{paddingTop: "0px"}}>
                                                 <input className="form-control pwdChangeI" type="password"
                                                 onChange={(e) => setNewPwd(e.target.value)} />
 
@@ -358,8 +352,8 @@ const MemberInfo = (props) => {
                                             
                                         </tr>
                                         <tr>
-                                            <th>비밀번호 확인</th>
-                                            <td>
+                                            <th style={{paddingTop: "0px"}}>비밀번호 확인</th>
+                                            <td style={{paddingTop: "0px"}}>
                                                 <input className="form-control pwdChangeI" type="password"
                                                 onChange={(e) => setNewPwdCon(e.target.value)} />
 
@@ -406,26 +400,45 @@ const MemberInfo = (props) => {
                                     <span style={{display: "block"}}>{memberData && memberData.address.detailedAddress}</span>
                                 </div>
 
-                                <div className="justify-content-start" style={{marginTop: "10px"}}>
+                                <div style={{marginTop: "10px"}}>
                                     <Container>
                                         <Row xs={2}>
-                                            <Col xs={3}>
+                                            <Col xs={3} style={{paddingLeft: "0px", marginTop: "5px"}}>
                                                 <input className="form-control" value={newZipcode} readOnly />
                                             </Col>
 
-                                            <Col xs={3}>
+                                            <Col xs={3} style={{paddingLeft: "0px", marginTop: "5px"}}>
                                                 <Button type="button" style={{width: "100%"}} onClick={() => addressChangeBtn()}>주소 찾기</Button>
                                             </Col>
                                         </Row>
 
                                         <Row xs={1}>
-                                            <Col xs={8}>
+                                            <Col xs={8} style={{paddingLeft: "0px", marginTop: "5px"}}>
                                                 <input className="form-control" value={newStreet} readOnly />
+                                                <div>
+                                                    {addressChgError.newStreet &&
+                                                        <>
+                                                            {addressChgError.newStreet.map((error, index) => (
+                                                                <p key={error.id} style={{color: "red", marginBottom: "5px"}}>※ {error.message}</p>
+                                                            ))}
+                                                        </>
+                                                    }
+
+                                                </div>
                                             </Col>
                                         </Row>
                                         <Row xs={1}>
-                                            <Col xs={8}>
+                                            <Col xs={8} style={{paddingLeft: "0px", marginTop: "5px"}}>
                                                 <input className="form-control" onChange={(e) => setNewDetailedAddress(e.target.value)} />
+                                                <div style={{marginBottom: "10px"}}>
+                                                    {addressChgError &&
+                                                        <>
+                                                            {addressChgError.newDetailedAddress.map((error, index) => (
+                                                                <p key={error.id} style={{color: "red", marginBottom: "5px"}}>※ {error.message}</p>
+                                                            ))}
+                                                        </>
+                                                    }
+                                                </div>
                                             </Col>
                                         </Row>                            
                                     </Container>
@@ -433,7 +446,7 @@ const MemberInfo = (props) => {
                                     {/* 에러 연결하기 */}
                                     
                                 </div>
-                                <div style={{marginTop: "15px"}}>
+                                <div style={{marginTop: "0px"}}>
                                     <AddressChangeButton
                                         newCity={newCity}
                                         newStreet={newStreet}
