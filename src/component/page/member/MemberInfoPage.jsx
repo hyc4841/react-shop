@@ -393,77 +393,11 @@ const MemberInfo = (props) => {
                         </tr>
                         <tr>
                             <th>주소</th>
+                              
                             <td>
-                                <div>
-                                    <span style={{display: "block"}}>{memberData && memberData.address.zipcode}</span>
-                                    <span style={{display: "block"}}>{memberData && memberData.address.street}</span>
-                                    <span style={{display: "block"}}>{memberData && memberData.address.detailedAddress}</span>
-                                </div>
-
-                                <div style={{marginTop: "10px"}}>
-                                    <Container>
-                                        <Row xs={2}>
-                                            <Col xs={3} style={{paddingLeft: "0px", marginTop: "5px"}}>
-                                                <input className="form-control" value={newZipcode} readOnly />
-                                            </Col>
-
-                                            <Col xs={3} style={{paddingLeft: "0px", marginTop: "5px"}}>
-                                                <Button type="button" style={{width: "100%"}} onClick={() => addressChangeBtn()}>주소 찾기</Button>
-                                            </Col>
-                                        </Row>
-
-                                        <Row xs={1}>
-                                            <Col xs={8} style={{paddingLeft: "0px", marginTop: "5px"}}>
-                                                <input className="form-control" value={newStreet} readOnly />
-                                                <div>
-                                                    {addressChgError.newStreet &&
-                                                        <>
-                                                            {addressChgError.newStreet.map((error, index) => (
-                                                                <p key={error.id} style={{color: "red", marginBottom: "5px"}}>※ {error.message}</p>
-                                                            ))}
-                                                        </>
-                                                    }
-
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                        <Row xs={1}>
-                                            <Col xs={8} style={{paddingLeft: "0px", marginTop: "5px"}}>
-                                                <input className="form-control" onChange={(e) => setNewDetailedAddress(e.target.value)} />
-                                                <div style={{marginBottom: "10px"}}>
-                                                    {addressChgError &&
-                                                        <>
-                                                            {addressChgError.newDetailedAddress.map((error, index) => (
-                                                                <p key={error.id} style={{color: "red", marginBottom: "5px"}}>※ {error.message}</p>
-                                                            ))}
-                                                        </>
-                                                    }
-                                                </div>
-                                            </Col>
-                                        </Row>                            
-                                    </Container>
-
-                                    {/* 에러 연결하기 */}
-                                    
-                                </div>
-                                <div style={{marginTop: "0px"}}>
-                                    <AddressChangeButton
-                                        newCity={newCity}
-                                        newStreet={newStreet}
-                                        newZipcode={newZipcode}
-                                        newDetailedAddress={newDetailedAddress}
-                                        fetchMemberData={setMemberData}
-                                        onChangeError={setAddressChgError}
-                                    /> 
-                                </div>
-                                <DaumPostModal
-                                    modalOnOff={modalOnOff}
-                                    setModalOnOff={setModalOnOff}
-                                    setZipcode={setNewZipcode}
-                                    setCity={setNewCity}
-                                    setStreet={setNewStreet}
-                                />
+                                {/* 주소 수정중 */}
                             </td>
+                            
                         </tr>
 
                         <tr>
@@ -480,6 +414,78 @@ const MemberInfo = (props) => {
         </Container>
         
     );
+
+
+/*
+    <div>
+        <span style={{display: "block"}}>{memberData && memberData.address.zipcode}</span>
+        <span style={{display: "block"}}>{memberData && memberData.address.street}</span>
+        <span style={{display: "block"}}>{memberData && memberData.address.detailedAddress}</span>
+    </div>
+
+    <div style={{marginTop: "10px"}}>
+        <Container>
+            <Row xs={2}>
+                <Col xs={3} style={{paddingLeft: "0px", marginTop: "5px"}}>
+                    <input className="form-control" value={newZipcode} readOnly />
+                </Col>
+
+                <Col xs={3} style={{paddingLeft: "0px", marginTop: "5px"}}>
+                    <Button type="button" style={{width: "100%"}} onClick={() => addressChangeBtn()}>주소 찾기</Button>
+                </Col>
+            </Row>
+
+            <Row xs={1}>
+                <Col xs={8} style={{paddingLeft: "0px", marginTop: "5px"}}>
+                    <input className="form-control" value={newStreet} readOnly />
+                    <div>
+                        {addressChgError.newStreet &&
+                            <>
+                                {addressChgError.newStreet.map((error, index) => (
+                                    <p key={error.id} style={{color: "red", marginBottom: "5px"}}>※ {error.message}</p>
+                                ))}
+                            </>
+                        }
+
+                    </div>
+                </Col>
+            </Row>
+            <Row xs={1}>
+                <Col xs={8} style={{paddingLeft: "0px", marginTop: "5px"}}>
+                    <input className="form-control" onChange={(e) => setNewDetailedAddress(e.target.value)} />
+                    <div style={{marginBottom: "10px"}}>
+                        {addressChgError &&
+                            <>
+                                {addressChgError.newDetailedAddress.map((error, index) => (
+                                    <p key={error.id} style={{color: "red", marginBottom: "5px"}}>※ {error.message}</p>
+                                ))}
+                            </>
+                        }
+                    </div>
+                </Col>
+            </Row>                            
+        </Container>
+
+        </div>
+        <div style={{marginTop: "0px"}}>
+            <AddressChangeButton
+                newCity={newCity}
+                newStreet={newStreet}
+                newZipcode={newZipcode}
+                newDetailedAddress={newDetailedAddress}
+                fetchMemberData={setMemberData}
+                onChangeError={setAddressChgError}
+            /> 
+        </div>
+        <DaumPostModal
+            modalOnOff={modalOnOff}
+            setModalOnOff={setModalOnOff}
+            setZipcode={setNewZipcode}
+            setCity={setNewCity}
+            setStreet={setNewStreet}
+        />
+
+*/
 
 }
 
