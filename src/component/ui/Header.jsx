@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import LogoutButton from "./LogoutButton";
-import ReGenerateAccessToken from "../../test/reGenerateAccessToken";
 
 import { useSelector, useDispatch } from "react-redux";
-import { login, logout, isLoggedInFetch } from "../../redux/reducer/userSlice";
-import { Container, Col, Row, Button, Navbar, Nav } from "react-bootstrap";
+import { logout, isLoggedInFetch } from "../../redux/reducer/userSlice";
+import { Container, Navbar, Nav, Dropdown, Form, Button } from "react-bootstrap";
+
 
 import { StyledNavItem } from "../style/header/headrStyle";
+
+import logo from '../../image/logo.jpg';
 
 
 const Header = () => {
@@ -40,10 +40,7 @@ const Header = () => {
             fetchData();
         }
 
-    }, [])
-    
-    console.log("isLoggedIn : " + isLoggedIn);
-    console.log("username : " + username);
+    }, []);
 
     return (
         <>
@@ -71,13 +68,29 @@ const Header = () => {
                 </Container>
             </Navbar>
 
-                        
             <header className="py-3 mb-4 border-bottom">
-                <Container className="d-flex flex-wrap justify-content-center">
-                    <Navbar.Brand href="/" className="me-lg-auto">
-                        <img></img>
-                        윤철몰
-                    </Navbar.Brand>
+                <Container className="d-flex flex-wrap justify-content-between">
+                    <div className="d-flex">
+                        <Dropdown>
+                            <a href="#">드랍다운 카테고리</a>
+                        </Dropdown>
+
+                        <Navbar.Brand href="/" className="me-lg-auto">
+                            <img src={logo} alt="로고" style={{width: "90px", height: "50px"}} />
+                        </Navbar.Brand>
+                    </div>
+                    
+                    <Form className="d-flex" method="get" action="/item">
+                        <Form.Group controlId="SearchForm.input">
+                            <Form.Control type="text" placeholder="검색어를 입력해주세요" style={{height: "100%"}} name="searchKeyword" />
+                        </Form.Group>
+                        <Button type="submit">검색</Button>
+                    </Form>
+
+                    <div>
+
+                    </div>
+                    
                 </Container>
             </header>
         </>
