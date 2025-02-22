@@ -20,6 +20,7 @@ const Signup = (props) => {
     const [ birthDate, setBirthDate ] = useState('');             // 생년월일
     const [ gender, setGender ] = useState('NONE');               // 성별
     const [ email, setEmail ] = useState('');                     // 이메일
+    const [ phoneNum, setPhoneNum ] = useState('');               // 휴대전화 번호
    
     const [ city, setCity ] = useState('');                       // 도시
     const [ zipcode, setZipcode ] = useState('');                 // 우편번호
@@ -31,7 +32,7 @@ const Signup = (props) => {
 
     const [ birthDateShow, setBirthDateShow ] = useState('');     // 생년월일 표시 변수
 
-    const [error, setError ] = useState({});                      // 회원가입 오류 응답 변수
+    const [error, setError ] = useState('');                      // 회원가입 오류 응답 변수
 
     /*
     const errorText = styled(Form.Control)`
@@ -53,9 +54,9 @@ const Signup = (props) => {
             
             navigate('/'); // 회원가입 성공하면 홈 화면으로 이동
 
-        } catch (err) {
-            console.error("회원가입 오류 : ", err);
-            setError(err.response.data);
+        } catch (error) {
+            console.error("회원가입 오류 : ", error);
+            setError(error.response.data);
         }
     }
 
@@ -115,7 +116,13 @@ const Signup = (props) => {
                 <Col sm={12} className="text-center"><h2>회원가입</h2></Col>
 
                 <Col sm={12} className='text-center'>
-                    {error && <p style={{ color: 'red' }}>{error.message}</p>}
+                    {error.message && 
+                        <>
+                            {error.message.map((error, index) => (
+                                <p style={{ color: 'red' }}>{error.message}</p>
+                            ))}
+                        </>
+                    }
                 </Col>
 
                 <Col sm={12} className="d-flex justify-content-center">
@@ -128,7 +135,14 @@ const Signup = (props) => {
                                 <Form.Group className="mb-3" controlId="name">
                                     <Form.Label>이름</Form.Label>
                                     <Form.Control onChange={(e) => setName(e.target.value)} type="text" value={name} placeholder="이름을 입력하세요" />
-                                    {error && <p style={{ color: 'red' }}>{error.name}</p>}
+                                    {error.name && 
+                                    <>
+                                        {error.name.map((error, index) => (
+                                            <p style={{ color: 'red' }}>{error.message}</p>
+                                        ))}
+                                    </>
+                                    }
+                                    
                                 </Form.Group>
                             </Col>
 
@@ -138,29 +152,63 @@ const Signup = (props) => {
                                     <Form.Label>아이디</Form.Label>
                                     <Form.Control onChange={(e) => setLoginId(e.target.value)} type="text" value={loginId} placeholder="아이디를 입력하세요" />
                                     <Form.Text className="text-muted">여기에 아이디를 입력하세요</Form.Text>
-                                    {error && <p style={{ color: 'red' }}>{error.loginId}</p>}
+                                    {error.loginId && 
+                                    <>
+                                        {error.loginId.map((error, index) => (
+                                            <p style={{ color: 'red' }}>{error.message}</p>
+                                        ))}
+                                    </>
+                                    }
                                 </Form.Group>
                             </Col>
 
-                            {/* 비밀번호 섹션 */}
+                            {/* 비밀번호 */}
                             <Col sm={12}>
                                 <Form.Group className="mb-3">
                                     <Form.Label>비밀번호</Form.Label>
                                     <Form.Control onChange={(e) => setPassword(e.target.value)} type="password" placeholder="비밀번호를 입력하세요" />
-                                    {error && <p style={{ color: 'red' }}>{error.password}</p>}
+                                    {error.password && 
+                                    <>
+                                        {error.password.map((error, index) => (
+                                            <p style={{ color: 'red' }}>{error.message}</p>
+                                        ))}
+                                    </>
+                                    }                                
                                 </Form.Group>
                             </Col>
 
-                            {/* 이메일 섹션 */}
+                            {/* 이메일 */}
                             <Col sm={12}>
                                 <Form.Group className="mb-3">
                                     <Form.Label>이메일</Form.Label>
                                     <Form.Control onChange={(e) => setEmail(e.target.value)} type="email" value={email} placeholder="이메일을 입력하세요" />
-                                    {error && <p style={{ color: 'red' }}>{error.email}</p>}
+                                    {error.email && 
+                                    <>
+                                        {error.email.map((error, index) => (
+                                            <p style={{ color: 'red' }}>{error.message}</p>
+                                        ))}
+                                    </>
+                                    }
                                 </Form.Group>
                             </Col>
 
-                            {/* 성별 섹션 */}
+                            {/* 전화번호 */}
+                            <Col sm={12}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>전화번호</Form.Label>
+                                    <Form.Control onChange={(e) => setPhoneNum(e.target.value)} type="text" value={phoneNum} placeholder="전화번호를 입력하세요" />
+                                    {error.phoneNum && 
+                                    <>
+                                        {error.phoneNum.map((error, index) => (
+                                            <p style={{ color: 'red' }}>{error.message}</p>
+                                        ))}
+                                    </>
+                                    }
+                                </Form.Group>
+                            </Col>
+
+
+                            {/* 성별 */}
                             <Col xs={12}>
                                 <Form>
                                     <Form.Label>성별</Form.Label>
@@ -184,7 +232,13 @@ const Signup = (props) => {
                                                 value={"WOMEN"}
                                                 onChange={(e) => setGender(e.target.value)}
                                             />
-                                            {error && <p style={{ color: 'red' }}>{error.gender}</p>}
+                                    {error.gender && 
+                                    <>
+                                        {error.gender.map((error, index) => (
+                                            <p style={{ color: 'red' }}>{error.message}</p>
+                                        ))}
+                                    </>
+                                    }
                                         </div>
                                     ))}
                                 </Form>
@@ -216,28 +270,35 @@ const Signup = (props) => {
                                     />
 
                                     <Col sm={12} md={6}>
-                                        <Form.Group className="mb-3">
+                                        <Form.Group className="">
                                             <Form.Control type="text" placeholder="주소" value={street} readOnly/>
                                         </Form.Group>
+                                        {error.street && 
+                                            <>
+                                                {error.street.map((error, index) => (
+                                                    <p style={{ color: 'red', paddingTop: "0px"}}>{error.message}</p>
+                                                ))}
+                                            </>
+                                        }
                                     </Col>
 
-                                    {error && <p style={{ color: 'red' }}>{error.zipcode}</p>}
+                                    
+
                                     <Col sm={12} md={6}>
-                                        <Form.Group className="mb-3">
-                                            {/* 이부분 삼항연산자 동작하도록 만들어야함. */}
-                                            {error ? <Form.Control 
-                                            type="text"
-                                            placeholder={error.detailedAddress}
-                                            value={detailedAddress}
-                                            onChange={(e) => setDetailedAddress(e.target.value)} /> 
-                                            : 
-                                            <Form.Control 
-                                            type="text"
-                                            placeholder="상세주소를 입력해주세요."
-                                            value={detailedAddress}
-                                            onChange={(e) => setDetailedAddress(e.target.value)} />
-                                            }
+                                    
+                                        <Form.Group className="">
+                                            <Form.Control type="text" onChange={(e) => setDetailedAddress(e.target.value)}
+                                            value={detailedAddress} placeholder="상세주소를 입력해주세요"/> 
                                         </Form.Group>
+
+                                        {error.detailedAddress && 
+                                            <>
+                                                {error.detailedAddress.map((error, index) => (
+                                                    <p style={{ color: 'red', paddingTop: "0px"}}>{error.message}</p>
+                                                ))}
+                                            </>
+                                        }
+
                                     </Col>
                                 </Row>
                             </Col>
@@ -274,7 +335,6 @@ const Signup = (props) => {
                                     </Col>
                                 </Row>
                             </Col>
-                           
                         </Row>
                     </Form>
                 </Col>
