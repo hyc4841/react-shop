@@ -9,13 +9,15 @@ import moment from "moment";
 
 import { type } from "@testing-library/user-event/dist/type";
 import styled from "styled-components";
+import '../../../css/signupPage.css';
 
 
 const Signup = (props) => {
     const navigate = useNavigate();
 
     const [ loginId, setLoginId ] = useState('');                 // 로그인 아이디
-    const [ password, setPassword ] = useState('');               // 비밀번호
+    const [ password, setPassword ] = useState('');  
+    const [ passwordCheck, setpasswordCheck ] = useState('');             // 비밀번호
     const [ name, setName ] = useState('');                       // 이름
     const [ birthDate, setBirthDate ] = useState('');             // 생년월일
     const [ gender, setGender ] = useState('NONE');               // 성별
@@ -32,22 +34,14 @@ const Signup = (props) => {
 
     const [ birthDateShow, setBirthDateShow ] = useState('');     // 생년월일 표시 변수
 
-    const [error, setError ] = useState('');                      // 회원가입 오류 응답 변수
-
-    /*
-    const errorText = styled(Form.Control)`
-        &::placeholder {
-            color: red;
-            opacity: 1;
-        }
-    `;
-    */
+    const [ error, setError ] = useState('');                      // 회원가입 오류 응답 변수
 
     const signupSubmit = async (e) => {
         e.preventDefault(); // 폼 제출 방지
+        const passwordAndCheck = { password, passwordCheck };
         try {
             const response = await axios.post('http://localhost:8080/signup', {
-                loginId, password, name, birthDate, gender, email, city, street, zipcode, detailedAddress
+                loginId, passwordAndCheck, phoneNum, name, birthDate, gender, email, city, street, zipcode, detailedAddress
             }, { withCredentials: true });
 
             console.log(response);
@@ -59,44 +53,6 @@ const Signup = (props) => {
             setError(error.response.data);
         }
     }
-
-    // 주소 선택 함수. 우편번호와 지번 혹은 도로명 주소값 결정
-    const completeHandler = (data) => {
-        const zipcode = data.zonecode;
-        setZipcode(zipcode);
-        setCity(data.sido)
-        console.log(data.sido);
-
-        var addr = '';
-        var extraAddr = '';
-
-        //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
-        if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
-            addr = data.roadAddress;
-            // setAddress(data.roadAddress);
-        } else { // 사용자가 지번 주소를 선택했을 경우(J)
-            addr = data.jibunAddress;
-        }
-
-        // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
-        if(data.userSelectedType === 'R'){
-            // 법정동명이 있을 경우 추가한다. (법정리는 제외)
-            // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
-            if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
-                extraAddr += data.bname;
-            }
-            // 건물명이 있고, 공동주택일 경우 추가한다.
-            if(data.buildingName !== '' && data.apartment === 'Y'){
-                extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-            }
-            // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
-            if(extraAddr !== ''){
-                extraAddr = ' (' + extraAddr + ')';
-            }
-        }
-        setStreet(addr + extraAddr);
-    };
-
 
     // 생년월일 달력 드롭다운 버튼 on, close 함수
     const birthDateDropdownHandler = (isOpen) => {
@@ -129,9 +85,10 @@ const Signup = (props) => {
 
                     <Form onSubmit={signupSubmit} style={{ width: '600px', background: 'white', padding: '10px', borderRadius: '10px', border: '1px solid black'}}>
 
-                        <Row>
-                            {/* 이름 섹션 */}
-                            <Col sm={12}>
+                        <Row className="p-3">
+                            
+                            {/* 이름 */}
+                            <Col sm={12} className="p-0">
                                 <Form.Group className="mb-3" controlId="name">
                                     <Form.Label>이름</Form.Label>
                                     <Form.Control onChange={(e) => setName(e.target.value)} type="text" value={name} placeholder="이름을 입력하세요" />
@@ -146,8 +103,8 @@ const Signup = (props) => {
                                 </Form.Group>
                             </Col>
 
-                            {/* 아이디 섹션 */}
-                            <Col sm={12}>
+                            {/* 아이디 */}
+                            <Col sm={12} className="p-0">
                                 <Form.Group className="mb-3" controlId="userId">
                                     <Form.Label>아이디</Form.Label>
                                     <Form.Control onChange={(e) => setLoginId(e.target.value)} type="text" value={loginId} placeholder="아이디를 입력하세요" />
@@ -163,22 +120,25 @@ const Signup = (props) => {
                             </Col>
 
                             {/* 비밀번호 */}
-                            <Col sm={12}>
+                            <Col sm={12} className="p-0">
                                 <Form.Group className="mb-3">
                                     <Form.Label>비밀번호</Form.Label>
-                                    <Form.Control onChange={(e) => setPassword(e.target.value)} type="password" placeholder="비밀번호를 입력하세요" />
-                                    {error.password && 
+                                    <div className="d-flex">  
+                                        <Form.Control style={{marginRight: "5px"}} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="비밀번호를 입력하세요" />
+                                        <Form.Control style={{marginLeft: "5px"}} onChange={(e) => setpasswordCheck(e.target.value)} type="password" placeholder="비밀번호 확인" />                                     
+                                    </div>
+                                    {error.passwordAndCheck && 
                                     <>
-                                        {error.password.map((error, index) => (
+                                        {error.passwordAndCheck.map((error, index) => (
                                             <p style={{ color: 'red' }}>{error.message}</p>
                                         ))}
                                     </>
-                                    }                                
+                                    }
                                 </Form.Group>
                             </Col>
 
                             {/* 이메일 */}
-                            <Col sm={12}>
+                            <Col sm={12} className="p-0">
                                 <Form.Group className="mb-3">
                                     <Form.Label>이메일</Form.Label>
                                     <Form.Control onChange={(e) => setEmail(e.target.value)} type="email" value={email} placeholder="이메일을 입력하세요" />
@@ -193,7 +153,7 @@ const Signup = (props) => {
                             </Col>
 
                             {/* 전화번호 */}
-                            <Col sm={12}>
+                            <Col sm={12} className="p-0">
                                 <Form.Group className="mb-3">
                                     <Form.Label>전화번호</Form.Label>
                                     <Form.Control onChange={(e) => setPhoneNum(e.target.value)} type="text" value={phoneNum} placeholder="전화번호를 입력하세요" />
@@ -209,7 +169,7 @@ const Signup = (props) => {
 
 
                             {/* 성별 */}
-                            <Col xs={12}>
+                            <Col xs={12} className="p-0">
                                 <Form>
                                     <Form.Label>성별</Form.Label>
                                     {['radio'].map((type) => (
@@ -244,8 +204,8 @@ const Signup = (props) => {
                                 </Form>
                             </Col>
 
-                            {/* 주소 섹션 */}
-                            <Col sm={12}>
+                            {/* 주소 */}
+                            <Col sm={12} className="p-0">
                                 <Form.Label>주소</Form.Label>
                                 <Row>
                                     <Col sm={6} md={6}>
@@ -303,8 +263,8 @@ const Signup = (props) => {
                                 </Row>
                             </Col>
                             
-                            {/* 생년월일 섹션 */}
-                            <Col className="mb-3">
+                            {/* 생년월일 */}
+                            <Col className="mb-3 p-0">
                                 <Form.Group>
                                     <Form.Label>생년월일</Form.Label>
                                     <Dropdown onToggle={birthDateDropdownHandler} show={dropDownShow} className="mb-1">
