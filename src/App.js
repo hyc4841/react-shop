@@ -10,7 +10,7 @@ import PostWritePage from './component/page/board/PostWritePage';
 import PostViewPage from './component/page/board/PostViewPage';
 import BoardPage from './component/page/board/BoardPage'
 import LoginPage from './component/page/login/LoginPage'
-import SignupPage from './component/page/signup/signupPage';
+import SignupPage from './component/page/signup/SignupPage';
 
 import MemberInfoPage from './component/page/member/MemberInfoPage';
 
