@@ -16,6 +16,7 @@ import MemberInfoPage from './component/page/member/MemberInfoPage';
 
 import Header from './component/ui/Header';
 import Footer from './component/ui/Footer';
+import ItemListPage from './component/page/item/ItemListPage';
 
 const MainTitleText = styled.p`
     font-size: 24px;
@@ -35,6 +36,7 @@ function App(props) {
                 <Route path="post/:postId" element={<PostViewPage />} />
                 <Route path="board" element={<BoardPage />} />
                 <Route path="mypage/info" element={<MemberInfoPage />} />
+                <Route path="items" element={<ItemListPage />} />
             </Routes>
             <Footer/>
         </Router>
