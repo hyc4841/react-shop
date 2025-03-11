@@ -3,12 +3,17 @@
     list-style-type: none;
     padding: 0;
     background: #06b87f;
+    position: relative;
+
 }
 
 .active {
     background: white;
     color: #06b87f;
 
+}
+
+.category_list_item {
 }
 
 .category_list_item a {
@@ -27,11 +32,15 @@
     position: absolute;
     overflow: hidden;
     top: 0;
-    left: 50%;
+    left: 100%;
     margin-left: -1px;
     z-index: 100;
     border: 1px solid #06b87f;
     border-radius: 0 8px 8px 8px;
+    width: 657px;
+    height: 520px;
+
+    background: white;
 }
 
 .category_list_item.active .category_2depth {

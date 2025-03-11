@@ -38,27 +38,29 @@ function MainPage(props) {
 
     const [ category, setCategory ] = useState([]);
 
-    const [ isHovered, setIsHovered ] = useState(false);
-    let timeoutId;
+    const [ isLocked, setIsLocked ] = useState(false);
 
+    const categoryOnMouseEnter = (event) => {
 
-    const categoryOnMouseEnter = (e) => {
-        // const { e, categoryId } = props;
-    
-        clearTimeout(timeoutId);
-        setIsHovered(true)
-    
-        console.log(e.target);
-        
-    };
-    
-    const categoryOnMouseLeave = (e) => {
-    
-        timeoutId = setTimeout(() => {
-            setIsHovered(false);
-        }, 200); // 200ms 후에 hover 상태를 변경
+        if (!isLocked && (event.target.tagName == "LI")) {
+            event.target.classList.add('active');
+        }
+        /*
+        setIsLocked(true);
+            // 해당 요소 active 설정
+            timeoutId = setTimeout(() => {
+                setIsLocked(false);
+            }, 200);
+        */
     };
 
+    const categoryOnMouseLeave = (event) => {
+        // 이렇게 하면 컴퓨터 상태에 따라서 부담이 갈수도 있겠지만 지금은 이게 훨씬 자연스러움
+        const items = document.querySelectorAll('.category_list_item');
+        items.forEach(item => {
+            item.classList.remove('active');
+        })
+    };
 
     useEffect(() => {
         const fetchCategory = async () => {
@@ -88,20 +90,19 @@ function MainPage(props) {
         }
 
         fetchCategory();
-
-        return () => clearTimeout(timeoutId);
     }, []);
 
     return (
-        <Wrapper>
+        
             <Container className="d-flex">
 
                 <div className="catetory text-center" id="category">
                     <ul className="category_list" role="menu">
                         {category.map((item, index) => ( 
 
-                            <li id={index} className="category_list_item" key={item.categoryId} onMouseEnter={(e) => {e.stopPropagation(); categoryOnMouseEnter(e);}} 
-                                onMouseLeave={(e) => {e.stopPropagation(); categoryOnMouseLeave(e);}}>
+                            <li id={`category${index}`} className="category_list_item" key={item.categoryId} 
+                            onMouseEnter={(e) => {categoryOnMouseEnter(e)}} 
+                            onMouseLeave={(e) => {categoryOnMouseLeave(e)}}>
 
                                 <a href="#">{item.categoryName}</a>
 
@@ -117,22 +118,11 @@ function MainPage(props) {
                 </div>
 
                 <div>
-                    <WriteButton
-                        title="글 작성하기"
-                        onClick={() => {
-                            navigate("/post-write");
-                        }}
-                    />
-                    <PostList
-                        posts={data}
-                        onClickItem={(item) => {
-                            navigate(`/post/${item.id}`);
-                        }}
-                    />
+                    
                 </div>
                 
             </Container>
-        </Wrapper>
+       
     );
 }
 
