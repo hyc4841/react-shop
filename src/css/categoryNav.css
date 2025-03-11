@@ -1,0 +1,46 @@
+.category_list {
+    border-radius: 15px;
+    list-style-type: none;
+    padding: 0;
+    background: #06b87f;
+}
+
+.active {
+    background: white;
+    color: #06b87f;
+
+}
+
+.category_list_item a {
+    color: white;
+    text-decoration-line: none;
+}
+
+.category_list_item.active a {
+    color: #06b87f;
+    text-decoration-line: none;
+}
+
+/* 다나와 보고 참고해서 여기 만들기 */
+.category_2depth {
+    display: none;
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    left: 50%;
+    margin-left: -1px;
+    z-index: 100;
+    border: 1px solid #06b87f;
+    border-radius: 0 8px 8px 8px;
+}
+
+.category_list_item.active .category_2depth {
+    display: block;
+}
+
+.category_2depth ul {
+    padding: 15px;
+    list-style-type: none;
+}
+
+

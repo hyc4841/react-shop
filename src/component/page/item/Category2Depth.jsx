@@ -1,4 +1,5 @@
 import React from "react";
+import "../../../css/categoryNav.css";
 
 const Category2Depth = (props) => {
 
@@ -7,9 +8,10 @@ const Category2Depth = (props) => {
     const category2LayerId = `categoryHoverLayer${categoryId}`;
 
     return (
-        <div id={category2LayerId} className="category_2depth" style={{display: "none"}}>
-        
+        <div id={category2LayerId} className="category_2depth" >
+            
             <ul>
+
                 {children && 
                 <>
                     {children.map((item, index) => (
@@ -19,6 +21,7 @@ const Category2Depth = (props) => {
                     ))}
                 </>
                 }
+
             </ul>
             
         </div>
