@@ -16,7 +16,7 @@ const Category2Depth = (props) => {
                 <>
                     {children.map((item, index) => (
                         <li key={item.categoryId}>
-                            <a href="#">{item.categoryName}</a>
+                            <a href={`/products?category=${item.categoryId}`}>{item.categoryName}</a>
                         </li>
                     ))}
                 </>
