@@ -32,11 +32,9 @@ function App(props) {
                 <Route index element={<MainPage />} />
                 <Route path="login" element={<LoginPage />} />
                 <Route path='signup' element={<SignupPage />} />
-                <Route path="post-write" element={<PostWritePage />} />
-                <Route path="post/:postId" element={<PostViewPage />} />
                 <Route path="board" element={<BoardPage />} />
                 <Route path="mypage/info" element={<MemberInfoPage />} />
-                <Route path="items" element={<ItemListPage />} />
+                <Route path="/products" element={<ItemListPage />} />
             </Routes>
             <Footer/>
         </Router>
