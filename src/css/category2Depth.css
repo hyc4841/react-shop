@@ -1,0 +1,32 @@
+/* 다나와 보고 참고해서 여기 만들기 */
+
+
+.category_2depth {
+    display: none;
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    left: 100%;
+    margin-left: -1px;
+    z-index: 100;
+    border: 1px solid #06b87f;
+    border-radius: 0 8px 8px 8px;
+    width: 657px;
+    height: 600px;
+
+    background: white;
+}
+
+.category_list_item.active .category_2depth {
+    display: block;
+}
+
+.category_2depth ul {
+    padding: 15px;
+    list-style-type: none;
+}
+
+.category_2depth_list_item.active {
+    background: rgba(86, 86, 89, 0.138);
+}
+
