@@ -1,19 +1,37 @@
+.active {
+    background: white;
+    color: #06b87f;
+}
+
+.category_nav {
+    width: 200px;
+    text-align: center;
+}
+
 .category_list {
     border-radius: 15px;
     list-style-type: none;
     padding: 0;
     background: #06b87f;
     position: relative;
+    & > * {
+        padding: 10px;
+    }
 
-}
-
-.active {
-    background: white;
-    color: #06b87f;
-
+    & > * {
+        :not(:last-child) {
+            padding: 5px; 
+        }
+    }
+    
 }
 
 .category_list_item {
+
+}
+
+.category_btn {
+    pointer-events: none;
 }
 
 .category_list_item a {
@@ -21,35 +39,14 @@
     text-decoration-line: none;
 }
 
+
+
+
 .category_list_item.active a {
     color: #06b87f;
     text-decoration-line: none;
 }
 
-/* 다나와 보고 참고해서 여기 만들기 */
-.category_2depth {
-    display: none;
-    position: absolute;
-    overflow: hidden;
-    top: 0;
-    left: 100%;
-    margin-left: -1px;
-    z-index: 100;
-    border: 1px solid #06b87f;
-    border-radius: 0 8px 8px 8px;
-    width: 657px;
-    height: 520px;
 
-    background: white;
-}
-
-.category_list_item.active .category_2depth {
-    display: block;
-}
-
-.category_2depth ul {
-    padding: 15px;
-    list-style-type: none;
-}
 
 
