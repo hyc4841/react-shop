@@ -1,7 +1,9 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Nav } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
+import CategoryNav from "./CategoryNav";
+import ItemCard from "./ItemCard";
 
 const ItemListPage = () => {
 
@@ -16,6 +18,8 @@ const ItemListPage = () => {
 
     const searchCond = {categories, itemName, morePrice, lessPrice};
 
+    const [ items, setItems ] = useState([]);
+
     console.log(searchCond);
 
     // 나중에는 검색 태그 같은것들을 바디에 넣어서 조회
@@ -23,6 +27,9 @@ const ItemListPage = () => {
     useEffect(() => {
         const fetchItems = async () => {
             try {
+                console.log("categoryId : " + categoryId)
+
+
                 const response = await axios.get(`http://localhost:8080/items`, {
                     params: {
                         categories: categoryId,
@@ -39,6 +46,8 @@ const ItemListPage = () => {
 
                 console.log("dfdfd");
                 console.log(response.data);
+                setItems(response.data);
+                
                                                 
             } catch (error) {
                 console.log(error);
@@ -46,23 +55,25 @@ const ItemListPage = () => {
         };
 
         fetchItems();
-    });
+    }, []); // [] 이거 역할 다시 알기
 
 
     return (
         <Container className="d-flex">
-            <div className="d-flex flex-column flex-shrink" style={{width: "280px"}}>
-                <a href="#" className="d-flex align-items-center text-decoration-none">
-                    <span>사이드 바</span>
+            
+            {/* 카테고리 네비게이션 */}
+            <CategoryNav />
+            
+            {/* 상품 리스트 */}
+            <div>
+                {/* 상세검색 필터링 체크하는 곳 */}
 
-                </a>
-
-                <hr />
-
-                
-                
+                <ItemCard 
+                    items={items}
+                />
             </div>
-
+            
+            
         </Container>
     );
     
@@ -70,3 +81,16 @@ const ItemListPage = () => {
 };
 
 export default ItemListPage;
+
+/*
+SearchCond API
+------- 공통 부분 -------
+type : String
+categories : List<Long>
+itemName : String
+
+morePrice : Integer
+lessPrice : Integer
+
+
+*/
