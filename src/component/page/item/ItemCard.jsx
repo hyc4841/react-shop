@@ -6,10 +6,7 @@ const ItemCard = (props) => {
 
     const {items} = props;
 
-    console.log("아이템 데이터");
-    console.log(items);
-
-
+    console.log("아이템 데이터 : ", items);
 
 
 
