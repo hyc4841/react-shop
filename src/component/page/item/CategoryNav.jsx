@@ -21,7 +21,7 @@ const CategoryNav = () => {
                     withCredentials: true
                 });
 
-                console.log(response);
+                console.log("카테고리 응답 데이터 : ", response.data);
                 setCategory(response.data); // 카테고리 저장
             } catch (error) {
                 if (error.status == 403) {
