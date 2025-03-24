@@ -18,11 +18,7 @@
         padding: 10px;
     }
 
-    & > * {
-        :not(:last-child) {
-            padding: 5px; 
-        }
-    }
+    
     
 }
 

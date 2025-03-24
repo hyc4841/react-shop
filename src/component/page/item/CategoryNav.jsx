@@ -2,8 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Category2Depth from "./Category2Depth";
-
-
+import '../../../css/categoryNav.css';
 
 const CategoryNav = () => {
 

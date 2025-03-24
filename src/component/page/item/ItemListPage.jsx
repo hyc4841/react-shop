@@ -5,7 +5,6 @@ import { data, useLocation } from "react-router-dom";
 import CategoryNav from "./CategoryNav";
 import ItemCard from "./ItemCard";
 import ItemFilter from "./ItemFilter";
-import qs from 'qs';
 
 const ItemListPage = () => {
 

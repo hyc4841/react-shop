@@ -37,13 +37,9 @@
     & > * {
         padding: 10px;
     }
+}
 
-    & > * {
-        :not(:last-child) {
-            padding: 5px; 
-        }
-    }
-
-
+.category_btn {
+    pointer-events: none;
 }
 
