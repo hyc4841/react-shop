@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import MainPage from './component/page/MainPage';
 import PostWritePage from './component/page/board/PostWritePage';
 import PostViewPage from './component/page/board/PostViewPage';
+
 import BoardPage from './component/page/board/BoardPage'
 import LoginPage from './component/page/login/LoginPage'
 import SignupPage from './component/page/signup/SignupPage';

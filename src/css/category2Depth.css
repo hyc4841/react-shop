@@ -30,3 +30,20 @@
     background: rgba(86, 86, 89, 0.138);
 }
 
+.category_2depth_list {
+    text-align: left;
+    position: relative;
+
+    & > * {
+        padding: 10px;
+    }
+
+    & > * {
+        :not(:last-child) {
+            padding: 5px; 
+        }
+    }
+
+
+}
+
