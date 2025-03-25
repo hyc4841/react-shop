@@ -22,7 +22,6 @@ const Category2Depth = (props) => {
 
         
         const parentBox = depth2Rect.current.getBoundingClientRect();
-
         if ((event.target.tagName == "LI")) {
             event.target.classList.add('active');
 
