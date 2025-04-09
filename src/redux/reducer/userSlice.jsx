@@ -40,7 +40,7 @@ export const isLoggedInFetch = createAsyncThunk(
     'user/isLoggedInFetch',
     async (args, { dispatch, getState, rejectWithValue }) => {
         try {
-            const response = await axios.get('http://localhost:8080/member/islogin', {
+            const response = await axios.get('http://localhost:8080/member/isLogin', {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('accessToken')}`
                 },

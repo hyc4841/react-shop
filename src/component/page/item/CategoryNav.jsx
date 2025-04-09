@@ -13,12 +13,7 @@ const CategoryNav = () => {
     useEffect(() => {
         const fetchCategory = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/category/major', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-                    },
-                    withCredentials: true
-                });
+                const response = await axios.get('http://localhost:8080/category/major');
 
                 console.log("카테고리 응답 데이터 : ", response.data);
                 setCategory(response.data); // 카테고리 저장
@@ -28,12 +23,10 @@ const CategoryNav = () => {
                     navigate('/');
                 } else if (error.status == 401) {
                     alert("카테고리를 가져오지 못함");
-                    navigate('')
+                    navigate('');
                 }
-
                 console.log(error);
-                alert("유저를 검증할 수 없습니다.");
-                navigate('/'); // 만약 잘못된 토큰 제시로 보안상 문제가 있으면 홈 화면으로 이동
+                navigate('/');
             }
         }
 
@@ -45,13 +38,6 @@ const CategoryNav = () => {
         if ((event.target.tagName == "LI")) {
             event.target.classList.add('active');
         }
-        /*
-        setIsLocked(true);
-            // 해당 요소 active 설정
-            timeoutId = setTimeout(() => {
-                setIsLocked(false);
-            }, 200);
-        */
     };
     
     const categoryOnMouseLeave = (event) => {
