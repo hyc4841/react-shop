@@ -17,6 +17,17 @@ const Category2Depth = (props) => {
     // top 값을 렌더링 되기전에 모두 설정해놓을 수 있다.
     // 만약 bottom 값 비교해서 자식이 부모모다 아래 있으면 top값을 조정한다.
 
+    var temp;
+    for (var i = 0; i < children.length; i++) {
+        for (var j = i + 1; j < children.length; j++) {
+            if (children[i].sequence > children[j].sequence) {
+                // 스위칭한다.
+                temp = children[i];
+                children[i] = children[j];
+                children[j] = temp;
+            }
+        }
+    }
 
     const category2DepthOnMouseEnter = (event) => {
 
@@ -50,27 +61,34 @@ const Category2Depth = (props) => {
     return (
         <div id={category2LayerId} className="category_2depth" ref={depth2Rect}>
             
-            <ul className="category_2depth_list" >
+            <ul className="category_2depth_list">
 
                 {children && 
                     <>
                         {children.map((item, index) => (
-                            <li className="category_2depth_list_item" key={item.categoryId}
-                                onMouseEnter={category2DepthOnMouseEnter}
-                                onMouseLeave={category2DepthOnMouseLeave}>
-                                
+                            <div key={item.categoryId}>
+                                <p style={{marginBottom: "5px", color: "black"}}><strong>{item.categoryName}</strong></p>
+                                {item.children && item.children.length > 0 && (
+                                    <>
+                                        {item.children.map((child, childIndex) => (
+                                            
+                                            <li className="category_2depth_list_item" key={child.categoryId}
+                                                onMouseEnter={category2DepthOnMouseEnter}
+                                                onMouseLeave={category2DepthOnMouseLeave}>
 
-                                    {/* 여기에 3차 네비게이션 넣어야함. */}
-                                <Category3Depth 
-                                    children={item.children}
-                                    depth3Rect={depth3Rect}
-                                    id={item.categoryId}
-                                    setIs3DepthOpen={setIs3DepthOpen}
-                                    is2DepthOpen={is2DepthOpen}
-                                />
-                                <a className="category_btn" href={`/products?category=${item.categoryId}`}>{item.categoryName}</a>
-                                
-                            </li>
+                                                <Category3Depth 
+                                                    children={child.children}
+                                                    depth3Rect={depth3Rect}
+                                                    id={child.categoryId}
+                                                    setIs3DepthOpen={setIs3DepthOpen}
+                                                    is2DepthOpen={is2DepthOpen}
+                                                />
+                                                <a className="category_btn" href={`/products?category=${child.categoryId}`}>{child.categoryName}</a>
+                                            </li>
+                                        ))}
+                                    </>
+                                )}
+                            </div>
                         ))}
                     </>
                 }

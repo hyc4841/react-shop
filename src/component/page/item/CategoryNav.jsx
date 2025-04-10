@@ -62,7 +62,7 @@ const CategoryNav = () => {
                         <a className="category_btn" href="#">{item.categoryName}</a>
 
                         {/* className = category_2depth */}
-                        <Category2Depth 
+                        <Category2Depth
                             categoryId={item.categoryId}
                             children={item.children}
                         />
