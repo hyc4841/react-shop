@@ -1,0 +1,9 @@
+.error-field {
+    color: red;
+    margin-bottom: 0;
+}
+
+.inform-field {
+    color: rgb(39, 39, 254);
+    margin-bottom: 0;
+}

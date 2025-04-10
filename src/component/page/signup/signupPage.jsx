@@ -7,9 +7,9 @@ import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 import moment from "moment";
 
-import { type } from "@testing-library/user-event/dist/type";
-import styled from "styled-components";
 import '../../../css/signupPage.css';
+import EmailCertificationButton from "./EmailCerificationButton";
+import EmailCodeSubmitButton from "./EmailCodeSubmitButton";
 
 
 const Signup = (props) => {
@@ -35,6 +35,10 @@ const Signup = (props) => {
     const [ birthDateShow, setBirthDateShow ] = useState('');     // 생년월일 표시 변수
 
     const [ error, setError ] = useState('');                      // 회원가입 오류 응답 변수
+    const [ emailCodeisSent, setEmailCodeisSent ] = useState(false);
+    const [ emailCode, setEmailCode ] = useState('');
+    const [ isEmailCertificated, setIsEmailCertificated ] = useState(false);
+    const [ emailCodeReReq, setEmailCodeReReq ] = useState(false);
 
     const signupSubmit = async (e) => {
         e.preventDefault(); // 폼 제출 방지
@@ -75,7 +79,7 @@ const Signup = (props) => {
                     {error.message && 
                         <>
                             {error.message.map((error, index) => (
-                                <p style={{ color: 'red' }}>{error.message}</p>
+                                <p className="error-field" key={index}>※ {error.message}</p>
                             ))}
                         </>
                     }
@@ -95,7 +99,7 @@ const Signup = (props) => {
                                     {error.name && 
                                     <>
                                         {error.name.map((error, index) => (
-                                            <p style={{ color: 'red' }}>{error.message}</p>
+                                            <p className="error-field" key={index}>※ {error.message}</p>
                                         ))}
                                     </>
                                     }
@@ -107,12 +111,17 @@ const Signup = (props) => {
                             <Col sm={12} className="p-0">
                                 <Form.Group className="mb-3" controlId="userId">
                                     <Form.Label>아이디</Form.Label>
-                                    <Form.Control onChange={(e) => setLoginId(e.target.value)} type="text" value={loginId} placeholder="아이디를 입력하세요" />
+                                    <div className="d-flex">
+                                        <Form.Control onChange={(e) => setLoginId(e.target.value)} type="text" value={loginId} placeholder="아이디를 입력하세요" />
+
+                                        <Button style={{whiteSpace: "nowrap", marginLeft: "15px"}}>중복확인</Button>
+
+                                    </div>
                                     <Form.Text className="text-muted">여기에 아이디를 입력하세요</Form.Text>
                                     {error.loginId && 
                                     <>
                                         {error.loginId.map((error, index) => (
-                                            <p style={{ color: 'red' }}>{error.message}</p>
+                                            <p className="error-field" key={index}>※ {error.message}</p>
                                         ))}
                                     </>
                                     }
@@ -130,7 +139,7 @@ const Signup = (props) => {
                                     {error.passwordAndCheck && 
                                     <>
                                         {error.passwordAndCheck.map((error, index) => (
-                                            <p style={{ color: 'red' }}>{error.message}</p>
+                                            <p className="error-field" key={index}>※ {error.message}</p>
                                         ))}
                                     </>
                                     }
@@ -141,11 +150,66 @@ const Signup = (props) => {
                             <Col sm={12} className="p-0">
                                 <Form.Group className="mb-3">
                                     <Form.Label>이메일</Form.Label>
-                                    <Form.Control onChange={(e) => setEmail(e.target.value)} type="email" value={email} placeholder="이메일을 입력하세요" />
+                                    <div className="d-flex mb-2">
+                                        <Form.Control onChange={(e) => setEmail(e.target.value)} value={email} type="email" placeholder="이메일을 입력하세요" />
+                                            {/* 이메일 인증 코드 요청 버튼 */}
+                                        <EmailCertificationButton style={{whiteSpace: "nowrap", marginLeft: "15px"}}
+                                            email={email}
+                                            emailCodeisSent={emailCodeisSent}
+                                            setEmailCodeisSent={setEmailCodeisSent}
+                                            setError={setError}
+                                            setEmailCodeReReq={setEmailCodeReReq}
+                                        />
+
+                                    </div>
+                                    {emailCodeisSent && 
+                                        <>
+                                            <div className="d-flex">
+                                                <Form.Control onChange={(e) => setEmailCode(e.target.value)} value={emailCode}
+                                                    type="text"  placeholder="인증 코드를 입력해주세요"/>
+
+                                                    {/* 이메일 인증 코드 제출 버튼 */}
+                                                <EmailCodeSubmitButton 
+                                                    email={email}
+                                                    code={emailCode}
+                                                    setError={setError}
+                                                    setIsEmailCertificated={setIsEmailCertificated}
+                                                    setEmailCodeisSent={setEmailCodeisSent}
+                                                />
+                                            </div>
+
+
+                                            {!emailCodeReReq ?  
+                                                <p className="inform-field">인증 코드를 전송했습니다. 코드를 입력해주세요.</p>
+                                            :
+                                                <p className="inform-field">인증 코드를 다시 요청했습니다. 코드를 입력해주세요.</p>
+                                            }
+                                            
+
+
+
+                                            {error.code && 
+                                                <>
+                                                    {error.code.map((error, index) => (
+                                                        <p className="error-field" key={index}>※ {error.message}</p>
+                                                    ))}
+                                                </>
+                                            }
+
+
+
+
+                                        </>  
+                                    }
+
+                                    {isEmailCertificated && 
+                                        <p className="inform-field">인증에 성공했습니다!</p>
+                                    }
+                                    
                                     {error.email && 
                                     <>
                                         {error.email.map((error, index) => (
-                                            <p style={{ color: 'red' }}>{error.message}</p>
+                                            <p className="error-field" key={index}>※ {error.message}</p>
                                         ))}
                                     </>
                                     }
@@ -160,48 +224,31 @@ const Signup = (props) => {
                                     {error.phoneNum && 
                                     <>
                                         {error.phoneNum.map((error, index) => (
-                                            <p style={{ color: 'red' }}>{error.message}</p>
+                                            <p className="error-field" key={index}>※ {error.message}</p>
                                         ))}
                                     </>
                                     }
                                 </Form.Group>
                             </Col>
 
-
                             {/* 성별 */}
                             <Col xs={12} className="p-0">
-                                <Form>
-                                    <Form.Label>성별</Form.Label>
-                                    {['radio'].map((type) => (
-                                        <div key={`inline-${type}`} className="mb-3">
-                                            <Form.Check
-                                                inline
-                                                label="남자"
-                                                name="gender"
-                                                type={type}
-                                                id="man"
-                                                value={"MAN"}
-                                                onChange={(e) => setGender(e.target.value)}
-                                            />
-                                            <Form.Check
-                                                inline
-                                                label="여자"
-                                                name="gender"
-                                                type={type}
-                                                id="women"
-                                                value={"WOMEN"}
-                                                onChange={(e) => setGender(e.target.value)}
-                                            />
-                                    {error.gender && 
-                                    <>
-                                        {error.gender.map((error, index) => (
-                                            <p style={{ color: 'red' }}>{error.message}</p>
-                                        ))}
-                                    </>
-                                    }
-                                        </div>
-                                    ))}
-                                </Form>
+                                <Form.Label>성별</Form.Label>
+                                {['radio'].map((type) => (
+                                    <div key={`inline-${type}`} className="mb-3">
+                                        <Form.Check id="man" label="남자" name="gender" type={type} value={"MAN"}
+                                            onChange={(e) => setGender(e.target.value)} inline/>
+                                        <Form.Check id="women" label="여자" name="gender" type={type} value={"WOMEN"}
+                                            onChange={(e) => setGender(e.target.value)} inline/>
+                                        {error.gender && 
+                                            <>
+                                                {error.gender.map((error, index) => (
+                                                    <p className="error-field" key={index}>※ {error.message}</p>
+                                                ))}
+                                            </>
+                                        }
+                                    </div>
+                                ))}
                             </Col>
 
                             {/* 주소 */}
@@ -236,7 +283,7 @@ const Signup = (props) => {
                                         {error.street && 
                                             <>
                                                 {error.street.map((error, index) => (
-                                                    <p style={{ color: 'red', paddingTop: "0px"}}>{error.message}</p>
+                                                    <p className="error-field" key={index}>※ {error.message}</p>
                                                 ))}
                                             </>
                                         }
@@ -254,7 +301,7 @@ const Signup = (props) => {
                                         {error.detailedAddress && 
                                             <>
                                                 {error.detailedAddress.map((error, index) => (
-                                                    <p style={{ color: 'red', paddingTop: "0px"}}>{error.message}</p>
+                                                    <p className="error-field" key={index}>※ {error.message}</p>
                                                 ))}
                                             </>
                                         }
