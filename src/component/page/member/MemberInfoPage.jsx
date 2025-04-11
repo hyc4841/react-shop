@@ -1,22 +1,21 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Container, Row, Table, Col, Button } from "react-bootstrap";
+import axios from "axios";
+import { Container, Row, Table, Col, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import Mypga from "../../page/member/MyPageNav";
 import MypageNav from "../../page/member/MyPageNav";
-
-import '../../../css/memberInfoPage.css';
 import PasswordChangeButton from "./PasswordChangButton";
 import LoginChangeButton from "./LoginIdChangeButton";
 import EmailChangeButton from "./EmailChangeButton";
 import PhoneNumChangeButton from "./PhoneNumChangeButton";
 import NameChangeButton from "./NameChangeButton";
-import DaumPostModal from "../signup/DaumPostModal";
-import AddressChangeButton from "./AddressChangeButton";
+
+import '../../../css/memberInfoPage.css';
+import UpdateEmailCodeSubmitbutton from "./UpdateEmailCodeSubmitButton";
 
 const MemberInfo = (props) => {
     const navigate = useNavigate();
+
+    const [ error, setError ] = useState('');
 
     const [ memberData, setMemberData ] = useState(null);
     const [ curPwd, setCurPwd ] = useState("");
@@ -24,7 +23,9 @@ const MemberInfo = (props) => {
     const [ newPwdCon, setNewPwdCon ] = useState("");
 
     const [ newLoginId, setNewLoginId ] = useState("");
-    const [ newEmail , setNewEmail ] = useState("");
+    const [ email , setEmail ] = useState("");
+    const [ emailCode, setEmailCode ] = useState('');
+
     const [ newPhoneNum, setNewPhoneNum ] = useState("");
     const [ newName, setNewName ] = useState("");
     
@@ -36,6 +37,9 @@ const MemberInfo = (props) => {
     const [ emailChgIsVisible, setEmailChgIsVisible ] = useState(false); // 이메일 변경 버튼 플레그
     const [ emailChgTitle, setEmailChgTitle ] = useState("변경하기"); // 변경 버튼 텍스트
     const [ emailChgError, setEmailChgError ] = useState("");
+
+    const [ emailCodeIsSent, setEmailCodeIsSent ] = useState(false);
+
 
     const [ phoneNumChgIsVisible, setPhoneNumChgIsVisible ] = useState(false); // 이메일 변경 버튼 플레그
     const [ phoneNumChgTitle, setPhoneNumChgTitle ] = useState("변경하기"); // 변경 버튼 텍스트
@@ -134,10 +138,7 @@ const MemberInfo = (props) => {
 
     const addressChangeBtn = () => {
         setModalOnOff(true);
-    }
-
-    console.log(passwordChgError);
-    
+    };
     
     return (
         <Container style={{ border: '1px solid blue', display: "flex"}}>
@@ -198,29 +199,52 @@ const MemberInfo = (props) => {
                                     <>
                                         <div style={{display: "flex", marginTop: "15px"}}>
 
-                                            <input className="form-control" type="email" onChange={(e) => setNewEmail(e.target.value)}
-                                            style={{width: "auto", marginRight: "10px"}} />
+                                            <Form.Control type="email" onChange={(e) => setEmail(e.target.value)}
+                                            style={{width: "auto", marginRight: "10px"}} placeholder="이메일을 입력해주세요" />
 
                                             <EmailChangeButton
-                                                newEmail={newEmail}
-                                                onChangeError={setEmailChgError}
-                                                fetchMemberData={setMemberData}
+                                                email={email}
+                                                setError={setError}
+                                                setMemberData={setMemberData}
+                                                setEmailCodeIsSent={setEmailCodeIsSent}
+                                                emailCodeIsSent={emailCodeIsSent}
                                             />
                                         </div>
 
-                                        {emailChgError && 
-                                            <>
-                                                
-                                                <div style={{marginTop: "10px"}}>
-                                                    {emailChgError.newEmail.map((error, index) => (
-                                                        <p key={error.id} style={{color: "red", marginBottom: "0px"}}>※ {error.message}</p>
-                                                    ))}
-                                                    
+                                        {emailCodeIsSent && (
+                                            <> 
+                                                <div>
+                                                    <p style={{color: "blue"}}>인증 코드를 전송했습니다.</p>
+                                                </div>
+
+                                                <div className="d-flex">
+                                                    <Form.Control type="text" onChange={(e) => setEmailCode(e.target.value)}
+                                                    value={emailCode}  placeholder="코드를 입력해주세요"/>
+
+                                                    <UpdateEmailCodeSubmitbutton
+                                                        email={email}
+                                                        code={emailCode}
+                                                        setError={setError}
+                                                        setMemberData={setMemberData}
+                                                    />
                                                 </div>
                                             </>
-
-                                            
-                                        
+                                        )}
+                                        {error.code &&   
+                                            <div style={{marginTop: "10px"}}>
+                                                {error.code.map((error, index) => (
+                                                    <p key={error.id} style={{color: "red", marginBottom: "0px"}}>※ {error.message}</p>
+                                                ))}
+                                                
+                                            </div>    
+                                        }
+                                        {error.email &&   
+                                            <div style={{marginTop: "10px"}}>
+                                                {error.email.map((error, index) => (
+                                                    <p key={error.id} style={{color: "red", marginBottom: "0px"}}>※ {error.message}</p>
+                                                ))}
+                                                
+                                            </div>    
                                         }
                                     </>
                                 }
@@ -261,8 +285,6 @@ const MemberInfo = (props) => {
                                         }
                                     </>
                                 }
-
-                                
                             </td>
                         </tr>
 
