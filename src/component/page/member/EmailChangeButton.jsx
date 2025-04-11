@@ -6,14 +6,16 @@ import { useNavigate } from "react-router-dom";
 
 const EmailChangeButton = (props) => {
 
-    const { newEmail, onChangeError, fetchMemberData } = props;
+    const { email, setError, setMemberData, setEmailCodeIsSent, emailCodeIsSent} = props;
     const navigate = useNavigate();
+
+    var buttonTitle = emailCodeIsSent ? "인증 재요청" : "인증요청";
 
     const submitmailChange = async () => {
         
         try {
-            const response = await axios.post('http://localhost:8080/member/email', 
-                { newEmail },
+            const response = await axios.post('http://localhost:8080/member/email/auth', 
+                { email: email },
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
@@ -23,21 +25,20 @@ const EmailChangeButton = (props) => {
                 }
             );
 
-            console.log(response);
-            alert("이메일 변경 성공");
-            fetchMemberData(response.data.memberInfo);
-            navigate(0);
+            console.log("이메일 변경 요청 응답 : ", response);
+            setEmailCodeIsSent(true);
+            // navigate(0);
+
         } catch (error) {
-            console.log(error.response);
-            // 오류 발생시 처리
-            onChangeError(error.response.data);
+            console.error("이메일 변경 오류 : ", error.response.data);
+            setError(error.response.data);
         }
     };
 
 
     return (
-        <Button type="button" onClick={submitmailChange}>
-            이메일 변경
+        <Button type="button" onClick={submitmailChange} style={{whiteSpace: "nowrap"}}>
+            {buttonTitle}
         </Button>
     );
 };
