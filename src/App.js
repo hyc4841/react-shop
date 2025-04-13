@@ -18,6 +18,7 @@ import MemberInfoPage from './component/page/member/MemberInfoPage';
 import Header from './component/ui/Header';
 import Footer from './component/ui/Footer';
 import ItemListPage from './component/page/item/ItemListPage';
+import SalesPage from './component/page/salesPage/SalesPage';
 
 const MainTitleText = styled.p`
     font-size: 24px;
@@ -36,6 +37,8 @@ function App(props) {
                 <Route path="board" element={<BoardPage />} />
                 <Route path="mypage/info" element={<MemberInfoPage />} />
                 <Route path="/products" element={<ItemListPage />} />
+                <Route path="/salesPage/" element={<SalesPage />} />
+
             </Routes>
             <Footer/>
         </Router>
