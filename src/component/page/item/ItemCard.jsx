@@ -4,7 +4,7 @@ import "../../../css/itemCard.css"
 
 const ItemCard = (props) => {
 
-    const {items} = props;
+    const { items } = props;
 
     console.log("아이템 데이터 : ", items);
 
@@ -25,12 +25,16 @@ const ItemCard = (props) => {
                             </svg>
                         </Col>
                         <Col md={8}>
-                            <Card.Body>
-                                {/* 이름 규칙 : 제조사 + 브랜드 + 제품명 */}
-                                <Card.Title>{item.lapTopManufactureBrand && item.lapTopManufactureBrand} {item.lapTopBrand} {item.name}</Card.Title>
-                                <Card.Text>테스트입니다</Card.Text>
+                            <a href={`/salesPage/?pageId=${item.id}`}>
+                                <Card.Body>
+                                    {/* 이름 규칙 : 제조사 + 브랜드 + 제품명 */}
 
-                            </Card.Body>
+                                    <Card.Title>{item.id} {item.pageName}</Card.Title>
+                                    <Card.Text>{item.description} </Card.Text>
+
+                                </Card.Body>
+                            </a>
+                                
                         </Col>
                     </Row>
 
