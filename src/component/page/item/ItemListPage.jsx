@@ -6,6 +6,9 @@ import CategoryNav from "./CategoryNav";
 import ItemCard from "./ItemCard";
 import ItemFilter from "./ItemFilter";
 
+import '../../../css/itemListPage.css';
+
+
 const ItemListPage = () => {
 
     const location = useLocation();
@@ -147,6 +150,8 @@ const ItemListPage = () => {
                     filterChgHandler={filterChgHandler}
                     selectedFilters={selectedFilters}
                 /> 
+
+                <hr className="separation_line"/>
 
                 <ItemCard 
                     items={items}
