@@ -7,6 +7,7 @@ import { Container, Navbar, Nav, Dropdown, Form, Button } from "react-bootstrap"
 
 
 import { StyledNavItem } from "../style/header/headrStyle";
+import '../../css/header.css';
 
 import logo from '../../image/logo.jpg';
 
@@ -70,6 +71,7 @@ const Header = () => {
 
             <header className="py-3 mb-4 border-bottom">
                 <Container className="d-flex flex-wrap justify-content-between">
+
                     <div className="d-flex">
                         <Dropdown>
                             <a href="#">드랍다운 카테고리</a>
@@ -88,7 +90,7 @@ const Header = () => {
                     </Form>
 
                     <div>
-
+                        
                     </div>
                     
                 </Container>
