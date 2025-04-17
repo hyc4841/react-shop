@@ -1,6 +1,8 @@
 import React from "react";
 import { Row, Col } from "react-bootstrap";
 
+import '../../../css/itemFilter.css';
+
 
 const ItemFilter = (props) => {
     const { filterList, filterChgHandler, selectedFilters} = props;
@@ -18,29 +20,35 @@ const ItemFilter = (props) => {
     };
 
     return (
-        <div>
+        <div className="item_filter">
             <ul>
                 {filterList && 
                     Object.entries(filterList).map(([key, values]) => (
-                        <div key={key}>
-                            <h3>{fieldNameMap[key] || key}</h3>
-                            <Row>
-                                {values.map((item, index) => (
-                                    <Col md={2} key={index}>
-                                        <div style={{whiteSpace: "nowrap"}}>
-                                            <label key={index} style={{marginRight: "10px"}}>
+                        // 여기서도 접는거 한번 구현하고
+                        <dl className="filter_block" key={key}>
+                            <dt className="item_dt">{fieldNameMap[key] || key}</dt>
+                            <dd className="item_dd">
+                                <ul>
+                                    {values.map((item, index) => (
+                                        // 여기서도 접는거 한번더 구현
+                                        // 메인 필터 보여주는 곳
+                                        <li className="filter_component" key={index}>
+                                            <label key={index}>
+                                                <input 
+                                                    type="checkbox"
+                                                    checked={selectedFilters[key]?.includes(item) || false}
+                                                    onChange={() => filterChgHandler(key, item)}/>
                                                 {item}
                                             </label>
-                                            <input 
-                                                type="checkbox"
-                                                checked={selectedFilters[key]?.includes(item) || false}
-                                                onChange={() => filterChgHandler(key, item)}
-                                            />
-                                        </div>
-                                    </Col>
-                                ))}
-                            </Row>
-                        </div>
+                                        </li>
+                                        // 필터 펼치기 및 접기 버튼
+
+                                        // 모든 필터 보여주는곳
+                                        // 컴포넌트 기반으로 만든다.
+                                    ))}
+                                </ul>
+                            </dd>
+                        </dl>
                     ))
                 }
             </ul>
