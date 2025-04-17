@@ -50,7 +50,7 @@ const CategoryNav = () => {
     };
 
     return (
-        <div className="category_nav" id="category">
+        <div className="category_nav" id="category" style={{minWidth: "240px", width: "240px"}}>
                  
             <ul className="category_list" role="menu">
 
@@ -59,7 +59,7 @@ const CategoryNav = () => {
                     onMouseEnter={(e) => {categoryOnMouseEnter(e)}} 
                     onMouseLeave={(e) => {categoryOnMouseLeave(e)}}>
 
-                        <a className="category_btn" href="#">{item.categoryName}</a>
+                        <a className="category_btn" href="#">{item.categoryId} {item.categoryName}</a>
 
                         {/* className = category_2depth */}
                         <Category2Depth

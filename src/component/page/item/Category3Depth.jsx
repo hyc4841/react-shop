@@ -27,7 +27,7 @@ const Category3Depth = (props) => {
                     <>
                         {children.map((item, index) => (
                             <li className="category_3depth_list_item" key={item.categoryId} style={{padding: "5px"}}>
-                                <a href={`/products?category=${item.categoryId}`}>{item.categoryName}</a>
+                                <a href={`/products?category=${item.categoryId}`}>{item.categoryId} {item.categoryName}</a>
                             </li>
                         ))}
                     </>

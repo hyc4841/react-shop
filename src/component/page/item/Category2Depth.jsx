@@ -83,7 +83,7 @@ const Category2Depth = (props) => {
                                                     setIs3DepthOpen={setIs3DepthOpen}
                                                     is2DepthOpen={is2DepthOpen}
                                                 />
-                                                <a className="category_btn" href={`/products?category=${child.categoryId}`}>{child.categoryName}</a>
+                                                <a className="category_btn" href={`/products?category=${child.categoryId}`}>{child.categoryId} {child.categoryName}</a>
                                             </li>
                                         ))}
                                     </>
