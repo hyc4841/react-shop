@@ -1,8 +1,6 @@
 import React from "react";
-import { Row, Col } from "react-bootstrap";
 
 import '../../../css/itemFilter.css';
-
 
 const ItemFilter = (props) => {
     const { filterList, filterChgHandler, selectedFilters} = props;
@@ -36,9 +34,9 @@ const ItemFilter = (props) => {
                                             <label key={index}>
                                                 <input 
                                                     type="checkbox"
-                                                    checked={selectedFilters[key]?.includes(item) || false}
-                                                    onChange={() => filterChgHandler(key, item)}/>
-                                                {item}
+                                                    checked={selectedFilters[key]?.includes(item.specName) || false}
+                                                    onChange={() => filterChgHandler(key, item.specName)}/>
+                                                {item.specName}
                                             </label>
                                         </li>
                                         // 필터 펼치기 및 접기 버튼

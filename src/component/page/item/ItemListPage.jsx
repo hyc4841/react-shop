@@ -33,6 +33,10 @@ const ItemListPage = () => {
 
 
     const filterChgHandler = (field, value) => {
+
+        console.log("필드", field);
+        console.log("벨류", value);
+
         setSelectedFilters((prev) => {
             const curValues = prev[field] || [];
 
