@@ -8,8 +8,6 @@ const ItemCard = (props) => {
 
     console.log("아이템 데이터 : ", items);
 
-
-
     function formattinPrice(price) {
         const formettedPrice = new Intl.NumberFormat('ko-KR', {
             style: 'currency', // 만약 단위 표시 없애고 싶으면 decimal로 설정하면 됨.
@@ -19,8 +17,6 @@ const ItemCard = (props) => {
         return formettedPrice
     };
 
-
-    console.log("아이템 리스트의 길이 : ", items.length);
     return (
         <div className="item_list">
             {items.length != 0 ? 

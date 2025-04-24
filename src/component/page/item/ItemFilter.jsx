@@ -2,6 +2,8 @@ import React from "react";
 import { Button, Nav } from "react-bootstrap";
 
 import '../../../css/itemFilter.css';
+import ItemSpecList from "./ItemSpecList";
+import ItemSpecListButton from "./ItemSpecListButton";
 
 const ItemFilter = (props) => {
     const { filterList, filterChgHandler, selectedFilters} = props;
@@ -15,8 +17,6 @@ const ItemFilter = (props) => {
 
             if (!popularSpec.has(key1)) {
                 popularSpec.set(key1, []);
-                console.log("저장되는 필드 이름 : ", key1);
-                console.log("이거 맞냐?", popularSpec.get(key1).length);
             }
 
 
@@ -55,6 +55,7 @@ const ItemFilter = (props) => {
 
     return (
         <div className="item_filter">
+            
             <ul>
                 {filterList && 
                     Object.entries(filterList).map(([key, values]) => (
@@ -62,23 +63,55 @@ const ItemFilter = (props) => {
                         <dl className="filter_block" key={key}>
                             <dt className="item_dt">{fieldNameMap[key] || key}</dt>
                             {/* key = tvBrand 이런거임 */}
-                            <dd className="item_dd">
-                                <ul className="d-flex">
-                                    <div>
-                                        {values.length > 5 ? 
-                                            popularSpec.get(key).map((item, index) => (
-                                                <li className="filter_component popular_spec" key={index}>
-                                                    <label key={index}>
-                                                        <input 
-                                                            type="checkbox"
-                                                            checked={selectedFilters[key]?.includes(item.specName) || false}
-                                                            onChange={() => filterChgHandler(key, item.specName)}/>
-                                                        {item.specName}
-                                                    </label>
-                                                </li>
-                                            ))
-                                        :
-                                            values.map((item, index) => (
+                            
+                                
+                                    
+                                {values.length > 5 ? 
+                                    <>
+                                        <dd className="item_dd d-flex">
+                                            <ul className="">
+
+                                                <div className="d-flex">
+
+                                                
+                                                    {popularSpec.get(key).map((item, index) => (
+                                                    <li className="filter_component popular_spec" key={index}>
+                                                        <label key={index}>
+                                                            <input 
+                                                                type="checkbox"
+                                                                checked={selectedFilters[key]?.includes(item.specName) || false}
+                                                                onChange={() => filterChgHandler(key, item.specName)}/>
+                                                            {item.specName}
+                                                        </label>
+                                                    </li>
+                                                    ))}
+
+                                                    <ItemSpecListButton 
+                                                        field={key}
+                                                    />
+
+                                                </div>
+                                                <ItemSpecList
+                                                    specList={values}
+                                                    field={key}
+                                                    filterChgHandler={filterChgHandler}
+                                                    selectedFilters={selectedFilters}
+                                                />
+
+
+                                            </ul>
+                                        </dd>
+
+                                        
+
+
+                                    </>
+                                :
+
+                                <>
+                                <dd className="item_dd">
+                                    <ul>
+                                        {values.map((item, index) => (
                                             // 이 부분은 스펙 수가 5 미만이어서 
                                                 <li className="filter_component normal" key={index}>
                                                     <label key={index}>
@@ -93,16 +126,17 @@ const ItemFilter = (props) => {
 
                                                 // 모든 필터 보여주는곳
                                                 // 컴포넌트 기반으로 만든다.
-                                            ))
-                                        }
-                                    </div>
+                                            ))}
+                                    </ul>
 
-                                    {values.length > 5 && 
-                                        <Button>펼치기</Button>
-                                    }
+                                </dd>
+                                
+                                </>
+                                                    
                                     
-                                </ul>
-                            </dd>
+                                }
+                                    
+                            
                         </dl>
                     ))
                 }
