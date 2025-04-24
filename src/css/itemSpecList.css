@@ -1,7 +1,7 @@
-.on {
+.activate {
     display: block;
 }
 
-.off {
+.item_spec_list {
     display: none;
 }
