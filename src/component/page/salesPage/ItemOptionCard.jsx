@@ -3,7 +3,7 @@ import { Form, FormSelect } from "react-bootstrap";
 
 const ItemOptionCard = (props) => {
 
-    const { parent, setSelectedItem } = props;
+    const { parent, setSelectedItems, selectItemHandler } = props;
 
     const [ nextOption, setNextOption ] = useState('');
 
@@ -17,8 +17,9 @@ const ItemOptionCard = (props) => {
             console.log("선택한 옵션인데 아직 상품은 없음 : ", selectedOption);
             setNextOption(selectedOption.child[0]); // 다음 옵션 계층 넘겨주기
         } else if (selectedOption.child.length === 0 && selectedOption.item != null) {
-            setSelectedItem(selectedOption.item); // 만약 다음 계층이 없으면, 해당 옵션은 실제 상품을 가지고 있는 옵션임. 따라서 선택 상품을 설정해 준다.
             console.log("선택한 아이템 : ", selectedOption.item);
+            // 만약 다음 계층이 없으면, 해당 옵션은 실제 상품을 가지고 있는 옵션임. 따라서 선택 상품을 설정해 준다.
+            selectItemHandler(selectedOption.item);
         }
     };
 
@@ -40,7 +41,8 @@ const ItemOptionCard = (props) => {
                 {nextOption && 
                     <ItemOptionCard 
                         parent={nextOption}
-                        setSelectedItem={setSelectedItem}
+                        setSelectedItems={setSelectedItems}
+                        selectItemHandler={selectItemHandler}
                     />
                 }
             </>
