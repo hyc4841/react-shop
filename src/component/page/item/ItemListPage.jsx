@@ -32,6 +32,7 @@ const ItemListPage = () => {
     const searchCond = {type, categories, itemName, morePrice, lessPrice}; // 공통 검색 조건
 
 
+    // 이부분은 배울점이 있다. 추후라도 이 코드 완벽하게 분석하기
     const filterChgHandler = (field, value) => {
 
         console.log("필드", field);
@@ -55,7 +56,7 @@ const ItemListPage = () => {
     };
 
 
-    // 서버로 보낼 데이터 형태 잘 잡아서 보내기
+    // 선택한 필터들 서버에서 받기 좋게 형태 변환하는 함수.
     const convertParams = () => {
 
         const params = new URLSearchParams();
