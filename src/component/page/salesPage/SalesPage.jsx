@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Form, FormSelect } from "react-bootstrap";
+import { Form, FormSelect, Button } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import ItemOptionCard from "./ItemOptionCard";
 
@@ -12,13 +12,14 @@ const SalesPage = () => {
 
     const [ pageData, setPageData ] = useState('');
     const [ itemOptions, setItemOptions ] = useState('');
-    const [ selectedItem, setSelectedItem ] = useState('');
+    const [ selectedItems, setSelectedItems ] = useState([]);
 
     const [ option1, setOption1 ] = useState('');
     const [ option2, setOption2 ] = useState('')
     const [ option3, setOption3 ] = useState('');
 
     console.log("최상위 옵션 : ", itemOptions[0]);
+    console.log('선택한 아이템들 : ', selectedItems);
 
     useEffect(() => {
             const fetchPage = async () => {
@@ -57,6 +58,31 @@ const SalesPage = () => {
         }
     };
 
+    const removeSelectedItem = (e, itemId) => {
+        console.log("삭제하려는 아이템 id : ", itemId);
+        const removeItem = selectedItems.find(item => item.itemId === itemId); // 이 로직에 문제가 있음
+
+        console.log("삭제하려는 아이템: ", removeItem);
+        setSelectedItems((prev) => prev.filter(item => item.itemId !== itemId));
+
+    };
+
+    const selectItemHandler = (selectItem) => {
+
+        console.log("기존에 선택된 상품들 : ", selectedItems);
+        const isItem = selectedItems.find(item => item.itemId === selectItem.itemId); // 이 로직에 문제가 있음.
+        console.log("기존 리스트에 존재해? : ", isItem);
+        
+
+
+        if (isItem != null) { // 선택한 상품이 이미 선택한 상품 리스트에 있다면,
+            alert("이미 선택한 상품 입니다.");
+        } else {
+            console.log("상품 추가하기 : ", selectItem);
+            setSelectedItems(prev => [...prev, selectItem]); 
+        }
+    };
+
     
     return (
         <div className="d-flex">
@@ -73,14 +99,42 @@ const SalesPage = () => {
             <div className="item_option">
                 <Form onSubmit={formSubmitHandler}>
                     {/* 이거 그냥 재귀 함수처럼 하면 그냥 되겠는데? */}
-                    {itemOptions[0]  &&
-                        <>
-                            <ItemOptionCard 
-                                parent={itemOptions[0]}
-                                setSelectedItem={setSelectedItem}
-                            />
-                        </>
-                    }
+
+                    <div className="d-flex">
+                        <div>
+                            {itemOptions[0]  &&
+                                <>
+                                    <ItemOptionCard 
+                                        parent={itemOptions[0]}
+                                        setSelectedItems={setSelectedItems}
+                                        selectItemHandler={selectItemHandler}
+                                    />
+                                </>
+                            }
+                        </div>
+
+                        <div>
+                            {selectedItems && 
+
+                                selectedItems.map((item, index) => (
+                                    <div key={index}>
+                                        <p>{item.itemId}</p>
+                                        <p>{item.name}</p>
+                                        <p>{item.price}</p>
+                                        <p>{item.stockQuantity}</p>
+                                        <Button onClick={(e) => removeSelectedItem(e, item.itemId)}>삭제</Button>
+                                    </div>
+
+                                ))
+                            
+                            }
+                            
+
+                        </div>
+
+                    </div>
+                    
+                    
                 </Form>
                 
             </div>
