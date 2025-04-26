@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Form, FormSelect } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
+import ItemOptionCard from "./ItemOptionCard";
 
 const SalesPage = () => {
 
@@ -17,17 +18,12 @@ const SalesPage = () => {
     const [ option2, setOption2 ] = useState('')
     const [ option3, setOption3 ] = useState('');
 
-
-    console.log("페이지 id : ", pageId);
-    console.log("옵션 : ", itemOptions[0]);
+    console.log("최상위 옵션 : ", itemOptions[0]);
 
     useEffect(() => {
             const fetchPage = async () => {
                 try {
                     const response = await axios.get(`http://localhost:8080/salesPage/${pageId}`);
-    
-                    console.log("판매 페이지 응답 : ", response.data);
-                    console.log("판매 페이지 응답 : ", response.data.page.itemOptionList);
 
                     /*
                     data.page
@@ -51,33 +47,15 @@ const SalesPage = () => {
 
     };
 
-    const selectHandler = (e) => {
+    const selectHandler = (e, parent) => {
 
-        // 이거 먼저 계층 구조 어떻게 할건지 부터 정해야함. 지금 뒤죽박죽임. 서버에서 데이터 뿌려줄때도 어떻게 뿌려줄건지 확실히 정하고 가야함.
-        // 정안된다면 데이터 구조 전부다 바꿔야함.
+        const selectedOption = parent.child.find(item => item.id.toString() === e.target.value) // 선택한 옵션 객체를 가져오기 위한 로직
+        console.log("선택한 옵션 : ", selectedOption);
 
-        
-
-
-
-        console.log("선택된 id : ", e.target.value);
-        const selectedOption = itemOptions[0].child.find(item => item.id.toString() === e.target.value);
-
-        console.log("선택된 옵션 : ", selectedOption);
-        console.log("selectedOption.child : ", selectedOption.child);
-
-
-        
-        if (selectedOption.child != null && selectedOption.child.length === 0) {
-            setSelectedItem(selectedOption.item);
-        } else {
-            setOption1(selectedOption);
+        // 선택한 옵션 및에 하위 옵션이 있는지 확인해야한다.
+        if (selectedOption.child != null) {
         }
-            
-
     };
-
-        
 
     
     return (
@@ -94,51 +72,15 @@ const SalesPage = () => {
 
             <div className="item_option">
                 <Form onSubmit={formSubmitHandler}>
-                    {itemOptions  &&
+                    {/* 이거 그냥 재귀 함수처럼 하면 그냥 되겠는데? */}
+                    {itemOptions[0]  &&
                         <>
-                            <Form.Group>
-                                <Form.Label>옵션 : {itemOptions[0].optionName}</Form.Label>
-                                <FormSelect value={selectedItem} onChange={selectHandler}>
-                                    <option value="">선택하세요</option>
-
-                                    {itemOptions[0].child && 
-                                        itemOptions[0].child.map((item, index) => (
-                                            <option key={item.id} value={item.id}>{item.optionName}</option>
-                                        ))
-                                    }
-
-                                    
-
-
-                                </FormSelect>
-                                
-
-                                {option1 && 
-                                    <>
-
-                                        <hr style={{height: "0px"}}/>
-                                        <Form.Label>옵션 : {option1.child[0].optionName}</Form.Label>
-                                        <FormSelect value={selectedItem} onChange={selectHandler}>
-                                            <option value="">선택하세요</option>
-
-                                            {option1.child[0].child && 
-                                                option1.child[0].child.map((item, index) => (
-                                                    <option key={item.id} value={item.id}>{item.optionName}</option>
-                                                ))
-                                            }
-
-                                        </FormSelect>
-                                    </>
-                                        
-                                    }
-
-
-                            </Form.Group>
-                            
+                            <ItemOptionCard 
+                                parent={itemOptions[0]}
+                                setSelectedItem={setSelectedItem}
+                            />
                         </>
                     }
-
-
                 </Form>
                 
             </div>
