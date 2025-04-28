@@ -20,6 +20,7 @@ import Footer from './component/ui/Footer';
 import ItemListPage from './component/page/item/ItemListPage';
 import SalesPage from './component/page/salesPage/SalesPage';
 import OrderPreviewPage from './component/page/order/OrderPreviewPage';
+import PrivateRoute from './component/page/login/PrivateRoute';
 
 const MainTitleText = styled.p`
     font-size: 24px;
@@ -39,7 +40,12 @@ function App(props) {
                 <Route path="mypage/info" element={<MemberInfoPage />} />
                 <Route path="/products" element={<ItemListPage />} />
                 <Route path="/salesPage/" element={<SalesPage />} />
-                <Route path="/order/preview" element={<OrderPreviewPage />} />
+
+                <Route path="/order/preview" element={
+                        <PrivateRoute>
+                            <OrderPreviewPage />
+                        </PrivateRoute>
+                    } />
 
             </Routes>
             <Footer/>
