@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { login, loginFetch } from '../../../redux/reducer/userSlice';
@@ -10,6 +10,10 @@ import { Container, Button, Row, Col } from 'react-bootstrap';
 
 
 const Login = () => { // 컴포넌트 선언 arrow function 방식
+
+    const location = useLocation();
+    const from = location.state?.from?.pathname || '/';
+
     const [loginId, setLoginId] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -33,13 +37,11 @@ const Login = () => { // 컴포넌트 선언 arrow function 방식
             if (loginFetch.fulfilled.match(resultAction)) {
                 console.log(resultAction);
                 // 로그인 성공하면 홈 화면으로
-                navigate('/');
+                navigate(from, { replace: true }); // replace: true 뒤로가기 했을 때, 로그인 페이지로 돌아가지 않도록 만들기
             }
 
         } catch (err) {
-            console.log("여기로는 안드니?????????????");
             console.error('로그인 오류:', err);
-            // errorHandler에 넣어서 무슨 오류인지 받는다.
             setError(err.response.data.message);
         }
     };
