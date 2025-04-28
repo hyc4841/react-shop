@@ -85,7 +85,7 @@ const MemberInfo = (props) => {
                 alert("유저를 검증할 수 없습니다.");
                 navigate('/'); // 만약 잘못된 토큰 제시로 보안상 문제가 있으면 홈 화면으로 이동
             }
-        }
+        };
 
         fetchMemberData();
     }, []);
