@@ -87,7 +87,6 @@ const userSlice = createAppSlice({
                 console.log(state);
 
                 state.loginError = action.payload.error;
-
             })
 
             // logoutFetch
