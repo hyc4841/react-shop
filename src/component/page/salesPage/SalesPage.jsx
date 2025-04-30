@@ -53,7 +53,7 @@ const SalesPage = () => {
                 // 추후에 추가할 데이터
             };
     
-            navigate('/order/preview', { state: orderData });
+            navigate('/order/preview', { state: { prevPageData: orderData } });
         } else {
             alert("상품을 선택해주세요");
         }

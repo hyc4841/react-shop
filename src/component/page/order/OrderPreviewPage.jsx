@@ -7,7 +7,7 @@ const OrderPreviewPage = () => {
     const navigate = useNavigate();
 
     const location = useLocation();
-    const orderData = location.state.data; // 이전 페이지에서 보내온 데이터 받기
+    const orderData = location.state?.prevPageData; // 이전 페이지에서 보내온 데이터 받기
     // orderData { pageId : , orderItems : [] }의 형태
 
     const [ fetchedData, setFetchedData ] = useState('');
