@@ -13,6 +13,8 @@ const Login = () => { // 컴포넌트 선언 arrow function 방식
 
     const location = useLocation();
     const from = location.state?.from?.pathname || '/';
+    const prevPageData = location.state?.from?.state;
+    console.log("로그인 페이지. 이전 페이지 데이터 : ", prevPageData);
 
     const [loginId, setLoginId] = useState('');
     const [password, setPassword] = useState('');
@@ -37,7 +39,7 @@ const Login = () => { // 컴포넌트 선언 arrow function 방식
             if (loginFetch.fulfilled.match(resultAction)) {
                 console.log(resultAction);
                 // 로그인 성공하면 홈 화면으로
-                navigate(from, { replace: true }); // replace: true 뒤로가기 했을 때, 로그인 페이지로 돌아가지 않도록 만들기
+                navigate(from, { replace: true, state: { data: prevPageData } }); // replace: true 뒤로가기 했을 때, 로그인 페이지로 돌아가지 않도록 만들기
             }
 
         } catch (err) {
