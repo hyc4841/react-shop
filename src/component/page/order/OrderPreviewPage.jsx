@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Button } from "react-bootstrap";
 import { data, useLocation, useNavigate } from "react-router-dom";
 
 const OrderPreviewPage = () => {
@@ -77,7 +78,21 @@ const OrderPreviewPage = () => {
 
     return (
         <>
-        
+            {fetchedData &&
+                <>
+                    <h4>주문상품 확인</h4>
+                    <hr/>
+                    {fetchedData.itemList?.map((item, index) => (
+                        <div key={index}>
+                            
+                            <p>상품 이름 : {item.item.name}</p>
+                            <p>주문 개수 : {item.quantity}</p>
+                        </div>
+                    ))}
+                    <hr/>
+                    <Button>결제하기</Button>
+                </>
+            }
         </>
     );
 };
