@@ -1,3 +1,4 @@
+import PortOne from "@portone/browser-sdk/v2";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
@@ -12,6 +13,7 @@ const OrderPreviewPage = () => {
     // orderData { pageId : , orderItems : [] }의 형태
 
     const [ fetchedData, setFetchedData ] = useState('');
+    const [ paymentStatus, setPaymentStatus ] = useState({status: "IDLE", }); // status : "IDLE", "FAILED", "PENDING", "PAID"
 
     var itemAndQuantity;
 
@@ -76,6 +78,74 @@ const OrderPreviewPage = () => {
         fetchData();   // 서버로 데이터 보내기
     }, []);
 
+    // 결제 요청
+
+    // 만약 장바구니 결제를 하면, 판매 페이지를 기준으로 따로 계산 한다.
+    const requestPayment = async () => {
+
+        try {
+            const response = await PortOne.requestPayment({
+                // Store ID 설정
+                storeId: "store-c0da3308-bb1a-4e91-b00b-41005a7381ff",
+                // 채널 키 설정
+                channelKey: "channel-key-e21752d3-0eba-4b47-bb52-ebb92f36835c",
+                paymentId: `payment-1234-12345`,
+                orderName: "테스트",
+                totalAmount: 10000,
+                currency: "CURRENCY_KRW",
+                payMethod: "CARD"
+            });
+
+            // 결제 오류 처리. ex) 결제창 종료 등...
+            if (response.code !== undefined) {
+                setPaymentStatus({
+                    status: "FAILED",
+                    message: response.message,
+                });
+                alert(`결제 실패 : ${response.message}`);
+
+                return;
+            }
+
+            // 서버 측으로 결제 완료 요청 보내기
+            const completeResponse = await axios.post("http://localhost:8080/order/payment/complete", 
+                {},
+                {
+                    headers: {
+                        // Authorization : "",
+                        "Content-Type": "application/json",
+                    },
+                    withCredentials: true,
+                }
+            );
+
+            // completeResponse는 서버에서 돌아온 응답임. 여기부턴 내 서버에 맞는 응답 스펙 정해서 처리 해야함.
+            if (completeResponse.ok) {
+                const paymentComplete = await completeResponse.json();
+                setPaymentStatus({
+                    status: paymentComplete.status,
+                });
+            } else {
+                setPaymentStatus({
+                    status: "FAILED",
+                    message: await completeResponse.text(),
+                });
+            }
+
+            console.log("결제 요청 응답 : ", response);
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleClose = () => {
+        setPaymentStatus({
+            status: "IDLE",
+        })
+    };
+
+
     return (
         <>
             {fetchedData &&
@@ -90,7 +160,7 @@ const OrderPreviewPage = () => {
                         </div>
                     ))}
                     <hr/>
-                    <Button>결제하기</Button>
+                    <Button onClick={requestPayment}>결제하기</Button>
                 </>
             }
         </>
