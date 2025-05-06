@@ -4,6 +4,9 @@ import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { data, useLocation, useNavigate } from "react-router-dom";
 
+const storeId = process.env.REACT_APP_PORTONE_STORE_ID;
+const channelKey = process.env.REACT_APP_PORTONE_CHANNEL_KEY;
+
 const OrderPreviewPage = () => {
 
     const navigate = useNavigate();
@@ -12,10 +15,15 @@ const OrderPreviewPage = () => {
     const orderData = location.state?.prevPageData; // 이전 페이지에서 보내온 데이터 받기
     // orderData { pageId : , orderItems : [] }의 형태
 
+    const now = new Date();
+    const yearMonthDate = `${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}`;
+
     const [ fetchedData, setFetchedData ] = useState('');
     const [ paymentStatus, setPaymentStatus ] = useState({status: "IDLE", }); // status : "IDLE", "FAILED", "PENDING", "PAID"
 
     var itemAndQuantity;
+
+    var paymentId;
 
     console.log("이전 페이지에서 받아온 데이터 : ", orderData);
 
@@ -79,22 +87,21 @@ const OrderPreviewPage = () => {
     }, []);
 
     // 결제 요청
-
     // 만약 장바구니 결제를 하면, 판매 페이지를 기준으로 따로 계산 한다.
     const requestPayment = async () => {
 
         try {
             const response = await PortOne.requestPayment({
-                // Store ID 설정
-                storeId: "store-c0da3308-bb1a-4e91-b00b-41005a7381ff",
-                // 채널 키 설정
-                channelKey: "channel-key-e21752d3-0eba-4b47-bb52-ebb92f36835c",
-                paymentId: `payment-1234-12345`,
-                orderName: "테스트",
-                totalAmount: 10000,
-                currency: "CURRENCY_KRW",
-                payMethod: "CARD"
+                storeId: storeId, // Store ID 설정
+                channelKey: channelKey, // 채널 키 설정
+                paymentId: `payment-${yearMonthDate}-${crypto.randomUUID()}`, // 결제 Id
+                orderName: "테스트", // 주문 이름
+                totalAmount: 100, // 결제 비용
+                currency: "CURRENCY_KRW", // 통화 설정
+                payMethod: "CARD",  // 결제 방식
             });
+
+            console.log("브라우저에서 결제 요청 응답 : ", response);
 
             // 결제 오류 처리. ex) 결제창 종료 등...
             if (response.code !== undefined) {
@@ -103,36 +110,39 @@ const OrderPreviewPage = () => {
                     message: response.message,
                 });
                 alert(`결제 실패 : ${response.message}`);
+                console.log(response);
 
                 return;
             }
+            paymentId = response.paymentId;
 
-            // 서버 측으로 결제 완료 요청 보내기
+            // 결제 성공하고 데이터베이스에 결제 정보 보내고 서버에서 처리하는거하고 브라우저에서 보내는 데이터하고 연결하는 로직 작성해야함.,
+            // 서버 측으로 결제 완료 요청 보내기. 스프링 서버에서 처리하는 로직 조금더 고민해봐야함.
             const completeResponse = await axios.post("http://localhost:8080/order/payment/complete", 
-                {},
+                { paymentId },
                 {
                     headers: {
-                        // Authorization : "",
+                        Authorization : `Bearer ${localStorage.getItem("accessToken")}`,
                         "Content-Type": "application/json",
                     },
                     withCredentials: true,
                 }
             );
 
+            console.log("서버측 결제 응답 : ", completeResponse);
+
             // completeResponse는 서버에서 돌아온 응답임. 여기부턴 내 서버에 맞는 응답 스펙 정해서 처리 해야함.
-            if (completeResponse.ok) {
-                const paymentComplete = await completeResponse.json();
+            if (completeResponse.status == 200) {
                 setPaymentStatus({
-                    status: paymentComplete.status,
+                    status: completeResponse.status,
                 });
             } else {
+                console.log("FAILED쪽임 ?여기?");
                 setPaymentStatus({
                     status: "FAILED",
-                    message: await completeResponse.text(),
+                    message: await completeResponse.statusText,
                 });
             }
-
-            console.log("결제 요청 응답 : ", response);
 
         } catch (error) {
             console.error(error);
@@ -144,7 +154,6 @@ const OrderPreviewPage = () => {
             status: "IDLE",
         })
     };
-
 
     return (
         <>
