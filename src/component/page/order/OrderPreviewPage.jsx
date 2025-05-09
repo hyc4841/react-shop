@@ -1,8 +1,9 @@
 import PortOne from "@portone/browser-sdk/v2";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import { data, useLocation, useNavigate } from "react-router-dom";
+import AddressShow from "./AddressShow";
 
 const storeId = process.env.REACT_APP_PORTONE_STORE_ID;
 const channelKey = process.env.REACT_APP_PORTONE_CHANNEL_KEY;
@@ -21,6 +22,13 @@ const OrderPreviewPage = () => {
     const [ fetchedData, setFetchedData ] = useState('');
     const [ paymentStatus, setPaymentStatus ] = useState({status: "IDLE", }); // status : "IDLE", "FAILED", "PENDING", "PAID"
 
+    const [ selectedAddress, setSelectedAddress ] = useState('');
+
+
+    const [ addresses, setAddresses ] = useState('');
+    const [ orderItems, setOrderItems ] = useState('');
+    const [ defaultAddress, setDefaultAddress ] = useState('');
+    
     var itemAndQuantity;
 
     var paymentId;
@@ -30,17 +38,6 @@ const OrderPreviewPage = () => {
     const convertData = () => {
 
         const dataa = new Map();
-
-        // for ... of 로 순회하기
-        /*
-        for (const [key, value] of orderData.orderItems) {
-            
-                key.itemId : 상품 id
-                value : 주문 수량
-            
-            dataa.set(key.itemId, value);
-        }
-        */
 
         for (const [key, value] of orderData.orderItems.entries()) {
             // entry는 key-value 데이터
@@ -52,10 +49,10 @@ const OrderPreviewPage = () => {
     }
 
     useEffect(() => {
-        const fetchData = async () => {
 
+        // 서버에서 주문 상품 수량 체크 및 데이터 다시 받아오기
+        const fetchData = async () => {
             console.log(itemAndQuantity);
-            
             try {
                 const response = await axios.post('http://localhost:8080/checkout/order',
                     { itemAndQuantity },
@@ -69,6 +66,9 @@ const OrderPreviewPage = () => {
     
                 console.log("응답 데이터 : ", response.data);
                 setFetchedData(response.data);
+                setAddresses(response.data.address);
+                setOrderItems(response.data.itemList);
+                setDefaultAddress()
 
             } catch (error) {
                 // 수량 부족 오류면 이전 페이지로 이동하기
@@ -90,7 +90,41 @@ const OrderPreviewPage = () => {
     // 만약 장바구니 결제를 하면, 판매 페이지를 기준으로 따로 계산 한다.
     const requestPayment = async () => {
 
+        // 1. 결제 요청을 하면 먼저 주문 정보를 서버로 보낸다
+        // 보낼 데이터 : 주문 상품, 주문 수량, 상품 페이지 id, 상품 옵션?
         try {
+            console.log("결제 요청 : 서버로 주문 데이터 전송");
+            const orderDataSubmit = await axios.post("http://localhost:8080/order",
+                { }, // body
+                {
+                    headers : {
+                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                        "Content-Type": "application/json"
+                    },
+                    withCredentials: true
+                } // header 및 각종 설정
+            );
+
+            if (orderDataSubmit.status == 200) { // 서버측에서 데이터 저장에 성공했고 상태 코드가 200 이면
+                // 포트원으로 결제 요청을 보낸다.
+                try {
+
+                } catch (error) {
+
+                }
+
+            }
+
+
+
+        } catch (error) {
+            console.error("오류 발생 : ", error);
+        }
+
+
+
+        try {
+            console.log("결제 요청 : 포트원으로 결제 요청");
             const response = await PortOne.requestPayment({
                 storeId: storeId, // Store ID 설정
                 channelKey: channelKey, // 채널 키 설정
@@ -147,6 +181,7 @@ const OrderPreviewPage = () => {
         } catch (error) {
             console.error(error);
         }
+
     };
 
     const handleClose = () => {
@@ -156,12 +191,14 @@ const OrderPreviewPage = () => {
     };
 
     return (
-        <>
-            {fetchedData &&
+        <Container>
+
+        
+            {orderItems &&
                 <>
                     <h4>주문상품 확인</h4>
                     <hr/>
-                    {fetchedData.itemList?.map((item, index) => (
+                    {orderItems?.map((item, index) => (
                         <div key={index}>
                             
                             <p>상품 이름 : {item.item.name}</p>
@@ -169,10 +206,31 @@ const OrderPreviewPage = () => {
                         </div>
                     ))}
                     <hr/>
-                    <Button onClick={requestPayment}>결제하기</Button>
+                    
                 </>
             }
-        </>
+            <div>
+                <div>
+                    <AddressShow 
+                        selectedAddress={selectedAddress}
+                    />
+                </div>
+
+            
+                <div id="portal-root">
+                </div>
+                
+            </div>
+
+
+            <div className="text-center">
+                <Button onClick={requestPayment}>결제하기</Button>
+            </div>
+
+            
+
+
+        </Container>
     );
 };
 
