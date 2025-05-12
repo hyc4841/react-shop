@@ -3,7 +3,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
 import { data, useLocation, useNavigate } from "react-router-dom";
-import AddressShow from "./AddressShow";
+import AddressModalContent from "./AddressModalContent";
 
 const storeId = process.env.REACT_APP_PORTONE_STORE_ID;
 const channelKey = process.env.REACT_APP_PORTONE_CHANNEL_KEY;
@@ -121,8 +121,6 @@ const OrderPreviewPage = () => {
             console.error("오류 발생 : ", error);
         }
 
-
-
         try {
             console.log("결제 요청 : 포트원으로 결제 요청");
             const response = await PortOne.requestPayment({
@@ -192,8 +190,6 @@ const OrderPreviewPage = () => {
 
     return (
         <Container>
-
-        
             {orderItems &&
                 <>
                     <h4>주문상품 확인</h4>
@@ -211,24 +207,22 @@ const OrderPreviewPage = () => {
             }
             <div>
                 <div>
-                    <AddressShow 
+                    <AddressModalContent 
                         selectedAddress={selectedAddress}
+                        addressList={addresses}
+                        setSelectedAddress={setSelectedAddress}
                     />
                 </div>
-
             
                 <div id="portal-root">
+
                 </div>
                 
             </div>
 
-
             <div className="text-center">
                 <Button onClick={requestPayment}>결제하기</Button>
             </div>
-
-            
-
 
         </Container>
     );
