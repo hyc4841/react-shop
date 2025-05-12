@@ -1,0 +1,44 @@
+/* src/components/Modal.css */
+.modal-overlay {
+  position: fixed; /* 화면 전체를 덮도록 고정 */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 검은색 오버레이 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* 다른 요소들 위에 표시되도록 z-index 높게 설정 */
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative; /* 닫기 버튼 위치 조정을 위해 */
+  min-width: 300px; /* 최소 너비 설정 */
+  max-width: 600px; /* 최대 너비 설정 */
+  max-height: 60%; /* 최대 높이 설정 */
+  overflow-y: auto; /* 내용이 길어지면 스크롤 */
+}
+
+.modal-close-button {
+  /* position: absolute; */
+  /* top: 10px; */
+  /* right: 10px; */
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.modal-title {
+    margin-bottom: 0;
+
+}
+
+.new-address-input {
+  /* display: none; */
+}
