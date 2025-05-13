@@ -9,7 +9,7 @@ const AddressModalContainer = ({ isOpen, onClose, children }) => {
         return null;
     }
     
-    return (
+    return ( 
         <AddressPortal>
             <div className="modal-overlay"> {/* onClick={onClose} 오버레이 클릭시 닫기 */}
                 <Container className="modal-content" onClick={(e) => e.stopPropagation()}> {/* 컨텐츠 영역 클릭 시 닫히지 않게 방지 */}
@@ -33,9 +33,6 @@ const AddressModalContainer = ({ isOpen, onClose, children }) => {
         </AddressPortal>
     );
 
-
 };
-
-
 
 export default AddressModalContainer;
