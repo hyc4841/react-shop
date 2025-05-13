@@ -11,6 +11,7 @@ import NameChangeButton from "./NameChangeButton";
 
 import '../../../css/memberInfoPage.css';
 import UpdateEmailCodeSubmitbutton from "./UpdateEmailCodeSubmitButton";
+import MemberAddressModalContent from "./addressPortal/MemberAddressModalContent";
 
 const MemberInfo = (props) => {
     const navigate = useNavigate();
@@ -70,7 +71,7 @@ const MemberInfo = (props) => {
                     },
                     withCredentials: true
                 });
-                console.log(response);
+                console.log("응답 데이터 : ", response);
                 setMemberData(response.data); // 멤버 데이터 넣기
             } catch (error) {
                 if (error.status == 403) {
@@ -140,6 +141,8 @@ const MemberInfo = (props) => {
         setModalOnOff(true);
     };
     
+    console.log("주소??? : ", memberData);
+
     return (
         <Container style={{ border: '1px solid blue', display: "flex"}}>
            
@@ -424,7 +427,15 @@ const MemberInfo = (props) => {
 
                         <tr>
                             <th>배송지</th>
-                            <td>배송지 관리</td>
+                            <td>
+                                {memberData &&
+                                    <MemberAddressModalContent
+                                        addressList={memberData.address}
+                                    />
+                                }
+                                
+                            </td>
+                            <div id="portal-root"></div>
                         </tr>
 
                     </tbody>
