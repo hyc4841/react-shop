@@ -57,10 +57,56 @@ export const isLoggedInFetch = createAsyncThunk(
     }
 );
 
+export const getMemberData = createAsyncThunk(
+    'user/fetchMemberData',
+    async (args, { dispatch, getState, rejectWithValue }) => {
+        try {
+            const response = await axios.get('http://localhost:8080/member/info', {
+                headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+                    },
+                    withCredentials: true
+            });
+            console.log("멤버 데이터 가져오기 성공 : ", response.data);
+
+            return response.data;
+
+        } catch (error) {
+            console.error("멤버 데이터 가져오지 못함 : ", error);
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const addAddressRequest = createAsyncThunk(
+    'user/addAddressRequest',
+    async (city, { dispatch, getState, rejectWithValue }) => {
+        console.log("제대로 나오나? : ", city);
+
+        try {
+                const response = await axios.post('http://localhost:8080/member/info', {city},
+                    {
+                headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+                    },
+                    withCredentials: true
+            });
+            console.log("주소 추가 성공 : ", response.data);
+
+            return response.data;
+
+        } catch (error) {
+            console.error("주소 추가 요청 실패 : ", error);
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+
 const userSlice = createAppSlice({
     name: 'user',
 
-    initialState: { isLoggedIn: false, username: null, loginError: null },
+    initialState: { isLoggedIn: false, username: null, loginError: null, memberData: null },
 
     reducers: (create) =>  ({
         login: create.reducer((state, action) => {
@@ -73,6 +119,29 @@ const userSlice = createAppSlice({
 
     extraReducers: (builder) => {
         builder
+        // memberData
+            .addCase(addAddressRequest.pending, (state) => {})
+            .addCase(addAddressRequest.fulfilled, (state, action) => {
+                console.log(action.payload);
+                state.memberData = action.payload
+            })  
+            .addCase(addAddressRequest.rejected, (state, action) => {
+                console.error(state);
+                console.error(action);
+
+            })
+
+            // memberData
+            .addCase(getMemberData.pending, (state) => {})
+            .addCase(getMemberData.fulfilled, (state, action) => {
+                console.log(action.payload);
+                state.memberData = action.payload
+            })  
+            .addCase(getMemberData.rejected, (state, action) => {
+
+            })
+
+            
             // loginFetch
             .addCase(loginFetch.pending, (state) => {})
             .addCase(loginFetch.fulfilled, (state, action) => {
@@ -85,7 +154,6 @@ const userSlice = createAppSlice({
             .addCase(loginFetch.rejected, (state, action) => {
                 console.log(action);
                 console.log(state);
-
                 state.loginError = action.payload.error;
             })
 
