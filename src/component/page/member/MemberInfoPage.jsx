@@ -12,13 +12,16 @@ import NameChangeButton from "./NameChangeButton";
 import '../../../css/memberInfoPage.css';
 import UpdateEmailCodeSubmitbutton from "./UpdateEmailCodeSubmitButton";
 import MemberAddressModalContent from "./addressPortal/MemberAddressModalContent";
+import { useDispatch, useSelector } from "react-redux";
+import { getMemberData } from "../../../redux/reducer/userSlice";
 
 const MemberInfo = (props) => {
     const navigate = useNavigate();
 
     const [ error, setError ] = useState('');
 
-    const [ memberData, setMemberData ] = useState(null);
+    // const [ memberData, setMemberData ] = useState(null);
+    const memberData = useSelector((state) => state.user.memberData);
     const [ curPwd, setCurPwd ] = useState("");
     const [ newPwd, setNewPwd ] = useState("");
     const [ newPwdCon, setNewPwdCon ] = useState("");
@@ -61,10 +64,15 @@ const MemberInfo = (props) => {
     const [ newDetailedAddress, setNewDetailedAddress ] = useState("");
     const [ addressChgError, setAddressChgError ] = useState("");
 
+    const dispatch = useDispatch();
+
     useEffect(() => {
 
         const fetchMemberData = async () => {
+
             try {
+                dispatch(getMemberData());
+                /*
                 const response = await axios.get('http://localhost:8080/member/info', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('accessToken')}`
@@ -73,6 +81,7 @@ const MemberInfo = (props) => {
                 });
                 console.log("응답 데이터 : ", response);
                 setMemberData(response.data); // 멤버 데이터 넣기
+                */
             } catch (error) {
                 if (error.status == 403) {
                     alert("접근 권한이 없는 유저입니다.");
@@ -173,7 +182,6 @@ const MemberInfo = (props) => {
                                             <LoginChangeButton 
                                                 newLoginId={newLoginId}
                                                 onChangeError={setLoginChgError}
-                                                fetchMemberData={setMemberData}
                                             />
                                         </div>
 
@@ -208,7 +216,6 @@ const MemberInfo = (props) => {
                                             <EmailChangeButton
                                                 email={email}
                                                 setError={setError}
-                                                setMemberData={setMemberData}
                                                 setEmailCodeIsSent={setEmailCodeIsSent}
                                                 emailCodeIsSent={emailCodeIsSent}
                                             />
@@ -228,7 +235,6 @@ const MemberInfo = (props) => {
                                                         email={email}
                                                         code={emailCode}
                                                         setError={setError}
-                                                        setMemberData={setMemberData}
                                                     />
                                                 </div>
                                             </>
@@ -273,7 +279,6 @@ const MemberInfo = (props) => {
                                             <NameChangeButton 
                                                 newName={newName}
                                                 onChangeError={setNameChgError}
-                                                fetchMemberData={setMemberData}
                                             />
                                         </div>
 
@@ -309,7 +314,6 @@ const MemberInfo = (props) => {
                                             <PhoneNumChangeButton
                                                 newPhoneNum={newPhoneNum}
                                                 onChangeError={setPhoneNumChgError}
-                                                fetchMemberData={setMemberData}
                                             />
                                         </div>
 
@@ -407,7 +411,6 @@ const MemberInfo = (props) => {
                                                     newPwd={newPwd}
                                                     newPwdCon={newPwdCon}
                                                     onChangeError={setPasswordChgError}
-                                                    fetchMemberData={setMemberData}
                                                 />
                                             </td>
                                         </tr>
