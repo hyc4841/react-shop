@@ -1,19 +1,25 @@
 import axios from "axios";
 import React from "react";
 import { Button } from "react-bootstrap";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { getMemberData } from "../../../redux/reducer/userSlice";
 
 
 const EmailChangeButton = (props) => {
 
     const { email, setError, setMemberData, setEmailCodeIsSent, emailCodeIsSent} = props;
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     var buttonTitle = emailCodeIsSent ? "인증 재요청" : "인증요청";
 
     const submitmailChange = async () => {
         
         try {
+            dispatch(getMemberData());
+
+            /*
             const response = await axios.post('http://localhost:8080/member/email/auth', 
                 { email: email },
                 {
@@ -28,6 +34,7 @@ const EmailChangeButton = (props) => {
             console.log("이메일 변경 요청 응답 : ", response);
             setEmailCodeIsSent(true);
             // navigate(0);
+            */
 
         } catch (error) {
             console.error("이메일 변경 오류 : ", error.response.data);

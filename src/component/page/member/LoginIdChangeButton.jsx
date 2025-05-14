@@ -1,17 +1,23 @@
 import axios from "axios";
 import React from "react";
 import { Button } from "react-bootstrap";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { getMemberData } from "../../../redux/reducer/userSlice";
 
 const LoginChangeButton = (props) => {
 
-    const { newLoginId, onChangeError, fetchMemberData } = props;
+    const { newLoginId, onChangeError } = props;
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const submitLoginIdUpdate = async () => {
         console.log("newLoginId : " + newLoginId);
 
         try {
+            dispatch(getMemberData());
+            /*
+
             const response = await axios.post('http://localhost:8080/member/id', 
                 { newLoginId }, 
                 {
@@ -24,7 +30,7 @@ const LoginChangeButton = (props) => {
             );
             console.log(response);
             alert("아이디가 성공적으로 변경 되었습니다.");
-            fetchMemberData(response.data.memberInfo);
+            */
             navigate(0);
         } catch (error) {
             onChangeError(error.response.data);
