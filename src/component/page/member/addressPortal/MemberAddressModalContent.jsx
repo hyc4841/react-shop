@@ -4,6 +4,7 @@ import MemberAddressModalContainer from "./MemberAddressModalContainer";
 import { Button } from "react-bootstrap";
 import AddressDeleteConfirmModal from "../AddressDeleteConfirmModal";
 import AddressAddModal from "../AddressAddModal";
+import { useSelector } from "react-redux";
 
 const MemberAddressModalContent = (props) => {
 
@@ -13,6 +14,8 @@ const MemberAddressModalContent = (props) => {
     const [ isPopupOpen, setIsPopupOpen ] = useState(false);
     const [ isDeleteModalOpen, setIsDeleteModalOpen ] = useState(false);
     const [ isAddModalOpen, setIsAddModalOpen ] = useState(false);
+
+    const error = useSelector((state) => state.user.addressAddError);
 
     const handleOpenPopup = () => {
         setIsPopupOpen(true);
@@ -92,7 +95,8 @@ const MemberAddressModalContent = (props) => {
                     </div>
                 }
 
-                
+
+                {/* 배송지 추가 */}
                 <Button onClick={() => setIsAddModalOpen(true)}>배송지 추가</Button>
 
                 <AddressAddModal 
