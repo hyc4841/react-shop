@@ -4,9 +4,12 @@ import MemberAddressModalContainer from "./MemberAddressModalContainer";
 import { Button } from "react-bootstrap";
 import AddressDeleteConfirmModal from "../AddressDeleteConfirmModal";
 import AddressAddModal from "../AddressAddModal";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteAddressRequest } from "../../../../redux/reducer/userSlice";
 
 const MemberAddressModalContent = (props) => {
+
+    const dispatch = useDispatch();
 
     const { addressList } = props;
     console.log("주소 리스트 : ", addressList);
@@ -15,7 +18,7 @@ const MemberAddressModalContent = (props) => {
     const [ isDeleteModalOpen, setIsDeleteModalOpen ] = useState(false);
     const [ isAddModalOpen, setIsAddModalOpen ] = useState(false);
 
-    const error = useSelector((state) => state.user.addressAddError);
+    const { deleteAddressError } = useSelector((state) => state.user);
 
     const handleOpenPopup = () => {
         setIsPopupOpen(true);
@@ -25,30 +28,19 @@ const MemberAddressModalContent = (props) => {
         setIsPopupOpen(false);
     };
 
-    const handleConfirmYes = async (address) => {
+    const handleConfirmYes = async (address) => { 
         console.log("주소 : ", address.addressId);
-        var addressId = address.addressId;
-        
-        try {
-            const response = await axios.delete("http://localhost:8080/member/info/address",
-                {
-                    data: {addressId},
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-                        'Content-type': 'application/json'
-                    },
-                    withCredentials: true
-                });
-                console.log("요청 응답 : ", response);
-                alert("주소 삭제에 성공했습니다.");
-                
-                setIsDeleteModalOpen(false);
+        var addressId = { addressId: address.addressId };
 
-        } catch (error) {
-            alert("주소 삭제에 실패했습니다.");
-            
+        const resultAction = await dispatch(deleteAddressRequest(addressId));
+
+        if (deleteAddressRequest.fulfilled.match(resultAction)) {
+            alert("주소 삭제에 성공했습니다.");
             setIsDeleteModalOpen(false);
-            console.error("주소 삭제 오류 발생 : ", error.response.data);
+        }
+
+        if (deleteAddressError) {
+            setIsDeleteModalOpen(false);
         }
     };
 
@@ -68,7 +60,7 @@ const MemberAddressModalContent = (props) => {
                 {addressList.length > 0 ? 
                      <>
                         {addressList?.map((item, index) => (
-                            <div className="d-flex justify-content-between" key={index}>
+                            <div className="d-flex justify-content-between mb-3" key={index}>
                                 <div>
                                     <p style={{marginBottom: "0"}}>주소 : {item.city} {item.street} {item.detailedAddress}</p>
                                 </div>
