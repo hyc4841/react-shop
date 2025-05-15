@@ -34,10 +34,10 @@ const Login = () => { // 컴포넌트 선언 arrow function 방식
         const credentials = { loginId, password };
 
         try {
-            const resultAction = await dispatch(loginFetch(credentials))
+            const resultAction = await dispatch(loginFetch(credentials));
 
             if (loginFetch.fulfilled.match(resultAction)) {
-                console.log(resultAction);
+                console.log("resultAction : ", resultAction);
                 // 로그인 성공하면 홈 화면으로
                 navigate(from, { replace: true, state: { prevPageData: prevPageData } }); // replace: true 뒤로가기 했을 때, 로그인 페이지로 돌아가지 않도록 만들기
             }
