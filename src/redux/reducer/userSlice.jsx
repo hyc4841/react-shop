@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, buildCreateSlice, asyncThunkCreator } from "@reduxjs/toolkit";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const createAppSlice = buildCreateSlice({
     creators: { asyncThunk: asyncThunkCreator },
@@ -60,6 +61,7 @@ export const isLoggedInFetch = createAsyncThunk(
 export const getMemberData = createAsyncThunk(
     'user/fetchMemberData',
     async (args, { dispatch, getState, rejectWithValue }) => {
+        // const navigate = useNavigate(); // slice에선 순수 함수인 것이 좋다. side Effect는 다루지 않는 것이 좋다고 함.
         try {
             const response = await axios.get('http://localhost:8080/member/info', {
                 headers: {
@@ -80,11 +82,11 @@ export const getMemberData = createAsyncThunk(
 
 export const addAddressRequest = createAsyncThunk(
     'user/addAddressRequest',
-    async (city, { dispatch, getState, rejectWithValue }) => {
-        console.log("제대로 나오나? : ", city);
+    async (args, { dispatch, getState, rejectWithValue }) => {
+        console.log("제대로 나오나? : ", args);
 
         try {
-                const response = await axios.post('http://localhost:8080/member/info', {city},
+                const response = await axios.post('http://localhost:8080/member/info/address', args,
                     {
                 headers: {
                         Authorization: `Bearer ${localStorage.getItem('accessToken')}`
@@ -106,7 +108,7 @@ export const addAddressRequest = createAsyncThunk(
 const userSlice = createAppSlice({
     name: 'user',
 
-    initialState: { isLoggedIn: false, username: null, loginError: null, memberData: null },
+    initialState: { isLoggedIn: false, username: null, loginError: null, memberData: null, memberDataError: null ,addressAddError: null },
 
     reducers: (create) =>  ({
         login: create.reducer((state, action) => {
@@ -126,9 +128,7 @@ const userSlice = createAppSlice({
                 state.memberData = action.payload
             })  
             .addCase(addAddressRequest.rejected, (state, action) => {
-                console.error(state);
-                console.error(action);
-
+                state.addressAddError = action.payload;
             })
 
             // memberData
@@ -138,9 +138,9 @@ const userSlice = createAppSlice({
                 state.memberData = action.payload
             })  
             .addCase(getMemberData.rejected, (state, action) => {
-
+                // action.payload -> message, status
+                state.memberDataError = action.payload;
             })
-
             
             // loginFetch
             .addCase(loginFetch.pending, (state) => {})
