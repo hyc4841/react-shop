@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk, buildCreateSlice, asyncThunkCreator } from "@reduxjs/toolkit";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const createAppSlice = buildCreateSlice({
     creators: { asyncThunk: asyncThunkCreator },
@@ -15,6 +14,7 @@ export const loginFetch = createAsyncThunk(
             const response = await axios.post('http://localhost:8080/login', credentials, {withCredentials: true});
 
             return response.data;
+
         } catch (error) {
             return rejectWithValue(error.response.data);
         }
@@ -83,7 +83,7 @@ export const getMemberData = createAsyncThunk(
 export const addAddressRequest = createAsyncThunk(
     'user/addAddressRequest',
     async (args, { dispatch, getState, rejectWithValue }) => {
-        console.log("제대로 나오나? : ", args);
+        console.log("주소 추가 요청 데이터 : ", args);
 
         try {
                 const response = await axios.post('http://localhost:8080/member/info/address', args,
@@ -104,11 +104,38 @@ export const addAddressRequest = createAsyncThunk(
     }
 );
 
+export const deleteAddressRequest = createAsyncThunk(
+    'user/deleteAddressRequest',
+    async (args, { dispatch, getState, rejectWithValue }) => {
+        console.log("주소 삭제 id : ", args);
+        
+        try {
+            const response = await axios.delete("http://localhost:8080/member/info/address",
+                {
+                    data: args,
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                        'Content-type': 'application/json'
+                    },
+                    withCredentials: true
+                });
+            
+            return response.data;
+        } catch (error) {
+            console.error("주소 삭제 요청 실패 : ", error);
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 
 const userSlice = createAppSlice({
     name: 'user',
 
-    initialState: { isLoggedIn: false, username: null, loginError: null, memberData: null, memberDataError: null ,addressAddError: null },
+    initialState: { isLoggedIn: false, username: null, loginError: null,
+        memberData: null, memberDataError: null, addressAddError: null,
+        deleteAddressError: null
+     },
 
     reducers: (create) =>  ({
         login: create.reducer((state, action) => {
@@ -117,16 +144,31 @@ const userSlice = createAppSlice({
         logout: create.reducer((state, action) => {
             state.isLoggedIn = false; 
         }),
+        setAddressAddError: create.reducer((state, action) => {
+            console.log("주소 추가 예외 삭제");
+            state.addressAddError = null;
+        })
+
     }),
 
     extraReducers: (builder) => {
         builder
-        // memberData
+            // deleteAddressRequest
+            .addCase(deleteAddressRequest.pending, (state) => {})
+            .addCase(deleteAddressRequest.fulfilled, (state, action) => {
+                console.log(action.payload);
+                state.memberData = action.payload
+            })
+            .addCase(deleteAddressRequest.rejected, (state, action) => {
+                state.deleteAddressError = action.payload;
+            })
+
+            // memberData
             .addCase(addAddressRequest.pending, (state) => {})
             .addCase(addAddressRequest.fulfilled, (state, action) => {
                 console.log(action.payload);
                 state.memberData = action.payload
-            })  
+            })
             .addCase(addAddressRequest.rejected, (state, action) => {
                 state.addressAddError = action.payload;
             })
@@ -187,5 +229,5 @@ const userSlice = createAppSlice({
 });
 
 // 액션 생성자와 리듀서
-export const { login, logout } = userSlice.actions;
+export const { login, logout, setAddressAddError } = userSlice.actions;
 export default userSlice.reducer;
