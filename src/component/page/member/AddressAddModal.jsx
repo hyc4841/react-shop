@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import DaumPostModal from "../signup/DaumPostModal";
-import { addAddressRequest } from "../../../redux/reducer/userSlice";
+import { addAddressRequest, setAddressAddError } from "../../../redux/reducer/userSlice";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const AddressAddModal = ({ isOpen, onCancel }) => {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [ city, setCity ] = useState('');
     const [ zipcode, setZipcode ] = useState('');
@@ -25,10 +27,17 @@ const AddressAddModal = ({ isOpen, onCancel }) => {
         setZipcode('');
         setStreet('');
         setDetailedAddress('');
+        dispatch(setAddressAddError());
     }
 
-    const addAddressRequestHandler = () => {
-        dispatch(addAddressRequest({ zipcode, city, street, detailedAddress, addressName }));
+    const addAddressRequestHandler = async () => {
+        const resultAction = await dispatch(addAddressRequest({ zipcode, city, street, detailedAddress, addressName }));
+
+        if (addAddressRequest.fulfilled.match(resultAction)) {
+            console.log("성공 : ", resultAction);
+            alert("주소 추가에 성공하였습니다!");
+            modalCloseHandler();
+        }
     };
 
     const daumModalHandler = (e) => {
@@ -36,7 +45,7 @@ const AddressAddModal = ({ isOpen, onCancel }) => {
         setDaumModalOnOff(true);
     };
 
-    const modalCancleHandler = () => {
+    const modalCloseHandler = () => {
         onCancel();
         addressClean();
     };
@@ -54,24 +63,21 @@ const AddressAddModal = ({ isOpen, onCancel }) => {
                 
                 <div className="modal-actions">
                     <div className="d-flex justify-content-between">
-                        <p>주소 추가하기</p>
-                        <Button onClick={modalCancleHandler}>취소</Button>
+                        <h4>주소 추가하기</h4>
+                        <Button onClick={modalCloseHandler}>취소</Button>
                     </div>
                     
                     <Form>
+                        {addressAddError &&
+                            addressAddError.zipcode?.map((item, index) => (
+                                <p style={{color: "red", marginBottom: "10px"}}>{item.message}</p>
+                            ))
+                        }
                         <div className="d-flex justify-content-between">
-
-                            <div>
-                                <Form.Group controlId="zipcode" style={{width: "48%"}}>
-                                    <Form.Label>우편번호</Form.Label>
-                                    <Form.Control type="text" value={zipcode} readOnly required />
-                                </Form.Group>
-
-                                {addressAddError &&
-                                    addressAddError.zipcode
-                                }
-                            </div>
-                            
+                            <Form.Group controlId="zipcode" style={{width: "48%"}}>
+                                <Form.Label className="d-flex">우편번호</Form.Label>
+                                <Form.Control type="text" value={zipcode} readOnly required />
+                            </Form.Group>
 
                             <Form.Group controlId="addressName" style={{width: "48%"}}>
                                 <Form.Label>주소 별명</Form.Label>
@@ -94,12 +100,14 @@ const AddressAddModal = ({ isOpen, onCancel }) => {
                             </Form.Group>
 
                             {addressAddError &&
-                                <div>
-                                    {addressAddError.detailedAddress?.map((item, index) => (
-                                        <p key={index} style={{color: "red"}}>{item.message}</p>
-                                    ))}
+                                
+                                    addressAddError.detailedAddress?.map((item, index) => (
+                                        <div>
+                                            <p key={index} style={{color: "red"}}>{item.message}</p>
+                                        </div>
+                                    ))
 
-                                </div>
+                                
                                
                                 
                             }
@@ -113,9 +121,6 @@ const AddressAddModal = ({ isOpen, onCancel }) => {
                         </div>
 
                     </Form>
-
-                    
-                    
 
                     <DaumPostModal 
                             modalOnOff={daumModalOnOff}
