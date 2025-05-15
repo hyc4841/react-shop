@@ -21,7 +21,8 @@ const MemberInfo = (props) => {
     const [ error, setError ] = useState('');
 
     // const [ memberData, setMemberData ] = useState(null);
-    const memberData = useSelector((state) => state.user.memberData);
+    const { memberData, memberDataError } = useSelector(state => state.user);
+
     const [ curPwd, setCurPwd ] = useState("");
     const [ newPwd, setNewPwd ] = useState("");
     const [ newPwdCon, setNewPwdCon ] = useState("");
@@ -68,36 +69,20 @@ const MemberInfo = (props) => {
 
     useEffect(() => {
 
-        const fetchMemberData = async () => {
+        dispatch(getMemberData());
 
-            try {
-                dispatch(getMemberData());
-                /*
-                const response = await axios.get('http://localhost:8080/member/info', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-                    },
-                    withCredentials: true
-                });
-                console.log("응답 데이터 : ", response);
-                setMemberData(response.data); // 멤버 데이터 넣기
-                */
-            } catch (error) {
-                if (error.status == 403) {
-                    alert("접근 권한이 없는 유저입니다.");
-                    navigate('/');
-                } else if (error.status == 401) {
-                    alert("로그인이 필요한 화면입니다.");
-                    navigate('')
-                }
+        if (memberDataError) {
+            console.log("멤버 정보 가져오기 에러 : ", memberDataError);
+            alert("로그인이 필요한 화면입니다.");
+            navigate('/');
+        }
+        
+    }, [memberDataError]);
 
-                console.log(error);
-                alert("유저를 검증할 수 없습니다.");
-                navigate('/'); // 만약 잘못된 토큰 제시로 보안상 문제가 있으면 홈 화면으로 이동
-            }
-        };
+    useEffect(() => {
 
-        fetchMemberData();
+
+
     }, []);
 
     const loginIdChangeBtn = () => {
