@@ -14,6 +14,7 @@ import ItemListPage from './component/page/item/ItemListPage';
 import SalesPage from './component/page/salesPage/SalesPage';
 import OrderPreviewPage from './component/page/order/OrderPreviewPage';
 import PrivateRoute from './component/page/login/PrivateRoute';
+import OrderSuccessPage from './component/page/order/OrderSuccessPage';
 
 function App(props) {
     return (
@@ -27,6 +28,7 @@ function App(props) {
                 <Route path="mypage/info" element={<MemberInfoPage />} />
                 <Route path="/products" element={<ItemListPage />} />
                 <Route path="/salesPage/" element={<SalesPage />} />
+                <Route path="/orderSuccess" element={<OrderSuccessPage />} />
 
                 <Route path="/order/preview" element={
                         <PrivateRoute>
