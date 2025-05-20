@@ -27,7 +27,11 @@ const OrderPreviewPage = () => {
 
     const [ addresses, setAddresses ] = useState('');
     const [ orderItems, setOrderItems ] = useState('');
-    const [ defaultAddress, setDefaultAddress ] = useState('');
+
+    const [ zipcode, setZipcode ] = useState(null);
+    const [ city, setCity ] = useState(null);
+    const [ street, setStreet ] = useState(null);
+    const [ detailedAddress, setDetailedAddress ] = useState(null);
     
     var itemAndQuantity;
 
@@ -36,7 +40,6 @@ const OrderPreviewPage = () => {
     console.log("이전 페이지에서 받아온 데이터 : ", orderData);
 
     const convertData = () => {
-
         const dataa = new Map();
 
         for (const [key, value] of orderData.orderItems.entries()) {
@@ -68,7 +71,6 @@ const OrderPreviewPage = () => {
                 setFetchedData(response.data);
                 setAddresses(response.data.address);
                 setOrderItems(response.data.itemList);
-                setDefaultAddress()
 
             } catch (error) {
                 // 수량 부족 오류면 이전 페이지로 이동하기
@@ -90,12 +92,52 @@ const OrderPreviewPage = () => {
     // 만약 장바구니 결제를 하면, 판매 페이지를 기준으로 따로 계산 한다.
     const requestPayment = async () => {
 
+        console.log("")
+
+        var orderDataObject;
+        const orderItemSets = [];
+
+        for (const obj of orderItems) {
+            orderItemSets.push({ itemId: obj.item.itemId, quantity: obj.quantity, totalPrice: obj.item.price * obj.quantity });
+        }
+
+        console.log("selectedAddress : ", selectedAddress);
+
+        console.log("city : ", city);
+        console.log("zipcode : ", zipcode);
+        console.log("street : ", street);
+        console.log("detailedAddress : ", detailedAddress);
+
+        if (selectedAddress == null && city != null) {
+            console.log("주소 직접 입력인 경우");
+            // 주소 직접 입력인 경우
+            orderDataObject = {
+                salesPageId: orderData.pageId,
+                city: city,
+                street: street,
+                zipcode: zipcode,
+                detailedAddress: detailedAddress,
+                orderItemSets: orderItemSets
+            }
+
+        } else if (selectedAddress != null && city == null) {
+            // 주소 선택인 경우
+            console.log("주소 선택인 경우");
+            orderDataObject = {
+                salesPageId: orderData.pageId,
+                addressId: selectedAddress.addressId,
+                orderItemSets: orderItemSets
+            }
+        }
+
+        console.log("바디 데이터 : ", orderDataObject);
+
         // 1. 결제 요청을 하면 먼저 주문 정보를 서버로 보낸다
         // 보낼 데이터 : 주문 상품, 주문 수량, 상품 페이지 id, 상품 옵션?
         try {
             console.log("결제 요청 : 서버로 주문 데이터 전송");
             const orderDataSubmit = await axios.post("http://localhost:8080/order",
-                { }, // body
+                orderDataObject, // body
                 {
                     headers : {
                         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -105,79 +147,83 @@ const OrderPreviewPage = () => {
                 } // header 및 각종 설정
             );
 
+            console.log("서버 측 응답 : ", orderDataSubmit);
+
             if (orderDataSubmit.status == 200) { // 서버측에서 데이터 저장에 성공했고 상태 코드가 200 이면
                 // 포트원으로 결제 요청을 보낸다.
                 try {
+                    console.log("결제 요청 : 포트원으로 결제 요청");
+                    const response = await PortOne.requestPayment({
+                        storeId: storeId, // Store ID 설정
+                        channelKey: channelKey, // 채널 키 설정
+                        paymentId: `payment-${yearMonthDate}-${crypto.randomUUID()}`, // 결제 Id
+                        orderName: "테스트", // 주문 이름
+                        totalAmount: 100, // 결제 비용
+                        currency: "CURRENCY_KRW", // 통화 설정
+                        payMethod: "CARD",  // 결제 방식
+                        customData: { // 서버에서 결제 데이터 비교할 때 필요함
+                            orderItemSets
+                        },
+                    });
+
+                    console.log("브라우저에서 결제 요청 응답 : ", response);
+
+                    // 결제 오류 처리. ex) 결제창 종료 등...
+                    if (response.code !== undefined) {
+                        setPaymentStatus({
+                            status: "FAILED",
+                            message: response.message,
+                        });
+                        alert(`결제 실패 : ${response.message}`);
+                        console.log(response);
+
+                        return;
+                    }
+                    paymentId = response.paymentId;
+
+                    try {
+                        // 결제 성공하고 데이터베이스에 결제 정보 보내고 서버에서 처리하는거하고 브라우저에서 보내는 데이터하고 연결하는 로직 작성해야함.,
+                        // 서버 측으로 결제 완료 요청 보내기. 스프링 서버에서 처리하는 로직 조금더 고민해봐야함.
+                        var orderId = orderDataSubmit.data.orderId;
+                        const completeResponse = await axios.post(`http://localhost:8080/order/payment`, 
+                            { paymentId, orderId },
+                            {
+                                headers: {
+                                    Authorization : `Bearer ${localStorage.getItem("accessToken")}`,
+                                    "Content-Type": "application/json",
+                                },
+                                withCredentials: true,
+                            }
+                        );
+
+                        console.log("서버측 결제 응답 : ", completeResponse);
+
+                        // completeResponse는 서버에서 돌아온 응답임. 여기부턴 내 서버에 맞는 응답 스펙 정해서 처리 해야함.
+                        if (completeResponse.status == 200) {
+                            setPaymentStatus({
+                                status: completeResponse.status,
+                            });
+                        } else {
+                            console.log("FAILED쪽임 ?여기?");
+                            setPaymentStatus({
+                                status: "FAILED",
+                                message: await completeResponse.statusText,
+                            });
+                        }
+
+                        navigate("/orderSuccess", { replace: true });
+
+                    } catch (error) {
+                        console.error("서버측 결제 검증 예외 발생 : ", error);
+                    }
 
                 } catch (error) {
-
+                    console.error("포트원 결제 요청 오류 : ", error);
                 }
-
-            }
-
-
-
-        } catch (error) {
-            console.error("오류 발생 : ", error);
-        }
-
-        try {
-            console.log("결제 요청 : 포트원으로 결제 요청");
-            const response = await PortOne.requestPayment({
-                storeId: storeId, // Store ID 설정
-                channelKey: channelKey, // 채널 키 설정
-                paymentId: `payment-${yearMonthDate}-${crypto.randomUUID()}`, // 결제 Id
-                orderName: "테스트", // 주문 이름
-                totalAmount: 100, // 결제 비용
-                currency: "CURRENCY_KRW", // 통화 설정
-                payMethod: "CARD",  // 결제 방식
-            });
-
-            console.log("브라우저에서 결제 요청 응답 : ", response);
-
-            // 결제 오류 처리. ex) 결제창 종료 등...
-            if (response.code !== undefined) {
-                setPaymentStatus({
-                    status: "FAILED",
-                    message: response.message,
-                });
-                alert(`결제 실패 : ${response.message}`);
-                console.log(response);
-
-                return;
-            }
-            paymentId = response.paymentId;
-
-            // 결제 성공하고 데이터베이스에 결제 정보 보내고 서버에서 처리하는거하고 브라우저에서 보내는 데이터하고 연결하는 로직 작성해야함.,
-            // 서버 측으로 결제 완료 요청 보내기. 스프링 서버에서 처리하는 로직 조금더 고민해봐야함.
-            const completeResponse = await axios.post("http://localhost:8080/order/payment/complete", 
-                { paymentId },
-                {
-                    headers: {
-                        Authorization : `Bearer ${localStorage.getItem("accessToken")}`,
-                        "Content-Type": "application/json",
-                    },
-                    withCredentials: true,
-                }
-            );
-
-            console.log("서버측 결제 응답 : ", completeResponse);
-
-            // completeResponse는 서버에서 돌아온 응답임. 여기부턴 내 서버에 맞는 응답 스펙 정해서 처리 해야함.
-            if (completeResponse.status == 200) {
-                setPaymentStatus({
-                    status: completeResponse.status,
-                });
-            } else {
-                console.log("FAILED쪽임 ?여기?");
-                setPaymentStatus({
-                    status: "FAILED",
-                    message: await completeResponse.statusText,
-                });
             }
 
         } catch (error) {
-            console.error(error);
+            console.error("서버측 주문 데이터 처리 예외 : ", error);
         }
 
     };
@@ -211,6 +257,15 @@ const OrderPreviewPage = () => {
                         selectedAddress={selectedAddress}
                         addressList={addresses}
                         setSelectedAddress={setSelectedAddress}
+
+                        setZipcode={setZipcode}
+                        setCity={setCity}
+                        setStreet={setStreet}
+                        setDetailedAddress={setDetailedAddress}
+                        zipcode={zipcode}
+                        city={city}
+                        street={street}
+                        detailedAddress={detailedAddress}
                     />
                 </div>
             
