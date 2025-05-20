@@ -15,7 +15,7 @@ const AddressModalContainer = ({ isOpen, onClose, children }) => {
                 <Container className="modal-content" onClick={(e) => e.stopPropagation()}> {/* 컨텐츠 영역 클릭 시 닫히지 않게 방지 */}
 
                     <div className="d-flex justify-content-between">
-                        <h4 className="modal-title">주소 변경</h4>
+                        <h4 className="modal-title">주소 선택</h4>
 
                         <button className="modal-close-button" onClick={onClose}>
                             &times;
@@ -26,7 +26,6 @@ const AddressModalContainer = ({ isOpen, onClose, children }) => {
                     
                     {/* 모달에 표현되는 자식 */}
                     {children}
-
 
                 </Container>
             </div>
