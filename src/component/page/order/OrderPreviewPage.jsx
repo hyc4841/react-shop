@@ -99,7 +99,7 @@ const OrderPreviewPage = () => {
             console.log("주소 직접 입력인 경우");
             
             orderDataObject = {
-                salesPageId: orderData.pageId,
+                salesPageId: orderData.page.id,
                 city: city,
                 street: street,
                 zipcode: zipcode,
@@ -110,7 +110,7 @@ const OrderPreviewPage = () => {
         } else if (selectedAddress != null && city == null) {
             console.log("주소 선택인 경우");
             orderDataObject = {
-                salesPageId: orderData.pageId,
+                salesPageId: orderData.page.id,
                 addressId: selectedAddress.addressId,
                 orderItemSets: orderItemSets
             }
@@ -127,7 +127,6 @@ const OrderPreviewPage = () => {
             setAddressNullException("주소를 선택 또는 입력해주세요");
             return;
         }
-
 
         var orderBodyData = createBodyData();
         console.log("바디 데이터 : ", orderBodyData);
@@ -174,6 +173,7 @@ const OrderPreviewPage = () => {
                         alert(`결제 실패 : ${response.message}`);
 
                         try {
+                            // 결제 실패시 서버로 주문 취소 처리
                             const paymentCancelResponse = await axios.delete('http://localhost:8080/order/payment', 
                                 {
                                     data: { orderId: orderDataSubmit.data.orderId },
@@ -187,9 +187,12 @@ const OrderPreviewPage = () => {
                                 console.log("주문 취소 응답 : ", paymentCancelResponse);
 
                         } catch (error) {
-                            console.error("주문 취소 요청 실패 : ", error)
+                            console.error("주문 취소 요청 실패 : ", error);
                         }
 
+                        console.log("왜안됨?");
+                        navigate(-2, { replace: true });
+                        
                         return;
                     }
 
