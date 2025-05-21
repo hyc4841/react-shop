@@ -15,22 +15,18 @@ const SalesPage = () => {
     const [ pageData, setPageData ] = useState('');
     const [ itemOptions, setItemOptions ] = useState('');
     const [ selectedItems, setSelectedItems ] = useState(new Map()); // selectedItems는 map 객체임
-
-    const [ option1, setOption1 ] = useState('');
-    const [ option2, setOption2 ] = useState('');
-    const [ option3, setOption3 ] = useState(''); 
+    
+    const [ selectedItemOptions, setSelectedItemOptions ] = useState([]);
 
     useEffect(() => {
             const fetchPage = async () => {
                 try {
                     const response = await axios.get(`http://localhost:8080/salesPage/${pageId}`);
-
-                    /*
-                    data.page
-                    data.review
-                    */
                     setPageData(response.data);
                     setItemOptions(response.data.page.itemOptionList);
+                    // response.data = { page: object, review: 'ok' }
+
+                    console.log("판매 페이지 데이터 : ", response.data);
 
                 } catch (error) {
                     console.error("페이지 응답을 가져오지 못함 : ", error);
@@ -48,7 +44,7 @@ const SalesPage = () => {
 
         if (selectedItems.size > 0) {
             const orderData = {
-                pageId: pageId,
+                page: pageData.page,
                 orderItems: selectedItems, // map 객체. item - quantity
                 // 추후에 추가할 데이터
             };
@@ -99,8 +95,6 @@ const SalesPage = () => {
 
     // 상품 수량 변경 함수
     const quantityChangeHandler = (e, item) => {
-
-
         console.log("새로 입력된 값? : ", e.target.value);
 
         const newSelectedItems  = new Map(selectedItems);
