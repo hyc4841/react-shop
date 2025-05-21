@@ -28,7 +28,7 @@ const MypageNav = (props) => {
                     <tr>
                         <td>
                             <StyledSpan>
-                                <a className="myPageList" href="/mypage/order">주문내역/배송조회</a>
+                                <a className="myPageList" href="/mypage/orders">주문내역/배송조회</a>
                             </StyledSpan>
                             <StyledSpan>
                                 <a className="myPageList" href="/mypage/cancel-return-change">취소/반품/환불/교환 내역</a>
