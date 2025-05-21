@@ -19,14 +19,11 @@ const OrderPreviewPage = () => {
     const now = new Date();
     const yearMonthDate = `${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}`;
 
-    const [ fetchedData, setFetchedData ] = useState('');
-    const [ paymentStatus, setPaymentStatus ] = useState({status: "IDLE", }); // status : "IDLE", "FAILED", "PENDING", "PAID"
-
-    const [ selectedAddress, setSelectedAddress ] = useState('');
-
-
-    const [ addresses, setAddresses ] = useState('');
     const [ orderItems, setOrderItems ] = useState('');
+   
+    const [ selectedAddress, setSelectedAddress ] = useState(null);
+    const [ addresses, setAddresses ] = useState('');
+    const [ addressNullException, setAddressNullException ] = useState(null);
 
     const [ zipcode, setZipcode ] = useState(null);
     const [ city, setCity ] = useState(null);
@@ -34,8 +31,7 @@ const OrderPreviewPage = () => {
     const [ detailedAddress, setDetailedAddress ] = useState(null);
     
     var itemAndQuantity;
-
-    var paymentId;
+    var orderItemData;
 
     console.log("이전 페이지에서 받아온 데이터 : ", orderData);
 
@@ -68,7 +64,6 @@ const OrderPreviewPage = () => {
                 );
     
                 console.log("응답 데이터 : ", response.data);
-                setFetchedData(response.data);
                 setAddresses(response.data.address);
                 setOrderItems(response.data.itemList);
 
@@ -88,29 +83,21 @@ const OrderPreviewPage = () => {
         fetchData();   // 서버로 데이터 보내기
     }, []);
 
-    // 결제 요청
-    // 만약 장바구니 결제를 하면, 판매 페이지를 기준으로 따로 계산 한다.
-    const requestPayment = async () => {
-
-        console.log("")
-
+    const createBodyData = () => {
         var orderDataObject;
-        const orderItemSets = [];
+        const orderItemSets = []; // { 아이템id, 수량, 총 가격 }
 
         for (const obj of orderItems) {
             orderItemSets.push({ itemId: obj.item.itemId, quantity: obj.quantity, totalPrice: obj.item.price * obj.quantity });
         }
 
         console.log("selectedAddress : ", selectedAddress);
-
         console.log("city : ", city);
-        console.log("zipcode : ", zipcode);
-        console.log("street : ", street);
-        console.log("detailedAddress : ", detailedAddress);
 
+        // 주소 직접 입력인 경우
         if (selectedAddress == null && city != null) {
             console.log("주소 직접 입력인 경우");
-            // 주소 직접 입력인 경우
+            
             orderDataObject = {
                 salesPageId: orderData.pageId,
                 city: city,
@@ -119,9 +106,8 @@ const OrderPreviewPage = () => {
                 detailedAddress: detailedAddress,
                 orderItemSets: orderItemSets
             }
-
+        // 주소 선택인 경우
         } else if (selectedAddress != null && city == null) {
-            // 주소 선택인 경우
             console.log("주소 선택인 경우");
             orderDataObject = {
                 salesPageId: orderData.pageId,
@@ -129,15 +115,29 @@ const OrderPreviewPage = () => {
                 orderItemSets: orderItemSets
             }
         }
+        orderItemData = orderItemSets;
+        return orderDataObject;
+    }
 
-        console.log("바디 데이터 : ", orderDataObject);
+    // 결제 요청
+    // 만약 장바구니 결제를 하면, 판매 페이지를 기준으로 따로 계산 한다.
+    const requestPayment = async () => {
+
+        if (selectedAddress == null && city == null) {
+            setAddressNullException("주소를 선택 또는 입력해주세요");
+            return;
+        }
+
+
+        var orderBodyData = createBodyData();
+        console.log("바디 데이터 : ", orderBodyData);
 
         // 1. 결제 요청을 하면 먼저 주문 정보를 서버로 보낸다
         // 보낼 데이터 : 주문 상품, 주문 수량, 상품 페이지 id, 상품 옵션?
         try {
             console.log("결제 요청 : 서버로 주문 데이터 전송");
             const orderDataSubmit = await axios.post("http://localhost:8080/order",
-                orderDataObject, // body
+                orderBodyData, // body
                 {
                     headers : {
                         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -162,31 +162,42 @@ const OrderPreviewPage = () => {
                         currency: "CURRENCY_KRW", // 통화 설정
                         payMethod: "CARD",  // 결제 방식
                         customData: { // 서버에서 결제 데이터 비교할 때 필요함
-                            orderItemSets
+                            orderItemSets: orderItemData
                         },
                     });
 
                     console.log("브라우저에서 결제 요청 응답 : ", response);
 
                     // 결제 오류 처리. ex) 결제창 종료 등...
-                    if (response.code !== undefined) {
-                        setPaymentStatus({
-                            status: "FAILED",
-                            message: response.message,
-                        });
+                    if (response.code !== undefined) { // 포트원 결제 중단은 여기서 해결해야함.
+                        
                         alert(`결제 실패 : ${response.message}`);
-                        console.log(response);
+
+                        try {
+                            const paymentCancelResponse = await axios.delete('http://localhost:8080/order/payment', 
+                                {
+                                    data: { orderId: orderDataSubmit.data.orderId },
+                                    headers: {
+                                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                                        'Content-type': 'application/json'
+                                    },
+                                    withCredentials: true
+                                });
+
+                                console.log("주문 취소 응답 : ", paymentCancelResponse);
+
+                        } catch (error) {
+                            console.error("주문 취소 요청 실패 : ", error)
+                        }
 
                         return;
                     }
-                    paymentId = response.paymentId;
 
                     try {
                         // 결제 성공하고 데이터베이스에 결제 정보 보내고 서버에서 처리하는거하고 브라우저에서 보내는 데이터하고 연결하는 로직 작성해야함.,
                         // 서버 측으로 결제 완료 요청 보내기. 스프링 서버에서 처리하는 로직 조금더 고민해봐야함.
-                        var orderId = orderDataSubmit.data.orderId;
                         const completeResponse = await axios.post(`http://localhost:8080/order/payment`, 
-                            { paymentId, orderId },
+                            { paymentId: response.paymentId, orderId: orderDataSubmit.data.orderId },
                             {
                                 headers: {
                                     Authorization : `Bearer ${localStorage.getItem("accessToken")}`,
@@ -200,15 +211,10 @@ const OrderPreviewPage = () => {
 
                         // completeResponse는 서버에서 돌아온 응답임. 여기부턴 내 서버에 맞는 응답 스펙 정해서 처리 해야함.
                         if (completeResponse.status == 200) {
-                            setPaymentStatus({
-                                status: completeResponse.status,
-                            });
+                            
                         } else {
-                            console.log("FAILED쪽임 ?여기?");
-                            setPaymentStatus({
-                                status: "FAILED",
-                                message: await completeResponse.statusText,
-                            });
+                            
+                            
                         }
 
                         navigate("/orderSuccess", { replace: true });
@@ -225,13 +231,6 @@ const OrderPreviewPage = () => {
         } catch (error) {
             console.error("서버측 주문 데이터 처리 예외 : ", error);
         }
-
-    };
-
-    const handleClose = () => {
-        setPaymentStatus({
-            status: "IDLE",
-        })
     };
 
     return (
@@ -248,7 +247,6 @@ const OrderPreviewPage = () => {
                         </div>
                     ))}
                     <hr/>
-                    
                 </>
             }
             <div>
@@ -257,7 +255,6 @@ const OrderPreviewPage = () => {
                         selectedAddress={selectedAddress}
                         addressList={addresses}
                         setSelectedAddress={setSelectedAddress}
-
                         setZipcode={setZipcode}
                         setCity={setCity}
                         setStreet={setStreet}
@@ -266,17 +263,16 @@ const OrderPreviewPage = () => {
                         city={city}
                         street={street}
                         detailedAddress={detailedAddress}
+                        setAddressNullException={setAddressNullException}
                     />
                 </div>
-            
-                <div id="portal-root">
-
-                </div>
+                <div id="portal-root"></div>
                 
             </div>
 
             <div className="text-center">
                 <Button onClick={requestPayment}>결제하기</Button>
+                { addressNullException && <p style={{color: "red"}}>{addressNullException}</p> }
             </div>
 
         </Container>
