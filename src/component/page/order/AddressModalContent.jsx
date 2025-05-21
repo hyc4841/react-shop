@@ -8,12 +8,12 @@ const AddressModalContent = (props) => {
 
     const { selectedAddress, addressList, setSelectedAddress,
         setZipcode, setCity, setStreet, setDetailedAddress,
-        zipcode, city, street, detailedAddress} = props;
+        zipcode, city, street, detailedAddress, setAddressNullException } = props;
 
-    const [ inputZipcode, setInputZipcode ] = useState(null);
-    const [ inputCity, setInputCity ] = useState(null);
-    const [ inputStreet, setInputStreet ] = useState(null);
-    const [ inputDetailedAddress, setInputDetailedAddress ] = useState(null);
+    const [ inputZipcode, setInputZipcode ] = useState('');
+    const [ inputCity, setInputCity ] = useState('');
+    const [ inputStreet, setInputStreet ] = useState('');
+    const [ inputDetailedAddress, setInputDetailedAddress ] = useState('');
 
     const [ newAddressFieldError, setNewAddressFieldError ] = useState(null);
 
@@ -25,10 +25,10 @@ const AddressModalContent = (props) => {
     const [ newAddressInputOnOff, setNewAddressInputOnOff ] = useState(true);
 
     const inputAddressCleanUp = () => {
-        setInputZipcode(null);
-        setInputCity(null);
-        setInputStreet(null);
-        setInputDetailedAddress(null);
+        setInputZipcode('');
+        setInputCity('');
+        setInputStreet('');
+        setInputDetailedAddress('');
     };
     const addressCleanUp = () => {
         setZipcode(null);
@@ -55,6 +55,7 @@ const AddressModalContent = (props) => {
         addressCleanUp();
         inputAddressCleanUp();
         setNewAddressFieldError(null);
+        setAddressNullException(null);
         handleClosePopup();
     };
 
@@ -83,7 +84,7 @@ const AddressModalContent = (props) => {
         e.preventDefault();
 
         // 주소 필드중 하나라도 입력을 안하면 오류 필드를 등록한다.
-        if (inputCity != null && inputZipcode != null && inputStreet != null && inputDetailedAddress != null) {
+        if (inputCity != '' && inputZipcode != '' && inputStreet != '' && inputDetailedAddress != '') {
 
             setNewAddressInputOnOff(true);
             setSelectedAddress(null); // 주소 직접 입력 모드는 선택한 주소를 제거한다.
@@ -94,6 +95,7 @@ const AddressModalContent = (props) => {
             setDetailedAddress(inputDetailedAddress);
 
             setNewAddressFieldError('');
+            setAddressNullException(null);
             handleClosePopup();
         } else {
             setNewAddressFieldError("상세 주소까지 모두 입력해주세요");
