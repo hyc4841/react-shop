@@ -128,13 +128,37 @@ export const deleteAddressRequest = createAsyncThunk(
     }
 );
 
+export const orderDataRequest = createAsyncThunk(
+    'user/orderDataRequest',
+    async (args, { dispatch, getState, rejectWithValue }) => {
+        console.log("멤버 주문 데이터 요청");
+
+        try {
+            const response = await axios.get('http://localhost:8080/orders', 
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                    },
+                    withCredentials: true
+                });
+
+            console.log("주문 내역 요청 응답 : ", response.data);
+            return response.data;
+
+        } catch (error) {
+            console.error("주문 내역 요청 실패 : ", error);
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 
 const userSlice = createAppSlice({
     name: 'user',
 
     initialState: { isLoggedIn: false, username: null, loginError: null,
         memberData: null, memberDataError: null, addressAddError: null,
-        deleteAddressError: null
+        deleteAddressError: null, orderList: null, orderListError: null
      },
 
     reducers: (create) =>  ({
@@ -153,11 +177,20 @@ const userSlice = createAppSlice({
 
     extraReducers: (builder) => {
         builder
+            // orderDataRequest
+            .addCase(orderDataRequest.pending, (state) => {})
+            .addCase(orderDataRequest.fulfilled, (state, action) => {
+                state.orderList = action.payload;
+            })
+            .addCase(orderDataRequest.rejected, (state, action) => {
+                state.orderListError = action.payload;
+            })
+
             // deleteAddressRequest
             .addCase(deleteAddressRequest.pending, (state) => {})
             .addCase(deleteAddressRequest.fulfilled, (state, action) => {
                 console.log(action.payload);
-                state.memberData = action.payload
+                state.memberData = action.payload;
             })
             .addCase(deleteAddressRequest.rejected, (state, action) => {
                 state.deleteAddressError = action.payload;
