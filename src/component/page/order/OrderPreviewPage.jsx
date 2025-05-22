@@ -44,7 +44,7 @@ const OrderPreviewPage = () => {
         }
 
         itemAndQuantity = Object.fromEntries(dataa.entries());
-        console.log("itemAndQuantity : ", itemAndQuantity)
+        console.log("itemAndQuantity : ", itemAndQuantity);
     }
 
     useEffect(() => {
