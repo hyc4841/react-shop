@@ -11,7 +11,8 @@ export const loginFetch = createAsyncThunk(
         try {
             console.log(credentials);
 
-            const response = await axios.post('http://localhost:8080/login', credentials, {withCredentials: true});
+            const response = await axios.post('http://localhost:8080/login', credentials, 
+                {withCredentials: true});
 
             return response.data;
 
@@ -152,13 +153,149 @@ export const orderDataRequest = createAsyncThunk(
     }
 );
 
+export const loginIdUpdate = createAsyncThunk(
+    'user/loginIdUpdate',
+    async (args, { dispatch, getState, rejectWithValue }) => {
+        console.log("로그인 id 변경 : ", args);
+
+        try {
+            const response = await axios.put('http://localhost:8080/member/id', 
+                args, 
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                        'Content-Type': 'application/json',
+                    },
+                    withCredentials: true,
+                }
+            );
+
+            console.log("응답 : ", response.data);
+            return response.data;
+        } catch (error) {
+            console.error("요청 실패 : ", error);
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+// 이 코드는 이메일 변경 코드 보내는 부분임
+export const emailUpdate = createAsyncThunk(
+    'user/emailUpdate',
+    async (args, { dispatch, getState, rejectWithValue }) => {
+        console.log("이메일 변경 : ", args);
+        try {
+            const response = await axios.post('http://localhost:8080/member/email',
+                args,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                        "Content-Type": "application/json",
+                    },
+                    withCredentials: true
+                }
+            );
+
+
+            console.log("응답 : ", response.data);
+            return response.data;
+
+        } catch (error) {
+            console.error("요청 실패 : ", error);
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const nameUpdate = createAsyncThunk(
+    'user/nameUpdate',
+    async (args, { dispatch, getState, rejectWithValue }) => {
+        console.log("이름 변경 : ", args);
+
+        try {
+            const response = await axios.put('http://localhost:8080/member/name',
+                args,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                        "Content-Type": "application/json"
+                    },
+                    withCredentials: true
+                }
+            );
+
+            console.log("응답 : ", response.data);
+            return response.data;
+
+        } catch (error) {
+            console.error("요청 실패 : ", error);
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const phoneNumCUpdate = createAsyncThunk(
+    'user/phoneNumCUpdate',
+    async (args, { dispatch, getState, rejectWithValue }) => {
+        console.log("휴대폰 번호 변경 : ", args);
+
+        try {
+            const response = await axios.put('http://localhost:8080/member/phone-num', 
+                args,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                        "Content-Type": "application/json",
+                    },
+                    withCredentials: true
+                }
+            );
+
+            console.log("응답 : ", response.data);
+            return response.data;
+
+        } catch (error) {
+            console.error("요청 실패 : ", error);
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const passwordUpdate = createAsyncThunk(
+    'user/passwordUpdate',
+    async (args, { dispatch, getState, rejectWithValue }) => {
+        console.log("비밀번호 변경 : ", args);
+
+        try {
+            const response = await axios.put('http://localhost:8080/member/password', 
+                args,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                        'Content-Type': 'application/json',
+                    },
+                    withCredentials: true
+                }
+            );
+
+            console.log("응답 : ", response.data);
+            return response.data;
+
+        } catch (error) {
+            console.error("요청 실패 : ", error);
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
 
 const userSlice = createAppSlice({
     name: 'user',
 
     initialState: { isLoggedIn: false, username: null, loginError: null,
         memberData: null, memberDataError: null, addressAddError: null,
-        deleteAddressError: null, orderList: null, orderListError: null
+        deleteAddressError: null, orderList: null, orderListError: null,
+        passwordChgError: null, emailChgError: null, phoneNumChgError: null,
+        nameChgError: null, passwordChgError: null
      },
 
     reducers: (create) =>  ({
@@ -171,12 +308,25 @@ const userSlice = createAppSlice({
         setAddressAddError: create.reducer((state, action) => {
             console.log("주소 추가 예외 삭제");
             state.addressAddError = null;
+        }),
+        setLoginIdChgError: create.reducer((state, action) => {
+            console.log("로그인 id 변경 오류 제거");
+            state.passwordChgError = null;
         })
-
+        
     }),
 
     extraReducers: (builder) => {
         builder
+            // loginIdUpdate
+            .addCase(loginIdUpdate.pending, (state) => {})
+            .addCase(loginIdUpdate.fulfilled, (state, action) => {
+                state.memberData = action.payload;
+            })
+            .addCase(loginIdUpdate.rejected, (state, action) => {
+                state.loginChgError = action.payload;
+            })
+
             // orderDataRequest
             .addCase(orderDataRequest.pending, (state) => {})
             .addCase(orderDataRequest.fulfilled, (state, action) => {
@@ -262,5 +412,5 @@ const userSlice = createAppSlice({
 });
 
 // 액션 생성자와 리듀서
-export const { login, logout, setAddressAddError } = userSlice.actions;
+export const { login, logout, setAddressAddError, setLoginIdChgError } = userSlice.actions;
 export default userSlice.reducer;
