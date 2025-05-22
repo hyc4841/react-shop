@@ -8,11 +8,11 @@ import { emailUpdate, getMemberData } from "../../../redux/reducer/userSlice";
 
 const EmailChangeButton = (props) => {
 
-    const { email, setError, setMemberData, setEmailCodeIsSent, emailCodeIsSent} = props;
+    const { email, setError, setIsSentCode, isSentCode} = props;
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    var buttonTitle = emailCodeIsSent ? "인증 재요청" : "인증요청";
+    var buttonTitle = isSentCode ? "인증 재요청" : "인증요청";
 
     console.log("변경 이메일 : ", email);
 
@@ -31,12 +31,11 @@ const EmailChangeButton = (props) => {
                 );
 
             console.log("이메일 변경 요청 응답 : ", response);
-            setEmailCodeIsSent(true);
+            setIsSentCode(true);
         } catch (error) {
             console.error("이메일 인증 요청 실패 : ", error);
             setError(error.response.data);
         }
-        
     };
 
     return (
