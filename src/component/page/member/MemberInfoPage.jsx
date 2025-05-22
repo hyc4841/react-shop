@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Container, Row, Table, Col, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import MypageNav from "../../page/member/MyPageNav";
+import MypageNav from "./MyPageNav";
 import PasswordChangeButton from "./PasswordChangButton";
 import LoginChangeButton from "./LoginIdChangeButton";
 import EmailChangeButton from "./EmailChangeButton";
@@ -14,6 +14,8 @@ import UpdateEmailCodeSubmitbutton from "./UpdateEmailCodeSubmitButton";
 import MemberAddressModalContent from "./addressPortal/MemberAddressModalContent";
 import { useDispatch, useSelector } from "react-redux";
 import { getMemberData, setLoginIdChgError } from "../../../redux/reducer/userSlice";
+import LoginId from "./memberInfo/LoginId";
+import Email from "./memberInfo/Email";
 
 const MemberInfo = (props) => {
     const navigate = useNavigate();
@@ -21,7 +23,7 @@ const MemberInfo = (props) => {
     const [ error, setError ] = useState('');
 
     // const [ memberData, setMemberData ] = useState(null);
-    const { memberData, memberDataError, loginChgError } = useSelector(state => state.user);
+    const { memberData, memberDataError } = useSelector(state => state.user);
 
     const [ curPwd, setCurPwd ] = useState("");
     const [ newPwd, setNewPwd ] = useState("");
@@ -70,30 +72,6 @@ const MemberInfo = (props) => {
         
     }, [memberDataError]);
 
-    const loginIdChangeBtn = () => {
-        if (loginIdChgIsVisible) {
-            setLoginIdChgIsVisible(false);
-            setLoginIdChgTitle("변경하기");
-        } else {
-            setLoginIdChgIsVisible(true);
-            setLoginIdChgTitle("변경취소");
-            dispatch(setLoginIdChgError())
-
-        }
-    };
-
-    const emailChangeBtn = () => {
-        if (emailChgIsVisible) {
-            setEmailChgIsVisible(false);
-            setEmailChgTitle("변경하기");
-        } else {
-            setEmailChgIsVisible(true);
-            setEmailChgTitle("변경취소");
-            setEmailChgError(null);
-
-        }
-    };
-
     const phoneNumChangeBtn = () => {
         if (phoneNumChgIsVisible) {
             setPhoneNumChgIsVisible(false);
@@ -137,31 +115,9 @@ const MemberInfo = (props) => {
                         <tr>
                             <td>아이디</td>
                             <td>
-                                <div>
-                                    {memberData ? memberData.loginId : ""} <Button onClick={loginIdChangeBtn}>{loginIdChgTitle}</Button>
-                                </div>
-
-                                {loginIdChgIsVisible &&
-                                    <>
-                                        <div style={{display: "flex", marginTop: "15px"}}>
-                                            <input className="form-control" type="text"
-                                            onChange={(e) => setNewLoginId(e.target.value)}
-                                            style={{width: "auto", marginRight: "10px"}} />
-                                            <LoginChangeButton 
-                                                newLoginId={newLoginId}
-                                            />
-                                        </div>
-
-                                        {loginChgError && 
-                                            <div style={{marginTop: "10px"}}>
-                                                {loginChgError.newLoginId.map((error, index) => (
-                                                    <p key={error.id} style={{color: "red", marginBottom: "0px"}}>※ {error.message}</p>
-                                                ))}
-                                            </div>
-                                        }
-
-                                    </>
-                                }
+                                <LoginId 
+                                    memberData={memberData}
+                                />
                             </td>
                         </tr>
 
@@ -169,66 +125,9 @@ const MemberInfo = (props) => {
                         <tr>
                             <td>이메일</td>
                             <td>
-                                <div>
-                                    {memberData && memberData.email} <Button type="button" onClick={emailChangeBtn}>{emailChgTitle}</Button>
-                                </div>
-                                
-                                {emailChgIsVisible && 
-                                    <>
-                                        <div style={{display: "flex", marginTop: "15px"}}>
-
-                                            <Form.Control type="email" onChange={(e) => setEmail(e.target.value)}
-                                            style={{width: "auto", marginRight: "10px"}} placeholder="이메일을 입력해주세요" />
-
-                                            {/* 인증 코드 요청 버튼 */}
-                                            <EmailChangeButton
-                                                email={email}
-                                                setError={setError}
-                                                setEmailCodeIsSent={setEmailCodeIsSent}
-                                                emailCodeIsSent={emailCodeIsSent}
-                                            />
-                                        </div>
-
-                                        {emailCodeIsSent && (
-                                            <> 
-                                                <div>
-                                                    <p style={{color: "blue"}}>인증 코드를 전송했습니다.</p>
-                                                </div>
-
-                                                <div className="d-flex">
-                                                    <Form.Control type="text" onChange={(e) => setEmailCode(e.target.value)}
-                                                    value={emailCode}  placeholder="코드를 입력해주세요"/>
-
-                                                    <UpdateEmailCodeSubmitbutton
-                                                        email={email}
-                                                        code={emailCode}
-                                                        setError={setError}
-                                                    />
-                                                </div>
-                                            </>
-                                        )}
-
-                                        {error.code &&   
-                                            <div style={{marginTop: "10px"}}>
-                                                {error.code.map((error, index) => (
-                                                    <p key={error.id} style={{color: "red", marginBottom: "0px"}}>※ {error.message}</p>
-                                                ))}
-                                                
-                                            </div>    
-                                        }
-                                        
-                                        {error.email &&   
-                                            <div style={{marginTop: "10px"}}>
-                                                {error.email.map((error, index) => (
-                                                    <p key={error.id} style={{color: "red", marginBottom: "0px"}}>※ {error.message}</p>
-                                                ))}
-                                                
-                                            </div>    
-                                        }
-                                    </>
-                                }
-                                
-                            
+                                <Email
+                                    memberData={memberData}
+                                />
                             </td>
                         </tr>
 
