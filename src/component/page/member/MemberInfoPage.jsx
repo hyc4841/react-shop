@@ -13,7 +13,7 @@ import '../../../css/memberInfoPage.css';
 import UpdateEmailCodeSubmitbutton from "./UpdateEmailCodeSubmitButton";
 import MemberAddressModalContent from "./addressPortal/MemberAddressModalContent";
 import { useDispatch, useSelector } from "react-redux";
-import { getMemberData } from "../../../redux/reducer/userSlice";
+import { getMemberData, setLoginIdChgError } from "../../../redux/reducer/userSlice";
 
 const MemberInfo = (props) => {
     const navigate = useNavigate();
@@ -21,7 +21,7 @@ const MemberInfo = (props) => {
     const [ error, setError ] = useState('');
 
     // const [ memberData, setMemberData ] = useState(null);
-    const { memberData, memberDataError } = useSelector(state => state.user);
+    const { memberData, memberDataError, loginChgError } = useSelector(state => state.user);
 
     const [ curPwd, setCurPwd ] = useState("");
     const [ newPwd, setNewPwd ] = useState("");
@@ -37,7 +37,6 @@ const MemberInfo = (props) => {
     // 이거 중복 없애기
     const [ loginIdChgIsVisible, setLoginIdChgIsVisible ] = useState(false); // 아이디 변경 버튼 플레그
     const [ loginIdChgTitle, setLoginIdChgTitle ] = useState("변경하기");
-    const [ loginChgError, setLoginChgError ] = useState("");
 
     const [ emailChgIsVisible, setEmailChgIsVisible ] = useState(false); // 이메일 변경 버튼 플레그
     const [ emailChgTitle, setEmailChgTitle ] = useState("변경하기"); // 변경 버튼 텍스트
@@ -55,16 +54,8 @@ const MemberInfo = (props) => {
     const [ nameChgError, setNameChgError ] = useState("");
 
     const [ passwordChgError, setPasswordChgError ] = useState("");
-
-    const [ addressChgIsVisible, setAddressChgIsVisible ] = useState(false);
-
     const [ modalOnOff, setModalOnOff ] = useState(false);
-    const [ newZipcode, setNewZipcode ] = useState("");
-    const [ newCity, setNewCity ] = useState("");
-    const [ newStreet, setNewStreet ] = useState("");
-    const [ newDetailedAddress, setNewDetailedAddress ] = useState("");
-    const [ addressChgError, setAddressChgError ] = useState("");
-
+    
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -79,12 +70,6 @@ const MemberInfo = (props) => {
         
     }, [memberDataError]);
 
-    useEffect(() => {
-
-
-
-    }, []);
-
     const loginIdChangeBtn = () => {
         if (loginIdChgIsVisible) {
             setLoginIdChgIsVisible(false);
@@ -92,7 +77,7 @@ const MemberInfo = (props) => {
         } else {
             setLoginIdChgIsVisible(true);
             setLoginIdChgTitle("변경취소");
-            setLoginChgError(null);
+            dispatch(setLoginIdChgError())
 
         }
     };
@@ -135,8 +120,6 @@ const MemberInfo = (props) => {
         setModalOnOff(true);
     };
     
-    console.log("주소??? : ", memberData);
-
     return (
         <Container style={{ border: '1px solid blue', display: "flex"}}>
            
@@ -166,7 +149,6 @@ const MemberInfo = (props) => {
                                             style={{width: "auto", marginRight: "10px"}} />
                                             <LoginChangeButton 
                                                 newLoginId={newLoginId}
-                                                onChangeError={setLoginChgError}
                                             />
                                         </div>
 
@@ -198,6 +180,7 @@ const MemberInfo = (props) => {
                                             <Form.Control type="email" onChange={(e) => setEmail(e.target.value)}
                                             style={{width: "auto", marginRight: "10px"}} placeholder="이메일을 입력해주세요" />
 
+                                            {/* 인증 코드 요청 버튼 */}
                                             <EmailChangeButton
                                                 email={email}
                                                 setError={setError}
@@ -224,6 +207,7 @@ const MemberInfo = (props) => {
                                                 </div>
                                             </>
                                         )}
+
                                         {error.code &&   
                                             <div style={{marginTop: "10px"}}>
                                                 {error.code.map((error, index) => (
@@ -232,6 +216,7 @@ const MemberInfo = (props) => {
                                                 
                                             </div>    
                                         }
+                                        
                                         {error.email &&   
                                             <div style={{marginTop: "10px"}}>
                                                 {error.email.map((error, index) => (
@@ -421,9 +406,8 @@ const MemberInfo = (props) => {
                                         addressList={memberData.address}
                                     />
                                 }
-                                
+                                <div id="portal-root"></div>
                             </td>
-                            <div id="portal-root"></div>
                         </tr>
 
                     </tbody>
