@@ -12,7 +12,6 @@ const MemberAddressModalContent = (props) => {
     const dispatch = useDispatch();
 
     const { addressList } = props;
-    console.log("주소 리스트 : ", addressList);
 
     const [ isPopupOpen, setIsPopupOpen ] = useState(false);
     const [ isDeleteModalOpen, setIsDeleteModalOpen ] = useState(false);
