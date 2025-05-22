@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getMemberData } from "../../../redux/reducer/userSlice";
+import { emailUpdate, getMemberData } from "../../../redux/reducer/userSlice";
 
 
 const EmailChangeButton = (props) => {
@@ -14,34 +14,30 @@ const EmailChangeButton = (props) => {
 
     var buttonTitle = emailCodeIsSent ? "인증 재요청" : "인증요청";
 
+    console.log("변경 이메일 : ", email);
+
     const submitmailChange = async () => {
         
         try {
-            dispatch(getMemberData());
-
-            /*
             const response = await axios.post('http://localhost:8080/member/email/auth', 
-                { email: email },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-                        "Content-Type": "application/json",
-                    },
-                    withCredentials: true
-                }
-            );
+                    { email: email },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                            "Content-Type": "application/json",
+                        },
+                        withCredentials: true
+                    }
+                );
 
             console.log("이메일 변경 요청 응답 : ", response);
             setEmailCodeIsSent(true);
-            // navigate(0);
-            */
-
         } catch (error) {
-            console.error("이메일 변경 오류 : ", error.response.data);
+            console.error("이메일 인증 요청 실패 : ", error);
             setError(error.response.data);
         }
+        
     };
-
 
     return (
         <Button type="button" onClick={submitmailChange} style={{whiteSpace: "nowrap"}}>
