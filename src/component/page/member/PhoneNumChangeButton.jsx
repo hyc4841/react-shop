@@ -14,10 +14,10 @@ const PhoneNumChangeButton = (props) => {
     
     const submitPhoneNumChange = async () => {
 
+
+
         try {
             dispatch(getMemberData());
-            
-
             /*
             const response = await axios.post('http://localhost:8080/member/phone-num', 
                 { newPhoneNum },
