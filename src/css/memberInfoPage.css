@@ -15,3 +15,30 @@
     width: auto;
     height: auto;
 }
+
+.member-info {
+    align-items: center; /* y축 중앙 정렬 */
+}
+
+.member-info p {
+    margin: 0 0 0;
+}
+
+.error-field {
+    margin-top: 10px;
+}
+
+.error-field p {
+    color: red;
+    margin-bottom: 0;
+}
+
+.input-area {
+    display: flex;
+    margin-top: 15px;
+}
+
+.input-area input {
+    width: auto;
+    margin-right: 10px;
+}
