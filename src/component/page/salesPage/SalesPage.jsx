@@ -1,8 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Form, FormSelect, Button } from "react-bootstrap";
+import { Form, FormSelect, Button, Container, Row, Col } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import ItemOptionCard from "./ItemOptionCard";
+import '../../../css/salesPage.css'; 
 
 const SalesPage = () => {
 
@@ -105,65 +106,64 @@ const SalesPage = () => {
 
     
     return (
-        <div className="d-flex">
-            <div className="item_description">
-                {pageData.page && 
-                    <>
-                        <p>{pageData.page.id}</p>
-                        <p>{pageData.page.pageName}</p>
-                        <p>{pageData.page.description}</p>
-                    </>
-                }
-            </div>
+        <Container className="d-flex justify-content-center">
+                <div className="item_description">
+                    {pageData.page && 
+                        <>
+                            <p>{pageData.page.id}</p>
+                            <p>{pageData.page.pageName}</p>
+                            <p>{pageData.page.description}</p>
+                        </>
+                    }
+                </div>
 
-            <div className="item_option">
-                <Form onSubmit={formSubmitHandler}>
-                    {/* 이거 그냥 재귀 함수처럼 하면 그냥 되겠는데? */}
+                <div className="item_option">
+                    <Form onSubmit={formSubmitHandler}>
+                        {/* 이거 그냥 재귀 함수처럼 하면 그냥 되겠는데? */}
 
-                    <div className="d-flex">
-                        {/* 상품 옵션 */}
-                        <div>
-                            {itemOptions[0]  &&
-                                <>
-                                    <ItemOptionCard 
-                                        parent={itemOptions[0]}
-                                        setSelectedItems={setSelectedItems}
-                                        selectItemHandler={selectItemHandler}
-                                    />
-                                </>
-                            }
+                        <div className="d-flex">
+                            {/* 상품 옵션 */}
+                            <div>
+                                {itemOptions[0]  &&
+                                    <>
+                                        <ItemOptionCard
+                                            parent={itemOptions[0]}
+                                            setSelectedItems={setSelectedItems}
+                                            selectItemHandler={selectItemHandler}
+                                        />
+                                    </>
+                                }
+                            </div>
+
+                            {/* 선택된 상품들 */}
+                            <div>
+                                {selectedItems && 
+                                    [...selectedItems.entries()].map(([key, value], index) => (
+                                        <div key={index}>
+                                            <p>상품명 : {key.name}</p>
+                                            <p>상품 가격 : {key.price}</p>
+                                            <p>보유 수량 : {key.stockQuantity}</p>
+
+                                            <input name="quantity" type="number" value={value} min={1} step={1} required onChange={(e) => quantityChangeHandler(e, key)} style={{display: "block", marginBottom: "10px"}}/>
+
+                                            <Button onClick={(e) => removeSelectedItem(e, key)}>삭제</Button>
+                                        </div>
+                                    ))
+                                }
+
+                                <hr/>
+                                
+                            </div>
+                            
                         </div>
+                        
 
-                        {/* 선택된 상품들 */}
-                        <div>
-                            {selectedItems && 
-                                [...selectedItems.entries()].map(([key, value], index) => (
-                                    <div key={index}>
-                                        <p>인덱스는 : {index}</p>
-                                        <p>{key.itemId}</p>
-                                        <p>상품명 : {key.name}</p>
-                                        <p>상품 가격 : {key.price}</p>
-                                        <p>보유 수량 : {key.stockQuantity}</p>
-
-                                        <input name="quantity" type="number" value={value} min={1} step={1} required onChange={(e) => quantityChangeHandler(e, key)} style={{display: "block", marginBottom: "10px"}}/>
-
-                                        <Button onClick={(e) => removeSelectedItem(e, key)}>삭제</Button>
-                                    </div>
-                                ))
-                            }
-
-                            <hr/>
-                            <Button onClick={formSubmitHandler}>주문하기</Button>
-                        </div>
-                    </div>
+                        <Button onClick={formSubmitHandler}>주문하기</Button>            
+                    </Form>
                     
+                </div>
 
-
-                </Form>
-                
-            </div>
-        </div>
-
+        </Container>
 
         
     );
