@@ -38,15 +38,20 @@ const ItemListPage = () => {
         console.log("필드", field);
         console.log("벨류", value);
 
+        // prev 부분은 콜백 함수 패턴임. 이전 상태를 가져오는 것.
         setSelectedFilters((prev) => {
-            const curValues = prev[field] || [];
+            // selectedFilters는 객체임.
+            const curValues = prev[field] || []; // 선택한 필드가 있으면 해당 값을 가져오고 없으면 빈 객체를 반환.
 
             if (curValues.includes(value)) {
+                // 객체 이기 때문에 중괄호 {} 를 사용해서 묶어주고, 스프레드 문법을 통해 이전 값에 추가하는 구조
+                // 해당 필드가 존재하지 않아 새로 추가.
                 return {
                     ...prev,
                     [field]: curValues.filter((v) => v !== value), // 값 제거
                 };
             } else {
+                // 해당 필드가 존재하여 기존 값에 추가.
                 return {
                     ...prev,
                     [field]: [...curValues, value], // 값 추가
