@@ -31,8 +31,8 @@ const ItemOptionCard = (props) => {
         <>
             {parent && 
             <>
-                <Form.Label>옵션 : {parent.optionName}</Form.Label>
-                <FormSelect defaultValue='' onChange={optionSelectHandler}>
+               <Form.Label>옵션 : {parent.optionName}</Form.Label>
+                <FormSelect style={{marginBottom: '50px'}} defaultValue='' onChange={optionSelectHandler}>
                     <option value='' disabled hidden>선택해주세요.</option>
                     {parent.child &&
                         parent.child.map((item, index) => ( 
