@@ -32,11 +32,11 @@ const ItemFilter = (props) => {
     displayFilter();
 
     const fieldNameMap = {
-        lapTopBrands: '브랜드',
-        lapTopCpus: 'CPU',
-        lapTopStorages: '스토리지',
-        lapTopScreenSizes: '스크린 크기',
-        lapTopManufactureBrands: '제조사',
+        lapTopBrandList: '브랜드',
+        lapTopCpuList: 'CPU',
+        lapTopStorageList: '스토리지',
+        lapTopScreenSizeList: '스크린 크기',
+        lapTopManufactureBrandList: '제조사',
 
         tvBrandList: "브랜드",
         tvDisplayPanelList: "화면 패널",
