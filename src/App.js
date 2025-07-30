@@ -16,6 +16,7 @@ import OrderPreviewPage from './component/page/order/OrderPreviewPage';
 import PrivateRoute from './component/page/login/PrivateRoute';
 import OrderSuccessPage from './component/page/order/OrderSuccessPage';
 import MemberOrderListPage from './component/page/member/MemberOrderListPage';
+import ItemSavePage from './component/page/item/ItemSavePage';
 
 function App(props) {
     return (
@@ -43,6 +44,8 @@ function App(props) {
                         <MemberOrderListPage />
                     </PrivateRoute>
                 } />
+
+                <Route path='/item' element={<ItemSavePage />} />
 
 
 
